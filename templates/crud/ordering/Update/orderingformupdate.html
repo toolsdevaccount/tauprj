@@ -231,7 +231,7 @@
                                 {% else %}
                                 <input type="tel" class="form-control" placeholder="" list="Shipping" autocomplete="new-password" name="ShippingCode" id="id_ShippingCode" value="{{ object.ShippingCode.CustomerCode }} {{ object.ShippingCode.CustomerOmitName }}">
                                 <datalist id="Shipping">
-                                {% for data in SupplierCode %}
+                                {% for data in ShippingCode %}
                                     <option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}">{{ data.id }}</option>
                                 {% endfor %}
                                 </datalist>

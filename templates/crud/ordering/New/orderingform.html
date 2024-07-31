@@ -223,8 +223,8 @@
                                 </div>
                                 <div class="form-group col-sm-2">
                                     <label for="id_SupplierCode">出荷先</label>
-                                    {% if form.errors.SupplierCode %}
-                                    {% for error in form.errors.SupplierCode %}
+                                    {% if form.errors.ShippingCode %}
+                                    {% for error in form.errors.ShippingCode %}
                                     <input type="tel" class="form-control is-invalid" placeholder="選択してください" list="Shipping" autocomplete="new-password" name="ShippingCode" id="id_ShippingCode">
                                     <datalist id="Shipping">
                                     {% for data in ShippingCode %}
