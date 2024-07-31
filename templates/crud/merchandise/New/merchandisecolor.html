@@ -1,0 +1,61 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<div class="text-left">
+			<button type="button" id="add" class="btn btn-primary btn-sm addcolor">追加</button>
+		</div>
+		<input type="hidden" name="McdColorId-TOTAL_FORMS" id="id_McdColorId-TOTAL_FORMS">
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				{{ inlinescolor.management_form }}
+				<table class="table table-sticky" id="tblrowcolor">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center product">色番</th>
+							<th scope="col" class="text-center product">カラー</th>
+							<th scope="col" class="text-center product">&nbsp&nbsp</th>
+						</tr>
+					</thead>
+					<tbody id="listcolor">
+						{% for form in inlinescolor %}
+						<tr class="colorarea">
+							<td>
+								<div id="div" class="fds-table__td-content">
+									{% if form.errors.McdColorNumber %}
+									{% for error in form.errors.McdColorNumber %}
+										<input type="text" class="form-control is-invalid McdColorNumber" autocomplete="new-password" data-id-format="id_McdColorId-%d-McdColorNumber" data-name-format="McdColorId-%d-McdColorNumber"
+										name="McdColorId-0-McdColorNumber" id="id_McdColorId-0-McdColorNumber" value="{{ form.McdColorNumber.value | default:'' }}">
+										<div class="invalid-feedback">{{ error }}</div>
+									{% endfor %}
+									{% else %}
+										<input type="text" class="form-control McdColorNumber" autocomplete="new-password" data-id-format="id_McdColorId-%d-McdColorNumber" data-name-format="McdColorId-%d-McdColorNumber"
+										name="McdColorId-0-McdColorNumber" id="id_McdColorId-0-McdColorNumber" value="{{ form.McdColorNumber.value | default:'' }}">
+									{% endif %}	
+								</div>
+							</td>
+							<td>
+								{% if form.errors.McdColor %}
+								{% for error in form.errors.McdColor %}
+									<input type="text" class="form-control is-invalid McdColor" autocomplete="new-password" data-id-format="id_McdColorId-%d-McdColor" data-name-format="McdColorId-%d-McdColor"
+									name="McdColorId-0-McdColor" id="id_McdColorId-0-McdColor" value="{{ form.McdColor.value | default:'' }}">                                          
+									<div class="invalid-feedback">{{ error }}</div>
+								{% endfor %}
+								{% else %}
+									<input type="text" class="form-control McdColor" autocomplete="new-password" data-id-format="id_McdColorId-%d-McdColor" data-name-format="McdColorId-%d-McdColor"
+									name="McdColorId-0-McdColor" id="id_McdColorId-0-McdColor" value="{{ form.McdColor.value | default:'' }}">                                          
+								{% endif %}	
+							</td>
+							<td>
+								<span class="delcolor"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+	

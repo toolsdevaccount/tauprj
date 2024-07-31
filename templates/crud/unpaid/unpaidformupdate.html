@@ -1,0 +1,208 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">未払情報編集</li>
+			<div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal">未払抽出</button></span>
+				</div>	
+			</div>	
+        </ol>
+    </nav>
+    <div class="form-group">
+        <form method="post" id="form">
+        {% csrf_token %}
+            <div style="height: 80px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="table-responsive table-container">
+                <div class="table-sticky-container">
+                    <table class="table table-sticky" id="tblrow">
+                        <thead>
+                            <tr class="bg-info">
+                                <th scope="col" class="text-center items">コード</th>
+                                <th scope="col" class="text-center coloritem">仕入先名</th>
+                                <th scope="col" class="text-center days">個別請求書発行日</th>
+                                <th scope="col" class="text-center days">出荷日</th>
+                                <th scope="col" class="text-center items">伝票番号</th>
+                                <th scope="col" class="text-center coloritem">商品名</th>
+                                <th scope="col" class="text-center items">番手</th>
+                                <th scope="col" class="text-center items">色番</th>
+                                <th scope="col" class="text-center coloritem">カラー</th>
+                                <th scope="col" class="text-center items">仕入金額</th>
+                                <th scope="col" class="text-center check">支払済</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in form %}
+                            <tr class="list_formset">
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: right;" data-id-format="id_form-1-%d-SupplierCode" data-name-format="form-1-%d-SupplierCode"
+                                        name="form-1-{{ forloop.counter0 }}-SupplierCode" id="id_form-1-{{ forloop.counter0 }}-SupplierCode" value="{{ data.OrderingId__SupplierCode_id__CustomerCode }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: left;" data-id-format="id_form-1-%d-CustomerName" data-name-format="form-1-%d-CustomerName"
+                                        name="form-1-{{ forloop.counter0 }}-CustomerName" id="id_form-1-{{ forloop.counter0 }}-CustomerName" value="{{ data.OrderingId__SupplierCode_id__CustomerName }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: right;" data-id-format="id_form-1-%d-InvoiceIssueDate" data-name-format="form-1-%d-InvoiceIssueDate"
+                                        name="form-1-{{ forloop.counter0 }}-InvoiceIssueDate" id="id_form-1-{{ forloop.counter0 }}-InvoiceIssueDate" value="{{ data.InvoiceIssueDate }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: right;" data-id-format="id_form-1-%d-ShippingDate" data-name-format="form-1-%d-ShippingDate"
+                                        name="form-1-{{ forloop.counter0 }}-ShippingDate" id="id_form-1-{{ forloop.counter0 }}-ShippingDate" value="{{ data.ShippingDate }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: left;" data-id-format="id_form-%d-SlipNumber" data-name-format="form-%d-SlipNumber"
+                                        name="form-{{ forloop.counter0 }}-SlipNumber" id="id_form-{{ forloop.counter0 }}-SlipNumber" value="{{ data.SlipNumber }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: left;" data-id-format="id_form-1-%d-ProductName" data-name-format="form-1-%d-ProductName"
+                                        name="form-1-{{ forloop.counter0 }}-ProductName" id="id_form-1-{{ forloop.counter0 }}-ProductName" value="{{ data.OrderingId__ProductName }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: left;" data-id-format="id_form-%d-OrderingCount" data-name-format="form-%d-OrderingCount"
+                                        name="form-{{ forloop.counter0 }}-OrderingCount" id="id_form-{{ forloop.counter0 }}-OrderingCount" value="{{ data.OrderingId__OrderingCount }}" disabled>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: left;" data-id-format="id_form-%d-DetailColorNumber" data-name-format="form-%d-DetailColorNumber"
+                                        name="form-{{ forloop.counter0 }}-DetailColorNumber" id="id_form-{{ forloop.counter0 }}-DetailColorNumber" value="{{ data.OrderingDetailId__DetailColorNumber }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: left;" data-id-format="id_form-%d-DetailColor" data-name-format="form-%d-DetailColor"
+                                        name="form-{{ forloop.counter0 }}-DetailColor" id="id_form-{{ forloop.counter0 }}-DetailColor" value="{{ data.OrderingDetailId__DetailColor }}" disabled>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="div" class="fds-table__td-content">
+                                        <input type="tel" class="form-control" autocomplete="new-password" style="text-align: right;" data-id-format="id_form-%d-Supplier_total" data-name-format="form-%d-Supplier_total"
+                                        name="form-{{ forloop.counter0 }}-Supplier_total" id="id_form-{{ forloop.counter0 }}-Supplier_total" value="{{ data.Supplier_total | intcomma }}" disabled>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div id="div" class="fds-table__td-content">
+                                        <div class="form-check">
+                                            {% if data.PaymentInputDiv == 1 %}
+                                            <input type="checkbox" class="form-check-input PrintDiv" data-id-format="id_form-%d-PaymentInputDiv" data-name-format="form-%d-PaymentInputDiv" 
+                                            name="form-{{ forloop.counter0 }}-PaymentInputDiv" id="id_form-{{ forloop.counter0 }}-PaymentInputDiv" checked>
+                                            {% else %}
+                                            <input type="checkbox" class="form-check-input PrintDiv" data-id-format="id_form-%d-PaymentInputDiv" data-name-format="form-%d-PaymentInputDiv" 
+                                            name="form-{{ forloop.counter0 }}-PaymentInputDiv" id="id_form-{{ forloop.counter0 }}-PaymentInputDiv">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <input type="hidden" class="form-control" data-id-format="id_form-%d-id" data-name-format="form-%d-id" id="id_form-{{ forloop.counter0 }}-id" name="form-{{ forloop.counter0 }}-id" value="{{ data.id }}">
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <ol>
+            </ol>   
+            <div class="text-right">
+                <button type="submit" class="btn btn-info btn-sm">&nbsp;&nbsp;保&nbsp;&nbsp;存&nbsp;&nbsp;</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{% url 'myapp:index' %}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+            </div>
+            <!-- 抽出 -->
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="label1">未払情報抽出</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+							<div class="form-row">
+								<div class="form-group col-sm-6">
+									<label for="id_TargetMonth">対象年月</label>
+									<input type="tel" class="form-control flatpickrformat" name="TargetMonth" id="id_TargetMonth" value="{{ GetMonth |date:'Y-m-d' }}">
+    	                        </div>
+							</div>
+						</div>
+                        <div class="modal-footer">
+                            <button type="button" id="issue" class="btn btn-success">抽出</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+			<script>
+				var btn = document.getElementById('modalOpen');
+                var cls = document.getElementById('modalClose');
+                var ise = document.getElementById('issue');
+                var modal = document.getElementsByClassName('modal fade');
+
+                btn.addEventListener('click', function() {
+                    for(i=0;i<modal.length;i++){
+                        modal[i].style.opacity = '1';
+                        modal[i].style.visibility = 'visible';
+                    }
+                })
+
+                ise.addEventListener('click', function() {
+					var TargetMonth = document.getElementById('id_TargetMonth').value;
+
+					// 入力値チェック
+					if(TargetMonth==''){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					var url = "/unpaid/update/123";
+					TargetMonth = TargetMonth.replace(/年/g,'');
+					TargetMonth = TargetMonth.replace(/月/g,'');
+					TargetMonth = TargetMonth + '01';
+					url = url.replace(/123/,TargetMonth);
+
+					location.href = url;
+				})
+            </script>
+		</form>
+	</div>
+</div>
+{% endblock %}

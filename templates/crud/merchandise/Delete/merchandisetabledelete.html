@@ -1,0 +1,60 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				{{ formset.management_form }}	
+				<table class="table table-sticky table-sm" id="tblrow">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center abs">品名</th>
+							<th scope="col" class="text-center items">番手</th>
+							<th scope="col" class="text-center abs">混率</th>
+							<th scope="col" class="text-center product">単価</th>
+							<th scope="col" class="text-center product">単位</th>
+						</tr>
+					</thead>
+					<tbody id="list">
+						{% for form in formset %}
+						<tr class="list_var">
+							<td>
+								<div id="div" class="fds-table__td-content">
+									<input type="tel" class="form-control McdDtProductName" data-id-format="id_McdDtid-%d-McdDtProductName" data-name-format="McdDtid-%d-McdDtProductName"
+									name="McdDtid-0-McdDtProductName" id="id_McdDtid-0-McdDtProductName" value="{{ form.McdDtProductName.value | default_if_none:'' }}" readonly>
+								</div>
+							</td>
+							<td>
+								<input type="text" class="form-control" data-id-format="id_McdDtid-%d-McdDtOrderingCount" data-name-format="McdDtid-%d-McdDtOrderingCount"
+								name="McdDtid-0-McdDtOrderingCount" id="id_McdDtid-0-McdDtOrderingCount" value="{{ form.McdDtOrderingCount.value | default_if_none:'' }}" readonly>                                          
+							</td>
+							<td>
+								<input type="text" class="form-control" data-id-format="id_McdDtid-%d-McdDtStainMixRatio" data-name-format="McdDtid-%d-McdDtStainMixRatio" 
+								name="McdDtid-0-McdDtStainMixRatio" id="id_McdDtid-0-McdDtStainMixRatio" value="{{ form.McdDtStainMixRatio.value | default_if_none:'' }}" readonly>                                   
+							</td>
+							<td>
+								<input type="text" step="0.1" class="form-control McdDtlPrice" data-id-format="id_McdDtid-%d-McdDtlPrice" data-name-format="McdDtid-%d-McdDtlPrice" 
+								name="McdDtid-0-McdDtlPrice" id="id_McdDtid-0-McdDtlPrice" data-empty-val="false"  style="text-align: right;" value="{{ form.McdDtlPrice.value }}" readonly>                                   
+							</td>
+							<td>
+								<select class="custom-select" data-id-format="id_McdDtid-%d-McdDtUnitCode" data-name-format="McdDtid-%d-McdDtUnitCode" name="McdDtid-0-McdDtUnitCode" id="id_McdDtid-0-McdDtUnitCode" readonly>
+									{% for data in form.McdDtUnitCode %}
+									{{ data }}
+									{% endfor %}
+								</select>
+                                <!-- <input type="hidden" data-id-format="id_McdDtid-%d-McdDtUnitCode" data-name-format="McdDtid-%d-McdDtUnitCode" name="McdDtid-0-McdDtUnitCode" id="id_McdDtid-0-McdDtUnitCode" value="{{ form.McdDtUnitCode.value }}"> -->
+							</td>
+							<input type="hidden" data-id-format="id_McdDtid-%d-is_Deleted" data-name-format="McdDtid-%d-is_Deleted" id="id_McdDtid-0-is_Deleted" name="McdDtid-0-is_Deleted" value="on">
+							<input type="hidden" data-id-format="id_McdDtid-%d-id" data-name-format="McdDtid-%d-id" name="McdDtid-0-id" id="id_McdDtid-0-id" value="{{ form.id.value }}">
+							<!-- <td>
+								<span class="list_del"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
+							</td> -->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

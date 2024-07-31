@@ -1,0 +1,123 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ request.META.HTTP_REFERER }}">支払情報一覧</a></li>
+            <li class="breadcrumb-item active" aria-current="page">支払情報編集</li>
+        </ol>
+    </nav>
+	<div class="form-group">
+        <form method="post" id="form">{% csrf_token %}
+            <div style="height: 30px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="tab-content">
+                <div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-sm-2">
+                                <label for="id_PaymentDate">支払日</label>
+                                {% if form.errors.PaymentDate %}
+                                {% for error in form.errors.PaymentDate %}
+                                    <input type="tel" class="form-control is-invalid flatpickr" autocomplete="new-password" name="PaymentDate" id="id_PaymentDate" value="{{ object.PaymentDate }}">
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                                {% else %}
+                                    <input type="tel" class="form-control flatpickr" autocomplete="new-password" name="PaymentDate" id="id_PaymentDate" value="{{ object.PaymentDate }}">
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label for="id_PaymentSupplierCode">支払先</label>
+                                {% if form.errors.PaymentSupplierCode %}
+                                {% for error in form.errors.PaymentSupplierCode %}
+                                <input type="tel" class="form-control is-invalid" list="Payment" autocomplete="new-password" name="PaymentSupplierCode" id="id_PaymentSupplierCode" value="{{ object.PaymentSupplierCode.CustomerCode }} {{ object.PaymentSupplierCode.CustomerOmitName }}">
+                                <datalist id="Payment">
+                                {% for data in PaymentSupplierCode %}
+                                    <option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}">{{ data.id }}</option>
+                                {% endfor %}
+                                </datalist>
+                                <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                                {% else %}
+                                <input type="tel" class="form-control" list="Deposit" autocomplete="new-password" name="PaymentSupplierCode" id="id_PaymentSupplierCode" value="{{ object.PaymentSupplierCode.CustomerCode }} {{ object.PaymentSupplierCode.CustomerOmitName }}">
+                                <datalist id="Deposit">
+                                {% for data in PaymentSupplierCode %}
+                                    <option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}">{{ data.id }}</option>
+                                {% endfor %}
+                                </datalist>
+                                {% endif %}
+                                <input type="hidden" name="PaymentSupplierCode" id="id_PaymentSupplierCode"value="{{ object.PaymentSupplierCode_id }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-2">
+                                <label for="id_PaymentMoney">支払金額</label>
+                                {% if form.errors.PaymentMoney %}
+                                {% for error in form.errors.PaymentMoney %}
+                                <input type="text" class="form-control is-invalid text-right PaymentMoney" autocomplete="new-password" name="PaymentMoney" id="id_PaymentMoney" onchange="comma(this);" value="{{ object.PaymentMoney | intcomma }}">
+                                <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                                {% else %}
+                                <input type="text" class="form-control text-right PaymentMoney" autocomplete="new-password" name="PaymentMoney" id="id_PaymentMoney" onchange="comma(this);" value="{{ object.PaymentMoney | intcomma }}">
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label for="id_PaymentDiv">支払区分</label>
+                                <select class="custom-select" name="PaymentDiv" id="id_PaymentDiv">
+                                    {% for data in form.PaymentDiv %}
+                                    {{ data }}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-4">
+                                <label for="id_PaymentSummary">摘要</label>
+                                {% if form.errors.PaymentSummary %}
+                                {% for error in form.errors.PaymentSummary %}
+                                <input type="text" class="form-control is-invalid" autocomplete="new-password" name="PaymentSummary" id="id_PaymentSummary" value="{{ object.PaymentSummary }}">
+                                <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                                {% else %}
+                                <input type="text" class="form-control" autocomplete="new-password" name="PaymentSummary" id="id_PaymentSummary" value="{{ object.PaymentSummary }}">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% block extrajs %}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+            <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+            {% load static %}
+            <script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\commapayment.js' %}" charset="UTF-8"></script>
+            {% endblock %}       
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary btn-sm">&nbsp;&nbsp;保&nbsp;&nbsp;存&nbsp;&nbsp;</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{{ request.META.HTTP_REFERER }}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

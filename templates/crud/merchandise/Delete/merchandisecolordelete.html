@@ -1,0 +1,42 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				{{ inlinescolor.management_form }}	
+				<table class="table table-sticky" id="tblrowcolor">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center product">色番</th>
+							<th scope="col" class="text-center product">カラー</th>
+						</tr>
+					</thead>
+					<tbody id="listcolor">
+						{% for form in inlinescolor %}
+						<tr class="colorarea">
+							<td>
+								<div id="div" class="fds-table__td-content">
+									<input type="text" class="form-control McdColorNumber" data-id-format="id_McdColorId-%d-McdColorNumber" data-name-format="McdColorId-%d-McdColorNumber"
+									name="McdColorId-0-McdColorNumber" id="id_McdColorId-0-McdColorNumber" value="{{ form.McdColorNumber.value | default_if_none:'' }}" readonly>
+								</div>
+							</td>
+							<td>
+								<input type="text" class="form-control McdColor" data-id-format="id_McdColorId-%d-McdColor" data-name-format="McdColorId-%d-McdColor"
+								name="McdColorId-0-McdColor" id="id_McdColorId-0-McdColor" value="{{ form.McdColor.value | default_if_none:'' }}" readonly>                                          
+							</td>
+							<input type="hidden" data-id-format="id_McdColorId-%d-is_Deleted" data-name-format="McdColorId-%d-is_Deleted" id="id_McdColorId-0-is_Deleted" name="McdColorId-0-is_Deleted" value="on">
+							<input type="hidden" data-id-format="id_McdColorId-%d-id" data-name-format="McdColorId-%d-id" name="McdColorId-0-id" id="id_McdColorId-0-id" value="{{ form.id.value }}">
+							<!-- <td>
+								<span class="delcolor"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
+							</td> -->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+	

@@ -1,0 +1,133 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+<div class="container-fluid">
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+			<li class="breadcrumb-item active" aria-current="page">受発注情報一覧</li>
+			<div class="container">
+				<div class="text-right">
+					<button class="btn btn-info btn-sm" onclick="location.href='{% url 'myapp:orderingnew' %}'">新規登録</button>
+				</div>	
+			</div>	
+		</ol>
+	</nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div class="form-row">
+				<div class="form-group col-sm-2">
+					<input type="search" name="query" id="query" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ search.query.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" name="key" id="key" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ search.key.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" name="word" id="word" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ search.word.value }}"/>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-sm-2">
+					<input type="search" class="form-control flatpickr" name="orderdateFrom" id="orderdateFrom"  autocomplete="new-password" placeholder="依頼日(From)" value="{{ search.orderdateFrom.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" class="form-control flatpickr" name="orderdateTo" id="orderdateTo" autocomplete="new-password" placeholder="依頼日(To)" value="{{ search.orderdateTo.value }}"/>
+				</div>
+				<div class="text-right">
+					<label class="sr-only">検索</label>
+					<button class="btn btn-info" type="submit">
+						検索
+					</button>
+					<label class="sr-only">クリア</label>
+					<button class="btn btn-info" type="submit" name="clear">
+						クリア
+					</button>
+				</div>
+			</div>
+			<div style="height: 30px;">
+				<div class="w-50 h-25 mx-auto">
+					{% if messages %}
+					<ul class="messages_ul">
+						{% for message in messages %}
+							<li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+				</div>
+			</div>
+		</form>
+		{% block extrajs %}
+		<!-- flatpicr -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+		{% load static %}
+		<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+		{% endblock %}
+	</div>
+	<div class="table-responsive table-container">
+		<div class="table-sticky-container">
+			<table class="table table-sticky" id="tblrow">
+				<thead>
+					<tr class="bg-info">
+						<th scope="col" class="text-center" style="width: 5%">発行済</th>
+						<th scope="col" class="text-center" style="width: 5%">区分</th>
+						<th scope="col" class="text-center" style="width: 7%">区分</th>
+						<th scope="col" class="text-center" style="width: 10%">依頼日</th>
+						<th scope="col" class="text-center" style="width: 10%">担当者</th>
+						<th scope="col" class="text-center" style="width: 10%">オーダーNO</th>
+						<th scope="col" class="text-center" style="width: 15%">手配先</th>
+						<th scope="col" class="text-center" style="width: 15%">商品名</th>
+						<th scope="col" class="text-center" style="width: 5%">番手</th>
+						<th scope="col" class="text-center" style="width: 12.5%">出荷先</th>
+						<th scope="col" class="text-center" style="width: 12.5%">依頼先</th>
+						<th scope="col" class="text-center product">アクション</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for OrderTable in object_list %}
+					<tr>
+						<td class="text-center" style="vertical-align:bottom;">
+							<div class="form-check">
+								{% if OrderTable.is_Ordered == 1 %}
+								<input class="form-check-input position-static" type="checkbox" checked>
+								{% else %}
+								<input class="form-check-input position-static" type="checkbox">
+								{% endif %}
+							</div>
+						</td>
+						<!-- <td>{{ OrderTable.get_SampleDiv_display }}</td> -->
+						<!-- <td>{{ OrderTable.get_OutputDiv_display }}</td> -->
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.SampleDiv.divname }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.OutputDiv.outputdivname }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ OrderTable.OrderingDate }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.ManagerCode.first_name|add:OrderTable.ManagerCode.last_name }}</td>
+						<td class="text-left" style="vertical-align:bottom;"><span>{{ OrderTable.SlipDiv }}</span><span>{{ '-' }}</span><span>{{ OrderTable.OrderNumber }}</span></td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.DestinationCode.CustomerOmitName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.ProductName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.OrderingCount }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.ShippingCode.CustomerOmitName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ OrderTable.RequestCode.CustomerOmitName }}</td>
+						<td class="text-center" style="vertical-align:bottom;">
+							<span><button type="button" class="btn btn-outline-success btn-sm" onclick="orderingpdf('{{OrderTable.id}}')">発注書</button></span>
+							<span><button type="button" class="btn btn-outline-primary btn-sm" onclick="orderingedit('{{OrderTable.id}}','{{forloop.counter}}')">詳細</button></span>
+							<span><button type="button" class="btn btn-outline-danger btn-sm" onclick="orderingdelete('{{OrderTable.id}}','{{forloop.counter}}')">削除</button></span>
+							<span><button type="button" class="btn btn-outline-primary btn-sm" onclick="requestedit('{{OrderTable.id}}','{{forloop.counter}}')">実績</button></span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% if is_paginated %}
+		{% include "crud/pagination.html" %}
+	{% endif %}
+</div>
+{% load static %}
+<script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\listordering.js' %}" charset="UTF-8"></script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<input type="hidden" name="McdSizeId-TOTAL_FORMS" id="id_McdSizeId-TOTAL_FORMS">
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				{{ inlinessize.management_form }}	
+				<table class="table table-sticky" id="tblrowsize">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center product">サイズ</th>
+						</tr>
+					</thead>
+					<tbody id="listsize">
+						{% for form in inlinessize %}
+						<tr class="sizearea">
+							<td>
+								<div id="div">
+									<input type="tel" class="form-control McdSize" data-id-format="id_McdSizeId-%d-McdSize" data-name-format="McdSizeId-%d-McdSize"
+									name="McdSizeId-0-McdSize" id="id_McdSizeId-0-McdSize" value="{{ form.McdSize.value | default_if_none:'' }}" readonly>
+								</div>
+							</td>
+							<input type="hidden" data-id-format="id_McdSizeId-%d-is_Deleted" data-name-format="McdSizeId-%d-is_Deleted" id="id_McdSizeId-0-is_Deleted" name="McdSizeId-0-is_Deleted" value="on">
+							<input type="hidden" data-id-format="id_McdSizeId-%d-id" data-name-format="McdSizeId-%d-id" name="McdSizeId-0-id" id="id_McdSizeId-0-id" value="{{ form.id.value }}">
+							<!-- <td>
+								<span class="delsize"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
+							</td> -->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

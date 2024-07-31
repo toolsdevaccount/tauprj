@@ -1,0 +1,54 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<div class="text-left">
+			<button type="button" id="add" class="btn btn-primary btn-sm addsize">追加</button>
+		</div>
+		<input type="hidden" name="McdSizeId-TOTAL_FORMS" id="id_McdSizeId-TOTAL_FORMS">
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				{{ inlinessize.management_form }}
+				<table class="table table-sticky" id="tblrowsize">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center check">削除</th>
+							<th scope="col" class="text-center product">サイズ</th>
+							<th scope="col" class="text-center check">&nbsp&nbsp</th>
+						</tr>
+					</thead>
+					<tbody id="listsize">
+						{% for form in inlinessize %}
+						<tr class="sizearea">
+							<td class="text-center">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" data-id-format="id_McdSizeId-%d-DELETE" data-name-format="McdSizeId-%d-DELETE" id="id_McdSizeId-0-DELETE" name="McdSizeId-0-DELETE">
+								</div>
+							</td>
+							<td>
+								<div id="div">
+								{% if form.errors.McdSize %}
+								{% for error in form.errors.McdSize %}
+									<input type="tel" class="form-control is-invalid McdSize" autocomplete="new-password" data-id-format="id_McdSizeId-%d-McdSize" data-name-format="McdSizeId-%d-McdSize"
+									name="McdSizeId-0-McdSize" id="id_McdSizeId-0-McdSize" value="{{ form.McdSize.value | default_if_none:'' }}">
+									<div class="invalid-feedback">{{ error }}</div>
+								{% endfor %}
+								{% else %}
+									<input type="tel" class="form-control McdSize" autocomplete="new-password" data-id-format="id_McdSizeId-%d-McdSize" data-name-format="McdSizeId-%d-McdSize"
+									name="McdSizeId-0-McdSize" id="id_McdSizeId-0-McdSize" value="{{ form.McdSize.value | default_if_none:'' }}">
+								{% endif %}	
+								</div>
+							</td>
+							<input type="hidden" data-id-format="id_McdSizeId-%d-id" data-name-format="McdSizeId-%d-id" name="McdSizeId-0-id" id="id_McdSizeId-0-id" value="{{ form.id.value }}">
+							<td>
+								<span class="delsize"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

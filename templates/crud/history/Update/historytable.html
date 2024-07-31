@@ -1,0 +1,70 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				<table class="table table-sticky" id="tblrow">
+					<thead>
+						<tr>
+							<th scope="col" class="text-center items">項番</th>
+							<th scope="col" class="text-center days">実績日</th>
+							<th scope="col" class="text-center days">出荷日</th>
+							<th scope="col" class="text-center volumes">出荷数</th>
+							<th scope="col" class="text-center days">伝票番号</th>
+						</tr>
+					</thead>
+					<tbody id="list">
+						{% for form in inlinesRecord %}
+						<tr class="list_var">
+							<td>
+								<div id="div" class="fds-table__td-content">
+									<input type="tel" class="form-control ResultItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingId-%d-ResultItemNumber" data-name-format="OrderingId-%d-ResultItemNumber"
+									name="OrderingId-0-ResultItemNumber" id="id_OrderingId-0-ResultItemNumber" value="{{ form.ResultItemNumber  | default:'0001' }}">
+								</div>
+							</td>
+							<td>
+								{% if form.ResultDate.value == "2000-01-01" %}
+								<input type="tel" class="form-control ResultDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultDate" data-name-format="OrderingId-%d-ResultDate" 
+									name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value="{{ '' }}">                                   
+								{% else %}
+								<input type="tel" class="form-control ResultDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultDate" data-name-format="OrderingId-%d-ResultDate" 
+									name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value="{{ form.ResultDate | default:'' }}">                                   
+								{% endif %}
+							</td>
+							<td>
+								{% if form.ResultDate.value == "2000-01-01" %}
+								<input type="tel" class="form-control ShippingDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" 
+								name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value="{{ '' }}">
+								{% else %}
+								<input type="tel" class="form-control ShippingDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" 
+								name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value="{{ form.ShippingDate | default:'' }}">
+								{% endif %}
+							</td>
+							<td>
+								<input type="tel" step="0.1" class="form-control ShippingVolume text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingVolume" data-name-format="OrderingId-%d-ShippingVolume" 
+								name="OrderingId-0-ShippingVolume" id="id_OrderingId-0-ShippingVolume" value="{{ form.ShippingVolume | intcomma }}">                                   
+							</td>
+							<td>
+								<input type="tel" class="form-control SlipNumber text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-SlipNumber" data-name-format="OrderingId-%d-SlipNumber" 
+								name="OrderingId-0-SlipNumber" id="id_OrderingId-0-SlipNumber" value="{{ form.SlipNumber | default_if_none:"" }}">                                   
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Datepicker 追加-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+{% load static %}
+<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\calc.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+{% endblock %}

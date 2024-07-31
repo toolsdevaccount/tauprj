@@ -1,0 +1,69 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+<div class="container-fluid">
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+			<li class="breadcrumb-item active" aria-current="page">商品マスタ一覧</li>
+			<div class="container">
+				<div class="text-right">
+					<button class="btn btn-info btn-sm" onclick="location.href='{% url 'myapp:merchandisenew' %}'">新規登録</button>
+				</div>
+			</div>
+		</ol>
+	</nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div class="form-row align-items-center">
+				<div class="col-auto">
+					<label class="sr-only" for="text5a">キーワード</label>
+					<input type="search" name="query" class="form-control mb-2" autocomplete="new-password" value="{{ mdsearch.query.value }}" placeholder="キーワード"/>
+				</div>
+				<div class="col-auto">
+					<button class="btn btn-info mb-2" type="submit">
+						検索
+					</button>
+				</div>
+			</div>
+		</form>
+		<div class="table-responsive table-container">
+		<div class="table-sticky-container">
+			<table class="table table-sticky" id="tblrow">
+				<thead>
+					<tr class="bg-info">
+						<th scope="col" class="text-center" style="width: 5%">商品コード</th>
+						<th scope="col" class="text-center" style="width: 5%">扱区分</th>
+						<th scope="col" class="text-center" style="width: 5%">仮品番</th>
+						<th scope="col" class="text-center" style="width: 5%">本品番</th>
+						<th scope="col" class="text-center" style="width: 5%">担当者</th>
+						<th scope="col" class="text-center" style="width: 5%">アクション</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for merchandise in object_list %}
+					<tr>
+						<td class="text-right" style="vertical-align:bottom;">{{ merchandise.id }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ merchandise.get_McdTreatmentCode_display }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ merchandise.McdTempPartNumber }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ merchandise.McdPartNumber }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ merchandise.McdManagerCode.first_name|add:merchandise.McdManagerCode.last_name }}</td>
+						<td class="text-center" style="vertical-align:bottom;">
+							<span><button type="button" class="btn btn-outline-primary btn-sm" onclick="merchandiseedit('{{merchandise.id}}','{{forloop.counter}}')">詳細</button></span>
+							<span><button type="button" class="btn btn-outline-danger btn-sm" onclick="merchandisedelete('{{merchandise.id}}','{{forloop.counter}}')">削除</button></span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-6 offset-3 justify-content-center">
+		{% if is_paginated %}
+			{% include "crud/pagination.html" %}
+		{% endif %}
+	</div>
+</div>
+{% load static %}
+<script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\listmerchandise.js' %}" charset="UTF-8"></script>
+{% endblock %}

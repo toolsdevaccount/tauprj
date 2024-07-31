@@ -1,0 +1,197 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+{% load mathfilters %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">個別請求書発行</li>
+			<div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal">個別請求書</button></span>
+				</div>	
+			</div>	
+        </ol>
+    </nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div class="form-row">
+				<div class="form-group col-sm-2">
+					<input type="search" name="query" id="query" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ invsearch.query.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" name="key" id="key" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ invsearch.key.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" name="word" id="word" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ invsearch.word.value }}"/>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-sm-2">
+					<input type="search" class="form-control flatpickr" name="InvoiceIssueDateFrom" id="InvoiceIssueDateFrom" autocomplete="new-password" placeholder="発行日(以上)" value="{{ invsearch.InvoiceIssueDateFrom.value }}"/>
+				</div>
+				<div class="text-right">
+					<label class="sr-only">検索</label>
+					<button class="btn btn-info" type="submit">
+						検索
+					</button>
+					<label class="sr-only">クリア</label>
+					<button class="btn btn-info" type="submit" name="clear">
+						クリア
+					</button>
+				</div>
+			</div>
+			<div style="height: 30px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="label1">個別請求書発行</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+							<div class="form-row">
+								<div class="form-group col-sm-6">
+									<label for="id_date_issue">発行日</label>
+									<input type="search" class="form-control flatpickrtoday" name="date_issue" id="id_date_issue" value="">
+									<label for="id_InvoiceNumber_From">請求書番号(FROM)</label>
+									<input type="tel" class="form-control" name="InvoiceNumber_From" id="id_InvoiceNumber_From" value="">
+									<label for="id_InvoiceNumber_To">請求書番号(To)</label>
+									<input type="tel" class="form-control" name="InvoiceNumber_To" id="id_InvoiceNumber_To" value="">
+    	                        </div>
+							</div>
+						</div>
+                        <div class="modal-footer">
+                            <button type="button" id="issue" class="btn btn-success">発行</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">中止</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+			<script>
+				var btn = document.getElementById('modalOpen');
+                var cls = document.getElementById('modalClose');
+                var ise = document.getElementById('issue');
+                var modal = document.getElementsByClassName('modal fade');
+
+                btn.addEventListener('click', function() {
+                    for(i=0;i<modal.length;i++){
+                        modal[i].style.opacity = '1';
+                        modal[i].style.visibility = 'visible';
+                    }
+                })
+
+                ise.addEventListener('click', function() {
+					var InvNumber_from = document.getElementById('id_InvoiceNumber_From').value;
+					var InvNumber_to = document.getElementById('id_InvoiceNumber_To').value;
+					var InvNumber_date = document.getElementById('id_date_issue').value;
+					var url = "/individualinvoice/pdf/123/456/789";
+					// 入力値チェック
+					if(InvNumber_from==''||InvNumber_to==''||InvNumber_date==''){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					InvNumber_date = InvNumber_date.replace(/-/g,'');
+					url = url.replace(/123/,InvNumber_from);
+					url = url.replace(/456/,InvNumber_to);
+					url = url.replace(/789/,InvNumber_date);
+
+					//location.href = url;
+					window.open(url, '_blank');
+				})
+            </script>
+		</form>
+		{% block extrajs %}
+		<!-- flatpicr -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+		{% endblock %}
+	</div>
+	<div class="table-responsive table-container">
+		<div class="table-sticky-container">
+			<table class="table table-sticky" id="tblrow">
+				<thead>
+					<tr class="bg-info">
+						<th scope="col" class="text-center" style="width: 5%">発行済</th>
+						<th scope="col" class="text-center" style="width: 10%">発行日</th>
+						<th scope="col" class="text-center" style="width: 6%">請求書番号</th>
+						<th scope="col" class="text-center" style="width: 10%">オーダーNO</th>
+						<th scope="col" class="text-center" style="width: 15%">商品名</th>
+						<th scope="col" class="text-center" style="width: 5%">番手</th>
+						<th scope="col" class="text-center" style="width: 10%">仕入先名</th>
+						<th scope="col" class="text-center" style="width: 10%">得意先名</th>
+						<th scope="col" class="text-center" style="width: 10%">依頼先名</th>
+						<th scope="col" class="text-center" style="width: 5%">色番</th>
+						<th scope="col" class="text-center" style="width: 10%">カラー</th>
+						<th scope="col" class="text-center" style="width: 5%">出荷数</th>
+						<th scope="col" class="text-center" style="width: 5%">仕入単価</th>
+						<th scope="col" class="text-center" style="width: 5%">仕入金額</th>
+						<th scope="col" class="text-center" style="width: 5%">販売単価</th>
+						<th scope="col" class="text-center" style="width: 5%">売上金額</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for InvoiceTable in object_list %}
+					<tr>
+						<td class="text-center" style="vertical-align:bottom;">
+							<div class="form-check">
+								{% if InvoiceTable.InvoiceIssueDiv == 1 %}
+								<input class="form-check-input position-static" type="checkbox" checked>
+								{% else %}
+								<input class="form-check-input position-static" type="checkbox">
+								{% endif %}
+							</div>
+						</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.InvoiceIssueDate }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.InvoiceNUmber }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.SlipDiv }} {{ '-' }} {{ InvoiceTable.OrderingId.OrderNumber }}</td>
+						<!-- <td class="text-right">{{ InvoiceTable.OrderingId.OrderingDate }}</td> -->
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.ProductName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.OrderingCount }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.SupplierCode.CustomerOmitName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.CustomeCode.CustomerOmitName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.RequestCode.CustomerOmitName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailColorNumber }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailColor }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.ShippingVolume }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailUnitPrice|intcomma }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailUnitPrice|mul:InvoiceTable.ShippingVolume|floatformat|intcomma }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailSellPrice|intcomma }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailSellPrice|mul:InvoiceTable.ShippingVolume|floatformat|intcomma }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% if is_paginated %}
+		{% include "crud/pagination.html" %}
+	{% endif %}
+</div>
+{% endblock %}

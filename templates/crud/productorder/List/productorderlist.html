@@ -1,0 +1,134 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+<div class="container-fluid">
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+			<li class="breadcrumb-item active" aria-current="page">製品受発注情報一覧</li>
+			<div class="container">
+				<div class="text-right">
+					<button class="btn btn-info btn-sm" onclick="location.href='{% url 'myapp:productordernew' %}'">新規登録</button>
+				</div>
+			</div>
+		</ol>
+	</nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div class="form-row">
+				<div class="form-group col-sm-2">
+					<input type="search" name="query" id="query" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ posearch.query.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" name="key" id="key" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ posearch.key.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" name="word" id="word" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ posearch.word.value }}"/>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-sm-2">
+					<input type="search" class="form-control flatpickr" name="orderdateFrom" id="orderdateFrom" autocomplete="new-password" placeholder="納期(From)" value="{{ posearch.productorderdateFrom.value }}"/>
+				</div>
+				<div class="form-group col-sm-2">
+					<input type="search" class="form-control flatpickr" name="orderdateTo" id="orderdateTo" autocomplete="new-password" placeholder="納期(To)" value="{{ posearch.productorderdateTo.value }}"/>
+				</div>
+				<div class="text-right">
+					<label class="sr-only">検索</label>
+					<button class="btn btn-info" type="submit">
+						検索
+					</button>
+					<label class="sr-only">クリア</label>
+					<button class="btn btn-info" type="submit" name="clear">
+						クリア
+					</button>
+				</div>
+			</div>
+			<div style="height: 30px;">
+				<div class="w-50 h-25 mx-auto">
+					{% if messages %}
+					<ul class="messages_ul">
+						{% for message in messages %}
+							<li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+				</div>
+			</div>
+		</form>
+		{% block extrajs %}
+		<!-- flatpicr -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+		{% load static %}
+		<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+		{% endblock %}
+		<div class="table-responsive table-container">
+			<div class="table-sticky-container">
+				<table class="table table-sticky" id="tblrow">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center" style="width: 5%">発行済</th>
+							<th scope="col" class="text-center" style="width: 5%">発注番号</th>
+							<th scope="col" class="text-center" style="width: 10%">発注日</th>
+							<th scope="col" class="text-center" style="width: 10%">納期</th>
+							<th scope="col" class="text-center" style="width: 7.5%">オーダーNO</th>
+							<th scope="col" class="text-center" style="width: 7.5%">商品コード</th>
+							<th scope="col" class="text-center" style="width: 15%">本品番</th>
+							<th scope="col" class="text-center" style="width: 10%">担当者</th>
+							<th scope="col" class="text-center" style="width: 12.5%">仕入先名</th>
+							<th scope="col" class="text-center" style="width: 12.5%">アパレル名</th>
+							<th scope="col" class="text-center" style="width: 10%">マーク名</th>
+							<th scope="col" class="text-center" style="width: 10%">ブランド名</th>
+							<th scope="col" class="text-center" style="width: 15%">アクション</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for ProductOrder in object_list %}
+						<tr>
+							<td class="text-center" style="vertical-align:bottom;">
+								<div class="form-check">
+									{% if ProductOrder.is_Ordered == 1 %}
+									<input class="form-check-input position-static" type="checkbox" checked>
+									{% else %}
+									<input class="form-check-input position-static" type="checkbox">
+									{% endif %}
+								</div>
+							</td>
+							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.id }}</td>
+							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderOrderingDate | default_if_none:'' }}</td>
+							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderDeliveryDate | default_if_none:'' }}</td>
+							<td class="text-left" style="vertical-align:bottom;"><span>{{ ProductOrder.ProductOrderSlipDiv }}</span><span>{{ '-' }}</span><span>{{ ProductOrder.ProductOrderOrderNumber }}</span></td>
+							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderMerchandiseCode }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderPartNumber }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderManagerCode.first_name|add:ProductOrder.ProductOrderManagerCode.last_name }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderSupplierCode.CustomerOmitName }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderApparelCode.CustomerOmitName }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderMarkName }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderBrandName }}</td>
+							<td class="text-center" style="vertical-align:bottom;">
+								<span><button type="button" class="btn btn-outline-success btn-sm" onclick="productorderpdf('{{ProductOrder.id}}')">発注書</button></span>
+								<span><button type="button" class="btn btn-outline-primary btn-sm" onclick="productorderedit('{{ProductOrder.id}}','{{forloop.counter}}')">詳細</button></span>
+								<span><button type="button" class="btn btn-outline-danger btn-sm" onclick="productorderdelete('{{ProductOrder.id}}','{{forloop.counter}}')">削除</button></span>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-6 offset-3 justify-content-center">
+		{% if is_paginated %}
+			{% include "crud/pagination.html" %}
+		{% endif %}
+	</div>
+</div>
+{% load static %}
+<script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\listproductorder.js' %}" charset="UTF-8"></script>
+{% endblock %}

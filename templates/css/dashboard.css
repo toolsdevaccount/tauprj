@@ -1,0 +1,375 @@
+body {
+  /* font-size: .875rem; */
+  font-size: .775rem;
+  height: -webkit-fill-available;
+  background-color: #f5f8fa;
+}
+
+.card-body {
+  /* font-size: .875rem; */
+  font-size: .775rem;
+  height: -webkit-fill-available;
+  background-color: #f5f8fa;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+  .sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #999;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+ * Content
+ */
+
+[role="main"] {
+  padding-top: 48px; /* Space for fixed navbar */
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+.dropdown:hover>.dropdown-menu {
+  display: block;
+}
+
+/* table 縦スクロール */
+.table-container {
+  position: relative;
+}
+
+.table-container::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  border: 1px solid #bbbbbb;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.table-sticky-container {
+    /* height: 580px; */
+    height: 520px;
+    overflow: auto;
+}
+
+.table-sticky-container-small {
+  height: 200px;
+  overflow: auto;
+}
+
+.table-sticky-container-small-small {
+  height: 90px;
+  overflow: hidden;
+}
+
+.table-sticky {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+}
+/*
+.table-sticky td {
+    background-color: #ffffff;
+}
+.table-sticky th {
+    background-color: #eeeeee;
+}
+*/
+.table-sticky td, .table-sticky th {
+    padding: 10px;
+    height: 60px;
+    border-right: 1px solid #bbbbbb;
+    border-bottom: 1px solid #bbbbbb;
+    white-space: nowrap;
+}
+
+.table-sticky thead {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    color: #f5f8fa;
+}
+
+.table-sticky tfoot {
+    position: sticky;
+    z-index: 2;
+    bottom: 0;
+}
+.table-sticky tfoot::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    top: -1px;
+    left: 0;
+    background-color: #bbbbbb;
+}
+.table-sticky *.fixed:first-child {
+    position: sticky;
+    z-index: 1;
+    left: 0;
+}
+
+.table-sticky-sm {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+}
+
+.table-sticky-sm thead {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  color: #f5f8fa;
+}
+
+
+.table-sticky-sm td, .table-sticky th {
+  padding: 10px;
+  height: 60px;
+  border-right: 1px solid #bbbbbb;
+  border-bottom: 1px solid #bbbbbb;
+  white-space: nowrap;
+}
+
+/* tblrow */
+#tblrow {
+  font-size: 0.875rem;
+  table-layout: fixed;
+}
+
+#tblrow th, #tblrow td {
+  text-align: center;
+  padding: 2px;
+  height: 40px;
+
+  /*padding: 5px;
+  height: 40px; */
+}
+
+/* tblrowcolor */
+#tblrowcolor {
+  width: 1000px;
+  table-layout: fixed;
+}
+
+#tblrowcolor th, #tblrowcolor td {
+  font-size: .775rem;
+  text-align: center;
+  padding: 5px;
+  height: 40px;
+}
+
+/* tblrowsize */
+#tblrowsize {
+  width: 650px;
+  table-layout: fixed;
+}
+
+#tblrowsize th, #tblrowsize td {
+  font-size: .775rem;
+  text-align: center;
+  padding: 5px;
+  height: 40px;
+}
+
+/* tblrowfile */
+#tblrowfile {
+  width: 1000px;
+  table-layout: fixed;
+}
+
+#tblrowfile th, #tblrowfile td {
+  font-size: .775rem;
+  text-align: center;
+  padding: 5px;
+  height: 40px;
+}
+
+/* tblrowclsz */
+#tblrowclsz {
+  width: 1000px;
+  table-layout: fixed;
+}
+
+#tblrowclsz th, #tblrowclsz td {
+  font-size: .775rem;
+  text-align: center;
+  padding: 5px;
+  height: 40px;
+}
+
+/* detailtblrow */
+#detailtblrow {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#detailtblrow th, #detailtblrow td {
+  font-size: .775rem;
+  text-align: center;
+  padding: 2px;
+  height: 40px;
+}
+
+/* フォントサイズ */
+.font-small {
+  font-size: 0.875rem;
+}
+
+/* チェックボックス */
+.check {
+  width: 3%;
+}
+
+/* 仕立カラム */
+.four {
+  width: 3%;
+}
+
+/* 単価カラム */
+.items {
+  width: 5%;
+}
+
+/* 数量カラム */
+.volumes {
+  width: 6%;
+}
+
+/* 日付カラム */
+.days {
+  width: 7%;
+}
+
+/* 商品マスタカラム */
+.product {
+  width: 15%;
+}
+
+/* 色番カラム */
+.coloritem {
+  width: 10%;
+}
+
+/* フォントサイズ */
+.breadcrumb{
+  font-size: .875rem;
+}
+.nav-tabs{
+  font-size: .875rem;
+}
+.tab-content{
+  font-size: .875rem;
+}
+
+@media screen and (max-width:1600px) { 
+  .table-sticky-container {
+    height: 580px;
+    overflow-x: scroll;
+}
+  .table-sticky {
+    width: 100%;
+    min-width: 1600px;
+    border-collapse: collapse;
+  }
+  .table-sticky th, .table-sticky td{
+    padding: 5px;
+    height: 40px;
+    border-right: 1px solid #bbbbbb;
+    border-bottom: 1px solid #bbbbbb;
+    white-space: nowrap;
+  }
+ }
+
+ .surround {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 75%;
+  }

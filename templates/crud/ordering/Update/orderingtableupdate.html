@@ -1,0 +1,238 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<div class="text-left">
+			<button type="button" id="add" class="btn btn-primary btn-sm list_add">追加</button>
+		</div>
+		<!-- <input type="hidden" name="OrderingTableId-TOTAL_FORMS" id="OrderingTableId-TOTAL_FORMS"> -->
+		{{ formset.management_form }}	
+		<div class="table-responsive table-container">	
+			<div class="table-sticky-container">
+				<table class="table table-sticky" id="tblrow">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center check">削除</th>
+							<th scope="col" class="text-center items">項番</th>
+							<th scope="col" class="text-center coloritem">色番</th>
+							<th scope="col" class="text-center coloritem">カラー</th>
+							<th scope="col" class="text-center four">仕立</th>
+							<th scope="col" class="text-center volumes">数量</th>
+							<th scope="col" class="text-center items">単位</th>
+							<th scope="col" class="text-center items">仕入単価</th>
+							<th scope="col" class="text-center items">通常単価</th>
+							<th scope="col" class="text-center items">UP分単価</th>
+							<th scope="col" class="text-center items">販売単価</th>
+							<th scope="col" class="text-center days">希望納期</th>
+							<th scope="col" class="text-center days">回答納期</th>
+							<th scope="col" class="text-center">摘&nbsp&nbsp&nbsp&nbsp要</th>
+							<th scope="col" class="text-center check">済</th>
+							<th scope="col" class="text-center check">印</th>
+							<th scope="col" class="text-center check">&nbsp</th>
+						</tr>
+					</thead>
+					<tbody id="list">
+						{% for form in formset %}
+						<tr class="list_var">
+							<input type="hidden" data-id-format="id_OrderingTableId-%d-id" data-name-format="OrderingTableId-%d-id" name="OrderingTableId-0-id" id="id_OrderingTableId-0-id" value="{{ form.id.value }}" >
+							<td class="text-center">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" data-id-format="id_OrderingTableId-%d-DELETE" data-name-format="OrderingTableId-%d-DELETE" id="id_OrderingTableId-0-DELETE" name="OrderingTableId-0-DELETE">
+								</div>
+							</td>
+							<td>
+								<div id="div" class="fds-table__td-content">
+								{% if form.errors.DetailItemNumber %}
+								{% for error in form.errors.DetailItemNumber %}
+									<input type="tel" class="form-control is-invalid DetailItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailItemNumber" data-name-format="OrderingTableId-%d-DetailItemNumber"
+									name="OrderingTableId-0-DetailItemNumber" id="id_OrderingTableId-0-DetailItemNumber" onchange="ItemNumber(this);" value="{{ form.DetailItemNumber.value }}">
+									<div class="invalid-feedback">{{ error }}</div>
+								{% endfor %}
+								{% else %}
+									<input type="tel" class="form-control DetailItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailItemNumber" data-name-format="OrderingTableId-%d-DetailItemNumber"
+									name="OrderingTableId-0-DetailItemNumber" id="id_OrderingTableId-0-DetailItemNumber" onchange="ItemNumber(this);" value="{{ form.DetailItemNumber.value }}">
+								{% endif %}
+								</div>
+							</td>
+							<td>
+							{% if form.errors.DetailColorNumber %}
+							{% for error in form.errors.DetailColorNumber %}
+								<input type="text" class="form-control is-invalid" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailColorNumber" data-name-format="OrderingTableId-%d-DetailColorNumber"
+								name="OrderingTableId-0-DetailColorNumber" id="id_OrderingTableId-0-DetailColorNumber" value="{{ form.DetailColorNumber.value | default:'' }}">                                          
+								<div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailColorNumber" data-name-format="OrderingTableId-%d-DetailColorNumber"
+								name="OrderingTableId-0-DetailColorNumber" id="id_OrderingTableId-0-DetailColorNumber" value="{{ form.DetailColorNumber.value | default:'' }}">
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.DetailColor %}
+							{% for error in form.errors.DetailColor %}
+								<input type="text" class="form-control is-invalid" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailColor" data-name-format="OrderingTableId-%d-DetailColor" 
+								name="OrderingTableId-0-DetailColor" id="id_OrderingTableId-0-DetailColor" value="{{ form.DetailColor.value | default:'' }}">                                   
+								<div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailColor" data-name-format="OrderingTableId-%d-DetailColor" 
+								name="OrderingTableId-0-DetailColor" id="id_OrderingTableId-0-DetailColor" value="{{ form.DetailColor.value | default:'' }}">                                   
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.DetailTailoring %}
+							{% for error in form.errors.DetailTailoring %}
+								<input type="text" class="form-control is-invalid" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailTailoring" data-name-format="OrderingTableId-%d-DetailTailoring" 
+								name="OrderingTableId-0-DetailTailoring" id="id_OrderingTableId-0-DetailTailoring" value="{{ form.DetailTailoring.value | default:'' }}">                                   
+								<div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailTailoring" data-name-format="OrderingTableId-%d-DetailTailoring" 
+								name="OrderingTableId-0-DetailTailoring" id="id_OrderingTableId-0-DetailTailoring" value="{{ form.DetailTailoring.value | default:'' }}">                                   
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.DetailVolume %}
+							{% for error in form.errors.DetailVolume %}
+								<input type="tel" step="0.1" class="form-control is-invalid DetailVolume text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailVolume" data-name-format="OrderingTableId-%d-DetailVolume"
+								name="OrderingTableId-0-DetailVolume" id="id_OrderingTableId-0-DetailVolume" data-empty-val="false" onchange="financial(this);" value="{{ form.DetailVolume.value | intcomma }}">                                   
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" step="0.1" class="form-control DetailVolume text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailVolume" data-name-format="OrderingTableId-%d-DetailVolume" 
+								name="OrderingTableId-0-DetailVolume" id="id_OrderingTableId-0-DetailVolume" data-empty-val="false" onchange="financial(this);" value="{{ form.DetailVolume.value | intcomma }}">                                   
+							{% endif %}
+							</td>
+							<td>
+								<select class="custom-select" data-id-format="id_OrderingTableId-%d-DetailUnitDiv" data-name-format="OrderingTableId-%d-DetailUnitDiv" name="OrderingTableId-0-DetailUnitDiv" id="id_OrderingTableId-0-DetailUnitDiv">
+									{% for data in form.DetailUnitDiv %}
+									{{ data }}
+									{% endfor %}
+								</select>
+							</td>
+							<td>
+							{% if form.errors.DetailUnitPrice %}
+							{% for error in form.errors.DetailUnitPrice %}
+								<input type="tel" class="form-control is-invalid DetailUnitPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" 
+								name="OrderingTableId-0-DetailUnitPrice" id="id_OrderingTableId-0-DetailUnitPrice" onchange="comma(this);" data-empty-val="false" value="{{ form.DetailUnitPrice.value| intcomma }}">                                   
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" class="form-control DetailUnitPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" 
+								name="OrderingTableId-0-DetailUnitPrice" id="id_OrderingTableId-0-DetailUnitPrice" onchange="comma(this);" data-empty-val="false" value="{{ form.DetailUnitPrice.value| intcomma }}">                                   
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.DetailPrice %}
+							{% for error in form.errors.DetailPrice %}
+								<input type="tel" class="form-control is-invalid DetailPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailPrice" data-name-format="OrderingTableId-%d-DetailPrice" 
+								name="OrderingTableId-0-DetailPrice" id="id_OrderingTableId-0-DetailPrice" onchange="calc(this);" data-empty-val="false" value="{{ form.DetailPrice.value| intcomma }}">
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" class="form-control DetailPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailPrice" data-name-format="OrderingTableId-%d-DetailPrice" 
+								name="OrderingTableId-0-DetailPrice" id="id_OrderingTableId-0-DetailPrice" onchange="calc(this);" data-empty-val="false" value="{{ form.DetailPrice.value| intcomma }}">
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.DetailOverPrice %}
+							{% for error in form.errors.DetailOverPrice %}
+								<input type="tel" class="form-control is-invalid DetailOverPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailOverPrice" data-name-format="OrderingTableId-%d-DetailOverPrice" 
+								name="OrderingTableId-0-DetailOverPrice" id="id_OrderingTableId-0-DetailOverPrice" onchange="calc(this);" data-empty-val="false" value="{{ form.DetailOverPrice.value| intcomma }}">
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" class="form-control DetailOverPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailOverPrice" data-name-format="OrderingTableId-%d-DetailOverPrice" 
+								name="OrderingTableId-0-DetailOverPrice" id="id_OrderingTableId-0-DetailOverPrice" onchange="calc(this);" data-empty-val="false" value="{{ form.DetailOverPrice.value| intcomma }}">
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.DetailOverPrice %}
+							{% for error in form.errors.DetailOverPrice %}
+								<input type="tel" class="form-control is-invalid DetailSellPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailSellPrice" data-name-format="OrderingTableId-%d-DetailSellPrice" 
+								name="OrderingTableId-0-DetailSellPrice" id="id_OrderingTableId-0-DetailSellPrice" data-empty-val="false" value="{{ form.DetailSellPrice.value| intcomma }}">                                   
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" class="form-control DetailSellPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailSellPrice" data-name-format="OrderingTableId-%d-DetailSellPrice" 
+								name="OrderingTableId-0-DetailSellPrice" id="id_OrderingTableId-0-DetailSellPrice" data-empty-val="false" value="{{ form.DetailSellPrice.value| intcomma }}">                                   
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.SpecifyDeliveryDate %}
+							{% for error in form.errors.SpecifyDeliveryDate %}
+								<input type="tel" class="form-control is-invalid SpecifyDeliveryDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-SpecifyDeliveryDate" data-name-format="OrderingTableId-%d-SpecifyDeliveryDate" 
+								name="OrderingTableId-0-SpecifyDeliveryDate" id="id_OrderingTableId-0-SpecifyDeliveryDate"  value="{{ form.SpecifyDeliveryDate.value | default_if_none:"" }}">                                   
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" class="form-control SpecifyDeliveryDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-SpecifyDeliveryDate" data-name-format="OrderingTableId-%d-SpecifyDeliveryDate" 
+								name="OrderingTableId-0-SpecifyDeliveryDate" id="id_OrderingTableId-0-SpecifyDeliveryDate" value="{{ form.SpecifyDeliveryDate.value | default_if_none:"" }}">                                   
+							{% endif %}
+							</td>
+							<td>
+							{% if form.errors.StainAnswerDeadline %}
+							{% for error in form.errors.StainAnswerDeadline %}
+								<input type="tel" class="form-control is-invalid StainAnswerDeadline flatpickr" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-StainAnswerDeadline" data-name-format="OrderingTableId-%d-StainAnswerDeadline" 
+								name="OrderingTableId-0-StainAnswerDeadline" id="id_OrderingTableId-0-StainAnswerDeadline" value="{{ form.StainAnswerDeadline.value | default_if_none:"" }}">                                   
+                                <div class="invalid-feedback">{{ error }}</div>
+							{% endfor %}
+							{% else %}
+								<input type="tel" class="form-control StainAnswerDeadline flatpickr" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-StainAnswerDeadline" data-name-format="OrderingTableId-%d-StainAnswerDeadline" 
+								name="OrderingTableId-0-StainAnswerDeadline" id="id_OrderingTableId-0-StainAnswerDeadline" value="{{ form.StainAnswerDeadline.value | default_if_none:"" }}">                                   
+							{% endif %}
+							</td>
+							<td>
+								<input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailSummary" data-name-format="OrderingTableId-%d-DetailSummary"
+								name="OrderingTableId-0-DetailSummary" id="id_OrderingTableId-0-DetailSummary" value="{{ form.DetailSummary.value | default_if_none:"" }}">                                   
+							</td>
+							<td class="text-center">
+								<div class="form-check">
+									{% if form.DeliveryManageDiv.value == 1 %}
+									<input type="checkbox" class="form-check-input DeliveryManageDiv" data-id-format="id_OrderingTableId-%d-DeliveryManageDiv" data-name-format="OrderingTableId-%d-DeliveryManageDiv" 
+									name="OrderingTableId-0-DeliveryManageDiv" id="id_OrderingTableId-0-DeliveryManageDiv" checked>
+									{% else %}
+									<input type="checkbox" class="form-check-input DeliveryManageDiv" data-id-format="id_OrderingTableId-%d-DeliveryManageDiv" data-name-format="OrderingTableId-%d-DeliveryManageDiv" 
+									name="OrderingTableId-0-DeliveryManageDiv" id="id_OrderingTableId-0-DeliveryManageDiv" >
+									{% endif %}
+								</div>
+							</td>
+							<td class="text-center">
+								<div class="form-check">
+									{% if form.PrintDiv.value == 1 %}
+									<input type="checkbox" class="form-check-input PrintDiv" data-id-format="id_OrderingTableId-%d-PrintDiv" data-name-format="OrderingTableId-%d-PrintDiv" 
+									name="OrderingTableId-0-PrintDiv" id="id_OrderingTableId-0-PrintDiv" checked>
+									{% else %}
+									<input type="checkbox" class="form-check-input PrintDiv" data-id-format="id_OrderingTableId-%d-PrintDiv" data-name-format="OrderingTableId-%d-PrintDiv" 
+									name="OrderingTableId-0-PrintDiv" id="id_OrderingTableId-0-PrintDiv">
+									{% endif %}
+								</div>
+							</td>
+							<td>
+								<span class="list_del"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% endblock %}
+				{% block extrajs %}
+				<!-- flatpicr -->
+				<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+				<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+				<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+				<!-- addinputarea -->
+				<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+				<script src="https://cdn.jsdelivr.net/npm/jquery.add-input-area@4.11.0/dist/jquery.add-input-area.min.js" integrity="sha256-yOwGvcRp3I8/XWkeARhJkgdfLREQygbFA5W2bUpM2FY=" crossorigin="anonymous"></script>
+				{% load static %}
+				<script src="{% static '\js\calc.js' %}" charset="UTF-8"></script>
+				<script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
+				<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+				<script src="{% static '\js\inputarea.js' %}" charset="UTF-8"></script>
+				<script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+				<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+				<script src="{% static '\js\viewchange.js' %}" charset="UTF-8"></script>
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,157 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">仕入台帳発行</li>
+			<div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal">仕入台帳発行</button></span>
+				</div>	
+			</div>	
+        </ol>
+    </nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div style="height: 30px;">
+				<div class="w-50 h-25 mx-auto">
+					{% if messages %}
+					<ul class="messages_ul">
+						{% for message in messages %}
+							<li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="label1">仕入台帳発行</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<div class="form-group col-sm-6">
+									<label for="id_TargetMonth">対象年月</label>
+									<input type="tel" class="form-control flatpickrformat" name="TargetMonth" id="id_TargetMonth" value="{{ GetMonth |date:'Y-m-d' }}">
+									<!-- 得意先コード(FROM) -->
+									<label for="id_InvoiceCustomerCode_From">仕入先(FROM)</label>
+									{% if form.errors.CustomerCode_From %}
+									{% for error in form.errors.CustomerCode_From %}
+									<input type="tel" class="form-control is-invalid" list="CustomerCode_From" autocomplete="new-password" name="CustomerCode_From" id="id_CustomerCode_From" value="A0000 未登録">
+									<datalist id="CustomerCode_From">
+									{% for data in CustomerCode_From %}
+										<option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}" label="{{ data.id }}"></option>
+									{% endfor %}
+									</datalist>
+									<div class="invalid-feedback">{{ error }}</div>
+									{% endfor %}
+									{% else %}
+									<input type="tel" class="form-control" list="CustomerCode_From" autocomplete="new-password" name="CustomerCode_From" id="id_CustomerCode_From" value="A0000 未登録">
+									<datalist id="CustomerCode_From">
+									{% for data in CustomerCode_From %}
+										<option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}" label="{{ data.id }}"></option>
+									{% endfor %}
+									</datalist>
+									{% endif %}
+									<input type="hidden" name="CustomerCode_From" id="id_CustomerCode_From" value=1>
+									<!-- 得意先コード(To) -->
+									<label for="id_CustomerCode_To">仕入先(To)</label>
+									{% if form.errors.CustomerCode_To %}
+									{% for error in form.errors.CustomerCode_To %}
+									<input type="tel" class="form-control is-invalid" list="CustomerCode_To" autocomplete="new-password" name="CustomerCode_To" id="id_CustomerCode_To">
+									<datalist id="CustomerCode_To">
+									{% for data in CustomerCode_To %}
+										<option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}" label="{{ data.id }}"></option>
+									{% endfor %}
+									</datalist>
+									<div class="invalid-feedback">{{ error }}</div>
+									{% endfor %}
+									{% else %}
+									<input type="tel" class="form-control" list="CustomerCode_To" autocomplete="new-password" name="CustomerCode_To" id="id_CustomerCode_To">
+									<datalist id="CustomerCode_To">
+									{% for data in CustomerCode_To %}
+										<option value="{{ data.CustomerCode }} {{ data.CustomerOmitName }}" label="{{ data.id }}"></option>
+									{% endfor %}
+									</datalist>
+									{% endif %}
+									<input type="hidden" name="CustomerCode_To" id="id_CustomerCode_To">
+									<input type="hidden" name="CustomerCode_Max" id="id_CustomerCode_Max" value="{{ CustomerCode_Max.CustomerCode }}{{' '}}{{ CustomerCode_Max.CustomerOmitName }}">							
+									<input type="hidden" name="Customerid" id="id_Customerid" value="{{ CustomerCode_Max.id }}">
+								</div>
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" id="issue" class="btn btn-success">発行</button>
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\datalistledger.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+			<script>
+				var btn = document.getElementById('modalOpen');
+                var cls = document.getElementById('modalClose');
+                var ise = document.getElementById('issue');
+                var modal = document.getElementsByClassName('modal fade');
+
+                btn.addEventListener('click', function() {
+                    for(i=0;i<modal.length;i++){
+                        modal[i].style.opacity = '1';
+                        modal[i].style.visibility = 'visible';
+                    }
+                })
+
+                ise.addEventListener('click', function() {
+					var TargetMonth = document.getElementById('id_TargetMonth').value;
+					var element_from = document.querySelector(`input[type=hidden][name="CustomerCode_From"]`).value;
+					var element_To = document.querySelector(`input[type=hidden][name="CustomerCode_To"]`).value;
+
+					// 入力値チェック
+					if(TargetMonth==''|| element_from=='' || element_To==''){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					var url = "/PurchaseLedger/pdf/123/456/789/";
+					TargetMonth = TargetMonth.replace(/年/g,'');
+					TargetMonth = TargetMonth.replace(/月/g,'');
+					TargetMonth = TargetMonth + '01';
+					url = url.replace(/123/,TargetMonth);
+					url = url.replace(/456/,element_from);
+					url = url.replace(/789/,element_To);
+
+					//location.href = url;
+					window.open(url, '_blank');
+				})
+            </script>
+            <script>
+                $('input[name=CustomerCode_From]').on('change', function () {
+                    document.querySelector(`input[type=hidden][name="CustomerCode_From"]`).value = $("#CustomerCode_From option[value='" + $(this).val() + "']").prop('label');
+                });
+                $('input[name=CustomerCode_To]').on('change', function () {
+                    document.querySelector(`input[type=hidden][name="CustomerCode_To"]`).value = $("#CustomerCode_To option[value='" + $(this).val() + "']").prop('label');
+                });
+            </script>
+		</form>
+	</div>
+</div>
+{% endblock %}

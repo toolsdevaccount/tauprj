@@ -1,0 +1,186 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+{% load mathfilters %}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active">日次更新対象レコード抽出</li>
+            <div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal">日次更新実行</button></span>
+				</div>	
+			</div>	
+        </ol>
+    </nav>
+	<div class="form-group">
+        <form method="post" id="form" name="confirm" action="{% url 'myapp:DailyUpdate' %}">
+            {% csrf_token %}
+            <div style="height: 60px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="table-responsive table-container">
+                <div class="table-sticky-container">
+                    <table class="table table-sticky" id="tblrow">
+                        <thead>
+                            <tr class="bg-info">
+                                <th scope="col" class="text-center" style="width: 10%">オーダーNO</th>
+                                <th scope="col" class="text-center" style="width: 10%">出荷日</th>
+                                <th scope="col" class="text-center" style="width: 10%">依頼日</th>
+                                <th scope="col" class="text-center" style="width: 12%">商品名</th>
+                                <th scope="col" class="text-center" style="width: 12%">得意先名</th>
+                                <th scope="col" class="text-center" style="width: 12%">仕入先名</th>
+                                <th scope="col" class="text-center" style="width: 12%">依頼先名</th>
+                                <th scope="col" class="text-center" style="width: 12%">出荷先名</th>
+                                <th scope="col" class="text-center" style="width: 5%">項番</th>
+                                <th scope="col" class="text-center" style="width: 5%">出荷数</th>
+                                <th scope="col" class="text-center" style="width: 5%">仕入単価</th>
+                                <th scope="col" class="text-center" style="width: 5%">仕入金額</th>
+                                <th scope="col" class="text-center" style="width: 5%">販売単価</th>
+                                <th scope="col" class="text-center" style="width: 5%">売上金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for InvoiceTable in object_list %}
+                            <tr>
+                                <td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.SlipDiv }} {{ '-' }} {{ InvoiceTable.OrderingId.OrderNumber }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.ShippingDate }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.OrderingDate }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.ProductName }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.CustomeCode.CustomerOmitName }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.SupplierCode.CustomerOmitName }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.RequestCode.CustomerOmitName }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId.ShippingCode.CustomerOmitName }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.ResultItemNumber }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.ShippingVolume }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailUnitPrice|intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailUnitPrice|mul:InvoiceTable.ShippingVolume|floatformat|intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailSellPrice|intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.OrderingDetailId.DetailSellPrice|mul:InvoiceTable.ShippingVolume|floatformat|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% if is_paginated %}
+                {% include "crud/pagination.html" %}
+            {% endif %}
+        </div>
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="label1">日次更新処理実行</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="form-group col-sm-6">
+                                <label for="id_date_issue">処理日</label>
+                                <input type="search" class="form-control flatpickrtoday" name="DailyUpdateDate" id="id_DailyUpdateDate" value="" style="pointer-events: none;" tabindex="-1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="issue" class="btn btn-success">実行</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">中止</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- <div class="tab-content">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-sm-5">
+                        </div>
+                        <div class="form-group col-sm-2">
+                            <label for="id_DailyUpdateDate">処理日</label>
+                            <input type="tel" class="form-control flatpickrtoday" autocomplete="new-password" name="DailyUpdateDate" id="id_DailyUpdateDate" value="" style="pointer-events: none;" tabindex="-1">
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" id="modalOpen" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal">&nbsp;&nbsp;実&nbsp;&nbsp;行&nbsp;&nbsp;</button>
+                        <button type="button" class="btn btn-secondary btn-sm"  onclick="location.href='{% url 'myapp:index' %}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+                    </div>            
+                </div>
+            </div>
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="label1">日次更新処理実行</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            実行してよろしいですか
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="delete" class="btn btn-primary">実行</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">中止</button>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            {% block extrajs %}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+            {% load static %}
+            <script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+            {% endblock %}
+            <script>
+                var btn = document.getElementById('modalOpen');
+                var cls = document.getElementById('modalClose');
+                var ise = document.getElementById('issue');
+                var modal = document.getElementsByClassName('modal fade');
+
+                btn.addEventListener('click', function() {
+                    for(i=0;i<modal.length;i++){
+                        modal[i].style.opacity = '1';
+                        modal[i].style.visibility = 'visible';
+                    }
+                })
+
+                ise.addEventListener('click', function() {
+					//var url = "/dailyupdate/update/";
+                    //console.log(url);
+
+					//location.href = url;
+                    document.confirm.submit();
+                })
+            </script>      
+        </form>
+    </div>
+</div>
+{% endblock %}

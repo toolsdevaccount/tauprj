@@ -1,0 +1,96 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<input type="hidden" name="PodDetailId-TOTAL_FORMS" id="id_PodDetailId-TOTAL_FORMS">
+		{{ formset.management_form }}
+		<div class="table-responsive table-container">	
+			<div class="table-sticky-container">
+				<table class="table table-sticky" id="tblrowclsz">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center product">色番</th>
+							<th scope="col" class="text-center product">カラー</th>
+							<th scope="col" class="text-center product">サイズ</th>
+							<th scope="col" class="text-center items">数量</th>
+						</tr>
+					</thead>
+					<tbody id="list">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block extrajs %}
+<!-- flatpicr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+<!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+{% load static %}
+<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\calc.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\productorder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+{% endblock %}
+<script>
+	$('#id_ProductOrderMerchandiseCode').on('change', function(){
+	$('#list').empty();
+	// Ajax通信を開始
+	$.ajax({
+		url: "{% url 'myapp:exec' %}",
+		method: "GET",
+		// プレーンテキストを受信（他にはhtml、xml、script、json、jsonp等）
+		dataType: 'json',
+		// リクエストパラメータ「?param=商品コード」
+		data: {
+			param: $('#id_ProductOrderMerchandiseCode').val(),
+		},
+		timeout: 5000,
+	})
+	.done(function(response) {
+		// 通信成功時の処理を記述
+		$.each(response.list, function(index, list) {
+			$('#list').append(														
+				'<tr>' +
+					'<td>' +
+						'<div>' +
+							'<label>' + list.McdColorNumber + '</label>' +										
+						'</div>' +
+						'<input type="hidden"  data-id-format="id_PodDetailId-%d-PodColorId" data-name-format="PodDetailId-%d-PodColorId" name="PodDetailId-' + index + '-PodColorId" id="id_PodDetailId-' + index + '-PodColorId" value='+ list.id + '>' +
+					'</td>' +
+					'<td>' +
+						'<div>' +
+							'<label>' + list.McdColor + '</label>' +										
+						'</div>' +
+						'<input type="hidden"  data-id-format="id_PodDetailId-%d-PodColorId" data-name-format="PodDetailId-%d-PodColorId" name="PodDetailId-' + index + '-PodColorId" id="id_PodDetailId-' + index + '-PodColorId" value='+ list.id + '>' +
+					'</td>' +
+					'<td>' +
+						'<div>' +
+							'<label>' + list.McdSize + '</label>' +										
+						'</div>' +
+						'<input type="hidden"  data-id-format="id_PodDetailId-%d-PodSizeId" data-name-format="PodDetailId-%d-PodSizeId"' +
+						'name="PodDetailId-' + index + '-PodSizeId" id="id_PodDetailId-' + index + '-PodSizeId" value=' + list.McdSizeid + '>' +
+					'</td>' +
+					'<td>' +
+						'<div>' +
+							'<input type="text" class="form-control" style="text-align: right;" autocomplete="new-password" data-id-format="id_PodDetailId-%d-PodVolume" data-name-format="PodDetailId-%d-PodVolume"' +
+								'name="PodDetailId-' + index + '-PodVolume" id="id_PodDetailId-' + index + '-PodVolume" value={{ form.PodVolume|default:"0" }}>' +
+						'</div>' +
+					'</td>' +
+				'</tr>' 
+			);
+			$('#id_ProductOrderPartNumber').val(list.McdPartNumber);
+		});
+	})
+	.fail(function() {
+		// 通信失敗時の処理を記述
+		$('#resultGET').text('GET処理失敗.');
+	});
+	})
+</script>

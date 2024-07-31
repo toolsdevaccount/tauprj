@@ -1,0 +1,71 @@
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<div class="form-group">
+		<!-- <input type="hidden" name="PodDetailId-TOTAL_FORMS" id="id_PodDetailId-TOTAL_FORMS"> -->
+		{{ formset.management_form }}
+		<div class="table-responsive table-container">	
+			<div class="table-sticky-container">
+				<table class="table table-sticky table-sm" id="tblrowclsz">
+					<thead>
+						<tr class="bg-info">
+							<th scope="col" class="text-center days">色番</th>
+							<th scope="col" class="text-center days">カラー</th>
+							<th scope="col" class="text-center days">サイズ</th>
+							<th scope="col" class="text-center items">数量</th>
+						</tr>
+					</thead>
+					<tbody id="list">
+						{% for col in list %}
+						<tr>
+							<td>
+								<div>
+									<label>{{ col.McdColorNumber }}</label>										
+								</div>
+								<input type="hidden"  data-id-format="id_PodDetailId-%d-PodColorId" data-name-format="PodDetailId-%d-PodColorId"
+								name="PodDetailId-{{ forloop.counter0 }}-PodColorId" id="id_PodDetailId-{{ forloop.counter0 }}-PodColorId" value="{{ col.podcolorid_id }}">
+							</td>
+							<td>
+								<div>
+									<label>{{ col.McdColor }}</label>										
+								</div>
+								<input type="hidden"  data-id-format="id_PodDetailId-%d-PodColorId" data-name-format="PodDetailId-%d-PodColorId"
+								name="PodDetailId-{{ forloop.counter0 }}-PodColorId" id="id_PodDetailId-{{ forloop.counter0 }}-PodColorId" value="{{ col.podcolorid_id }}">
+							</td>
+							<td>
+								<div>
+									<label>{{ col.McdSize }}</label>										
+								</div>
+								<input type="hidden"  data-id-format="id_PodDetailId-%d-PodSizeId" data-name-format="PodDetailId-%d-PodSizeId"
+								name="PodDetailId-{{ forloop.counter0 }}-PodSizeId" id="id_PodDetailId-{{ forloop.counter0 }}-PodSizeId" value="{{ col.podsizeid_id }}">
+							</td>
+							<td>
+								<div>
+									<input type="text" class="form-control" style="text-align: right;" data-id-format="id_PodDetailId-%d-PodVolume" data-name-format="PodDetailId-%d-PodVolume" 
+									name="PodDetailId-{{ forloop.counter0 }}-PodVolume" id="id_PodDetailId-{{ forloop.counter0 }}-PodVolume" value="{{ col.PodVolume }}" readonly>
+								</div>
+							</td>
+							<input type="hidden" data-id-format="id_PodDetailId-%d-id" data-name-format="PodDetailId-%d-id" name="PodDetailId-{{ forloop.counter0 }}-id" id="id_PodDetailId-{{ forloop.counter0 }}-id" value="{{ col.id }}">
+							<input type="hidden" data-id-format="id_PodDetailId-%d-is_Deleted" data-name-format="PodDetailId-%d-is_Deleted" id="id_PodDetailId-{{ forloop.counter0 }}-is_Deleted" name="PodDetailId-{{ forloop.counter0 }}-is_Deleted" value="on">
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block extrajs %}
+<!-- Datepicker 追加-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.add-input-area@4.11.0/dist/jquery.add-input-area.min.js" integrity="sha256-yOwGvcRp3I8/XWkeARhJkgdfLREQygbFA5W2bUpM2FY=" crossorigin="anonymous"></script>
+{% load static %}
+<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\calc.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\productorder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+{% endblock %}

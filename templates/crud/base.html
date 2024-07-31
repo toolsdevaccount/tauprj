@@ -1,0 +1,139 @@
+{% load static %}{% csrf_token %}
+<!doctype html>
+<html lang="ja" >
+	<head>
+		<title>TAU販売管理システム</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="canonical" href="https://getbootstrap.jp/docs/5.3/examples/dashboard/">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{% static '\css\dashboard.css' %}">
+		<!-- favicon -->
+		<link rel="shortcut icon" href="{% static '\image\favicon.ico' %}">
+	</head>
+	<body>
+		<a id="skippy" class="sr-only sr-only-focusable" href="#content">
+			<div class="container">
+				<span class="skiplink-text">Skip to main content</span>
+			</div>
+		</a>
+		<nav class="navbar navbar-expand-sm navbar-dark bg-info">
+			<span class="navbar-text"><p class="font-small">TAU販売管理システム</p></span>
+			<button class="navbar-toggler" type="button"
+				data-toggle="collapse"
+				data-target="#Navber"
+				aria-controls="Navber"
+				aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="Navber">
+				<ul class="navbar-nav mr-auto">	
+					<li class="nav-item dropdown">
+						<p class="font-small"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							受発注管理業務
+						</a>
+						</p>
+						<div class="dropdown-menu mt-0">
+							<a class="dropdown-item" href="{% url 'myapp:orderinglist' %}"><p class="font-small">受発注一覧</p></a>
+							<a class="dropdown-item" href="{% url 'myapp:productorderlist' %}"><p class="font-small">製品受発注一覧</p></a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="{% url 'myapp:Depositlist' %}"><p class="font-small">入金情報一覧</p></a>
+							<a class="dropdown-item" href="{% url 'myapp:Paymentlist' %}"><p class="font-small">支払情報一覧</p></a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="{% url 'myapp:unpaidview' %}"><p class="font-small">未払消込</p></a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<p class="font-small"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							マスター管理
+						</a>
+						</p>
+						<div class="dropdown-menu mt-0">
+						<a class="dropdown-item" href="{% url 'myapp:list' %}"><p class="font-small">得意先仕入先マスタ</p></a>
+						<a class="dropdown-item" href="{% url 'myapp:merchandiselist' %}"><p class="font-small">商品マスタ</p></a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<p class="font-small"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							日&nbsp次&nbsp処理
+						</a>
+						</p>
+						<div class="dropdown-menu mt-0">
+							<a class="dropdown-item" href="{% url 'myapp:DailyUpdatelist' %}"><p class="font-small">日次更新処理</p></a>
+							<a class="dropdown-item" href="{% url 'myapp:individualinvoicelist' %}"><p class="font-small">個別請求書発行</p></a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<p class="font-small"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							月&nbsp次&nbsp処理
+						</a>
+						</p>
+						<div class="dropdown-menu mt-0">
+							<a class="dropdown-item" href="{% url 'myapp:invoicelist' %}"><p class="font-small">一括請求書発行</p></a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="{% url 'myapp:CustomerMonthlylist' %}"><p class="font-small">得意先月次集計表発行</p></a>
+							<a class="dropdown-item" href="{% url 'myapp:SupplierMonthlylist' %}"><p class="font-small">仕入先月次集計表発行</p></a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="{% url 'myapp:SalesLedgerlist' %}"><p class="font-small">売上台帳発行</p></a>
+							<a class="dropdown-item" href="{% url 'myapp:PurchaseLedgerlist' %}"><p class="font-small">仕入台帳発行</p></a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="{% url 'myapp:unpaidlist' %}"><p class="font-small">未払一覧表発行</p></a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<p class="font-small"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							随&nbsp時&nbsp処理
+						</a>
+						</p>
+						<div class="dropdown-menu mt-0">
+							<a class="dropdown-item" href="{% url 'myapp:RequestCumulativelist' %}"><p class="font-small">依頼先別売上順一覧発行</p></a>
+							<a class="dropdown-item" href="{% url 'myapp:SalesPersonlist' %}"><p class="font-small">担当者別売上一覧発行</p></a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<p class="font-small"><a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							ユーザー管理
+						</a></p>
+						<div class="dropdown-menu mt-0">
+							<a class="dropdown-item" href="{% url 'myapp:signup' %}"><p class="font-small">アカウント登録</p></a>
+							<a class="dropdown-item" href="{% url 'password_change_form' %}"><p class="font-small">パスワード変更</p></a>
+							<a class="dropdown-item" href="{% url 'password_reset' %}"><p class="font-small">パスワードリセット</p></a>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<ul class="navbar-nav px-3">
+				<li class="nav-item text-nowrap">
+					{% if user.is_authenticated %}
+					<form action="{% url 'logout' %}" name="form1" method="post">
+					{% csrf_token %}
+					<span><p class="font-small"><a class="nav-link" href="javascript:form1.submit()">{{ user.first_name|add:user.last_name }}</a></p></span>
+					</form>
+					{% else %}
+					<span><p class="font-small"><a class="nav-link" href="{% url 'login' %}">ログイン</a></p></span>
+					{% endif %}
+				</li>
+			</ul>
+		</nav>
+		<div class="container-fluid">
+			<div class="row">
+				<main role="main" class="col-md-12 ml-sm-auto col-lg-12 px-4">
+					<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+						{% block content %}
+						{% endblock %}
+					</div>
+				</main>
+			</div>
+		</div>
+		<!-- BootStrap -->
+		<!-- flatpicker -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+		<!-- addinputarea -->
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery.add-input-area@4.11.0/dist/jquery.add-input-area.min.js" integrity="sha256-yOwGvcRp3I8/XWkeARhJkgdfLREQygbFA5W2bUpM2FY=" crossorigin="anonymous"></script>
+		<!-- bootstrap -->
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	</body>
+</html>

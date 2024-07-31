@@ -1,0 +1,125 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+{% load widget_tweaks %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'myapp:historylist' %}">履歴照会・検索</a></li>
+            <li class="breadcrumb-item active" aria-current="page">履歴情報詳細</li>
+        </ol>
+    </nav>
+	<div class="form-group">
+        <form method="post" id="form">
+            {% csrf_token %}
+            <div style="height: 30px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="item1-tab" data-toggle="tab" href="#item1" role="tab" aria-controls="item1" aria-selected="true">受発注明細</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="item2-tab" data-toggle="tab" href="#item2" role="tab" aria-controls="item2" aria-selected="true">実績</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab">
+                    <div class="form-group">
+                        <div class="table-responsive table-container">
+                            <div class="table-sticky-container">
+                                <table class="table table-sticky" id="tblrow">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th scope="col" class="text-center check">&nbsp&nbsp</th>
+                                            <th scope="col" class="text-center items">項番</th>
+                                            <th scope="col" class="text-center coloritem">色番</th>
+                                            <th scope="col" class="text-center coloritem">カラー</th>
+                                            <th scope="col" class="text-center four">仕立</th>
+                                            <th scope="col" class="text-center items">数量</th>
+                                            <th scope="col" class="text-center items">単位</th>
+                                            <th scope="col" class="text-center items">仕入単価</th>
+                                            <th scope="col" class="text-center items">通常単価</th>
+                                            <th scope="col" class="text-center items">UP分単価</th>
+                                            <th scope="col" class="text-center items">販売単価</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="list">
+                                        {% for form in formset %}
+                                        <tr class="list_var">
+                                            <td class="tableid"></td>
+                                                <input type="hidden" class="form-control OrderingId" data-id-format="id_OrderingTableId-%d-id" data-name-format="OrderingTableId-%d-id" id="id_OrderingTableId-{{ forloop.counter0 }}-id" name="OrderingTableId-{{ forloop.counter0 }}-id" value="{{ form.id.value }}">
+                                            <td>
+                                                <input type="tel" class="form-control DetailItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailItemNumber" data-name-format="OrderingTableId-%d-DetailItemNumber"
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailItemNumber" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailItemNumber" value="{{ form.DetailItemNumber }}">
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailColorNumber" data-name-format="OrderingTableId-%d-DetailColorNumber"
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailColorNumber" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailColorNumber" value="{{ form.DetailColorNumber | default:'' }}">
+                                            </td> 
+                                            <td>
+                                                <input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailColor" data-name-format="OrderingTableId-%d-DetailColor" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailColor" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailColor" value="{{ form.DetailColor | default:'' }}">                                   
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailTailoring" data-name-format="OrderingTableId-%d-DetailTailoring" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailTailoring" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailTailoring" value="{{ form.DetailTailoring | default:'' }}">                                   
+                                            </td>
+                                            <td>
+                                                <input type="tel" step="0.1" class="form-control DetailVolume text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailVolume" data-name-format="OrderingTableId-%d-DetailVolume" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailVolume" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailVolume" data-empty-val="false" value="{{ form.DetailVolume | intcomma }}">                                   
+                                            </td>
+                                            <td>
+                                                <input type="tel" class="form-control DetailUnitDiv text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailUnitDiv" data-name-format="OrderingTableId-%d-DetailUnitDiv" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailUnitDiv" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailUnitDiv" data-empty-val="false" value="{{ form.DetailUnitDiv }}">                                   
+                                            </td>
+                                            <td>
+                                                <input type="tel" class="form-control DetailUnitPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailUnitPrice" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailUnitPrice" data-empty-val="false" value="{{ form.DetailUnitPrice | intcomma }}">                                   
+                                            </td>
+                                            <td>
+                                                <input type="tel" class="form-control DetailPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailPrice" data-name-format="OrderingTableId-%d-DetailPrice" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailPrice" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailPrice" data-empty-val="false" value="{{ form.DetailPrice | intcomma }}">
+                                            </td>
+                                            <td>
+                                                <input type="tel" class="form-control DetailOverPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailOverPrice" data-name-format="OrderingTableId-%d-DetailOverPrice" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailOverPrice" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailOverPrice" data-empty-val="false" value="{{ form.DetailOverPrice | intcomma }}">
+                                            </td>
+                                            <td>
+                                                <input type="tel" class="form-control DetailSellPrice text-right" autocomplete="new-password" data-id-format="id_OrderingTableId-%d-DetailSellPrice" data-name-format="OrderingTableId-%d-DetailSellPrice" 
+                                                name="OrderingTableId-{{ forloop.counter0 }}-DetailSellPrice" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailSellPrice" data-empty-val="false" value="{{ form.DetailSellPrice | intcomma }}">                                   
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>		
+                    </div>               
+                </div>
+                <div class="tab-pane" id="item2" role="tabpanel" aria-labelledby="item2-tab">
+                    {% include "crud/history/Update/historytable.html" %}
+                </div>
+            </div>
+            <div class="text-right">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{% url 'myapp:historylist' %}'">&nbsp;&nbsp;戻&nbsp;&nbsp;る&nbsp;&nbsp;</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extrajs %}
+{% endblock %}

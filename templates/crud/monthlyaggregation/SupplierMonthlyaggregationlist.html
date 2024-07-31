@@ -1,0 +1,99 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">仕入先月次集計表発行</li>
+			<div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal">仕入先月次集計表</button></span>
+				</div>	
+			</div>	
+        </ol>
+    </nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div style="height: 30px;">
+				<div class="w-50 h-25 mx-auto">
+					{% if messages %}
+					<ul class="messages_ul">
+						{% for message in messages %}
+							<li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+				</div>
+			</div>
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="label1">仕入先月次集計表発行</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+							<div class="form-row">
+								<div class="form-group col-sm-6">
+									<label for="id_TargetMonth">対象年月</label>
+									<input type="tel" class="form-control flatpickrformat" name="TargetMonth" id="id_TargetMonth" value="">
+    	                        </div>
+							</div>
+						</div>
+                        <div class="modal-footer">
+                            <button type="button" id="issue" class="btn btn-success">発行</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+			<script>
+				var btn = document.getElementById('modalOpen');
+                var cls = document.getElementById('modalClose');
+                var ise = document.getElementById('issue');
+                var modal = document.getElementsByClassName('modal fade');
+
+                btn.addEventListener('click', function() {
+                    for(i=0;i<modal.length;i++){
+                        modal[i].style.opacity = '1';
+                        modal[i].style.visibility = 'visible';
+                    }
+                })
+
+                ise.addEventListener('click', function() {
+					var TargetMonth = document.getElementById('id_TargetMonth').value;
+
+					// 入力値チェック
+					if(TargetMonth==''){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					var url = "/SupplierMonthly/pdf/123";
+					TargetMonth = TargetMonth.replace(/年/g,'');
+					TargetMonth = TargetMonth.replace(/月/g,'');
+					TargetMonth = TargetMonth + '01';
+					url = url.replace(/123/,TargetMonth);
+
+					//location.href = url;
+					window.open(url, '_blank');
+				})
+            </script>
+		</form>
+	</div>
+</div>
+{% endblock %}

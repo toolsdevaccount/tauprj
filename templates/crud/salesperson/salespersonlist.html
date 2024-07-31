@@ -1,0 +1,141 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+{% load mathfilters %}
+{% load widget_tweaks %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">担当者別売上一覧</li>
+			<div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal">担当者別売上一覧表</button></span>
+				</div>	
+			</div>	
+        </ol>
+    </nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+            <div style="height: 30px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="label1">担当者別売上一覧表発行</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+							<div class="form-row">
+								<div class="form-group col-sm-6">
+									<label for="id_SalesPersonDate_From">年月日(FROM)</label>
+									<input type="tel" class="form-control flatpickr" name="SalesPersonDate_From" id="id_SalesPersonDate_From" value="">
+									<label for="id_SalesPersonDate_To">年月日(To)</label>
+									<input type="tel" class="form-control flatpickr" name="SalesPersonDate_To" id="id_SalesPersonDate_To" value="">
+									<label for="id_Manager">担当者(FROM)</label>
+									<input type="tel" class="form-control" list="ManagerCode_From" autocomplete="new-password" name="Manager_From" id="id_Manager_From">
+									<datalist id="ManagerCode_From">
+									{% for data in Manager_From %}
+										<option value="{{ data.first_name }} {{ data.last_name }}" label="{{ data.id }}"></option>
+									{% endfor %}
+									</datalist>
+									<input type="hidden" name="Manager_From" id="id_Manager_From">
+									<label for="id_Manager">担当者(To)</label>
+									<input type="tel" class="form-control" list="ManagerCode_To" autocomplete="new-password" name="Manager_To" id="id_Manager_To">
+									<datalist id="ManagerCode_To">
+									{% for data in Manager_To %}
+										<option value="{{ data.first_name }} {{ data.last_name }}" label="{{ data.id }}"></option>
+									{% endfor %}
+									</datalist>
+									<input type="hidden" name="Manager_To" id="id_Manager_To">
+    	                        </div>
+							</div>
+						</div>
+                        <div class="modal-footer">
+                            <button type="button" id="issue" class="btn btn-success">発行</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">中止</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+			<script>
+				var btn = document.getElementById('modalOpen');
+                var cls = document.getElementById('modalClose');
+                var ise = document.getElementById('issue');
+                var modal = document.getElementsByClassName('modal fade');
+
+                btn.addEventListener('click', function() {
+                    for(i=0;i<modal.length;i++){
+                        modal[i].style.opacity = '1';
+                        modal[i].style.visibility = 'visible';
+                    }
+                })
+
+                ise.addEventListener('click', function() {
+					var SpDate_From = document.getElementById('id_SalesPersonDate_From').value;
+					var SpDate_To = document.getElementById('id_SalesPersonDate_To').value;
+					var element_from = document.querySelector(`input[type=hidden][name="Manager_From"]`).value;
+					var element_To = document.querySelector(`input[type=hidden][name="Manager_To"]`).value;
+
+					// 入力値置換
+					if(element_from==''){
+						element_from=0;
+					}
+					if(element_To==''){
+						element_To=0;
+					}
+
+					// 入力値チェック
+					if(element_from>element_To){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					if(SpDate_From==''||SpDate_To==''){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					if(SpDate_From>SpDate_To){
+						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
+						return false;
+					}
+					var url = "/salesperson/pdf/123/456/789/567/";
+					SpDate_From = SpDate_From.replace(/-/g,'');
+					SpDate_To = SpDate_To.replace(/-/g,'');
+					url = url.replace(/123/,SpDate_From);
+					url = url.replace(/456/,SpDate_To);
+					url = url.replace(/789/,element_from);
+					url = url.replace(/567/,element_To);
+
+					//location.href = url;
+					window.open(url, '_blank');
+				})
+            </script>
+		</form>
+	</div>
+</div>
+{% endblock %}
