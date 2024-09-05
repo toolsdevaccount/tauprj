@@ -131,7 +131,7 @@ def connect(pkfrom,isdate):
                             OrderNumber=Concat('OrderingId__SlipDiv',Value('-'),'OrderingId__OrderNumber'),
                             SellPrice=F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice"),
                             IssueDate=Value(isdate),
-                        ).order_by('InvoiceNUmber','ShippingDate','ResultItemNumber'))
+                        ).order_by('InvoiceNUmber','ShippingDate','OrderingDetailId__DetailItemNumber'))
     return result
 #個別請求書発行
 def print_string(pdf_canvas,dt,dt_own):

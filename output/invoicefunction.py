@@ -13,6 +13,8 @@ import math
 def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From):
     #レコード数
     rec = len(dt_Detail)
+    if rec==0:
+        rec=1
     #行数
     param=32
     #ページ数

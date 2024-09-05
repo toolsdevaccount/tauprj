@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, portrait
 from myapp.models import Deposit, CustomerSupplier, RequestResult
+from django.db.models import Q
 from myapp.output import invoicefunction
 
 # 日時
@@ -239,7 +240,7 @@ def Detail(Customer, FromDate, ToDate ):
          'Shipping_total',
          'Abs_total',
          'SalesTaxRate',
-        ).filter(Abs_total__gt=0)
+        ).filter(Q(Abs_total__gt=0)|Q(Abs_total__lt=0))
 
     #請求月入金レコード
     queryset_depo = Deposit.objects.filter(DepositDate__range=(str(FromDate),str(ToDate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
@@ -249,7 +250,8 @@ def Detail(Customer, FromDate, ToDate ):
     #result = list(chain(queryset, queryset_depo))
     obj = chain(queryset, queryset_depo)
     #日付順にソート
-    result = sorted(obj)
+    #result = sorted(obj)
+    result = sorted(obj, key=lambda x: (x[0], int(x[6])))
 
     return result
 #一括請求書発行
