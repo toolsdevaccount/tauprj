@@ -1,5 +1,10 @@
 $(function(){
     $('#form').submit(function() {  	 // フォームを送信する直前 tableの行数を取得
+        //数量のカンマを取り除く
+        $(".DetailVolume").each(function() {
+            $(this).val(removeComma($(this).val()));
+        });
+
         //仕入単価のカンマを取り除く
         $(".DetailUnitPrice").each(function() {
             $(this).val(removeComma($(this).val()));
