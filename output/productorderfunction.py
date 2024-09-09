@@ -53,8 +53,8 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.drawString(410, 740, contents)
 
     # ロゴ追加
-    img = './mysite/myapp/templates/image/image1.jpg'
-    #img = './static/image/image1.jpg'
+    #img = './mysite/myapp/templates/image/image1.jpg'
+    img = './static/image/image1.jpg'
     pdf_canvas.drawImage(img, 165*mm, 258*mm , 45.0*mm, 12.0*mm)
 
     pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
@@ -396,8 +396,8 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     for i in range(l):
         row = dtimage[i]
         if row[1]!="":
-            img = './mysite/media/' + row[1]
-            #img = './media/' + row[1]
+            #img = './mysite/media/' + row[1]
+            img = './media/' + row[1]
 
             if i==0:
                 pdf_canvas.drawImage(img, 16*mm, 25*mm , 30.0*mm, 30.0*mm, preserveAspectRatio=True)

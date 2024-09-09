@@ -71,8 +71,8 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(345, 620, contents)
 
         # ロゴ追加
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 134*mm, 216*mm, 45.0*mm, 12.0*mm)
 
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))

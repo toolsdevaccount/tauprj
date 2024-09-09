@@ -91,8 +91,8 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         pdf_canvas.drawString(435, 745, contents)
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
         # 会社ロゴ
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 167*mm, 260*mm, 47.0*mm, 12.0*mm)
 
         # 自社住所
