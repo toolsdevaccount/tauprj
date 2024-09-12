@@ -11,10 +11,10 @@ from django.utils import timezone
 import datetime
 from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,DecimalField,IntegerField
+from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
 from decimal import Decimal
-import math
+from django.db.models.functions import TruncMonth
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
@@ -84,7 +84,7 @@ def make(search_date, response):
                 suppliermonthlyfunction.lineprintstring(pdf_canvas)
                 pdf_canvas.showPage()
                 width=220
- 
+
         result=0
 
     # 空白行を出力
@@ -182,47 +182,59 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(search_date, Customer): 
+def PrevBalance(search_date, Customer):        
     #前月までの支払額計
     queryset = Payment.objects.filter(PaymentDate__lte=(str(search_date[3])),PaymentSupplierCode=(str(Customer[0]['id'])),is_Deleted=0)
     queryset = queryset.filter(~Q(PaymentDiv=11))
 
-    DepoPrvSum = list(queryset.values('PaymentSupplierCode').annotate(Depo_total=Coalesce(Sum('PaymentMoney'),0,output_field=DecimalField())))
+    DepoPrvSum = list(queryset.values('PaymentSupplierCode').annotate(Depo_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())))
     #0判定
     if DepoPrvSum:
         DepoPrvTotal = int(DepoPrvSum[0]['Depo_total'])
     else:
         DepoPrvTotal = 0
-    #前月までの仕入額計
-    queryset =  RequestResult.objects.filter(InvoiceIssueDate__lte=(str(search_date[3])),
-                OrderingId__SupplierCode=(str(Customer[0]['id'])),
-                InvoiceNUmber__gt=0,
-                InvoiceIssueDiv=1,
-                is_Deleted=0,
-                )
-    SellPrvSum =  list(queryset.values('OrderingId__SupplierCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=DecimalField())))
 
-    Adjustment = Payment.objects.filter(PaymentDate__lte=(str(search_date[3]))
-                                        ,PaymentSupplierCode=(str(Customer[0]['id']))
-                                        ,is_Deleted=0
-                                        ,PaymentDiv=11
-                                        )
-    Adjustment = list(Adjustment.values('PaymentMoney'))
+    #前月までの仕入額計
+    SellPrvSum =  RequestResult.objects.annotate(
+        monthly=TruncMonth('InvoiceIssueDate')
+        ).values(
+            'monthly'
+        ).filter(
+            InvoiceIssueDate__lte=(str(search_date[3])),
+            OrderingId__SupplierCode=(str(Customer[0]['id'])),
+            InvoiceNUmber__gt=0,
+            InvoiceIssueDiv=1,
+            is_Deleted=0,
+            ).annotate(
+                    Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()),
+                )
+
+    #消費税調整抽出
+    PrvAdjustment = Payment.objects.values('PaymentSupplierCode').annotate(
+                                            Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
+                                            ).filter(PaymentDate__lte=(str(search_date[3]))
+                                                    ,PaymentSupplierCode=(str(Customer[0]['id']))
+                                                    ,is_Deleted=0
+                                                    ,PaymentDiv=11
+                                                    )
+
+    PrvAdjustment = list(PrvAdjustment.values('Adjustment_total'))
     #0判定
-    if Adjustment:
-        AdjustmentTotal = int(Adjustment[0]['PaymentMoney'])
+    if PrvAdjustment:
+        AdjustmentTotal = int(PrvAdjustment[0]['Adjustment_total'])
     else:
         AdjustmentTotal = 0
 
-    #0判定
+    #残高消費税計算
+    SellPrvTotal = 0
+    SellPrvtax = 0
     if SellPrvSum:
-        SellPrvTotal = int(SellPrvSum[0]['Abs_total'])
-        SellPrvtax = int(SellPrvSum[0]['Abs_total']) * 0.1 + int(AdjustmentTotal)
-        SellPrvtax = int(SellPrvtax)
-    else:
-        SellPrvTotal = 0
-        SellPrvtax = 0
+        for q in SellPrvSum:
+            SellPrvTotal+=int(q['Abs_total'])
+            tax = int(q['Abs_total'])
+            SellPrvtax+= int(tax*0.1)
+        SellPrvtax+= int(AdjustmentTotal)
+   
     #前月買掛残算出
     PrevBill = int(Customer[0]['LastPayable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
 
@@ -230,7 +242,7 @@ def PrevBalance(search_date, Customer):
     queryset = Payment.objects.filter(PaymentDate__range=(str(search_date[0]),str(search_date[1])),PaymentSupplierCode=(str(Customer[0]['id'])),is_Deleted=0)
     queryset = queryset.filter(~Q(PaymentDiv=11))
 
-    DepoSum = list(queryset.values('PaymentSupplierCode').annotate(Depo_total=Coalesce(Sum('PaymentMoney'),0,output_field=DecimalField())))
+    DepoSum = list(queryset.values('PaymentSupplierCode').annotate(Depo_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())))
     #0判定
     if DepoSum:
         DepoTotal = int(DepoSum[0]['Depo_total'])

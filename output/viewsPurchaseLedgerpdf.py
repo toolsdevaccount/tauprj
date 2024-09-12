@@ -11,9 +11,10 @@ from django.utils import timezone
 import datetime
 from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,DecimalField
+from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
 from itertools import chain
+from django.db.models.functions import TruncMonth
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
@@ -135,49 +136,60 @@ def PrevBalance(search_date, Customer):
     queryset = Payment.objects.filter(PaymentDate__lte=(str(search_date[3])),PaymentSupplierCode=(str(Customer[0]['id'])),is_Deleted=0)
     queryset = queryset.filter(~Q(PaymentDiv=11))
 
-    PayPrvSum = list(queryset.values('PaymentSupplierCode').annotate(Pay_total=Coalesce(Sum('PaymentMoney'),0,output_field=DecimalField())))
+    PayPrvSum = list(queryset.values('PaymentSupplierCode').annotate(Pay_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())))
     #0判定
     if PayPrvSum:
         PayPrvTotal = int(PayPrvSum[0]['Pay_total'])
     else:
         PayPrvTotal = 0
-    #前月までの仕入額計
-    queryset =  RequestResult.objects.filter(InvoiceIssueDate__lte=(str(search_date[3])),
-                OrderingId__SupplierCode=(str(Customer[0]['id'])),
-                InvoiceNUmber__gt=0,
-                InvoiceIssueDiv=1,
-                is_Deleted=0,
-                )
-    StockPrvSum =  list(queryset.values('OrderingId__SupplierCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=DecimalField())))
 
-    Adjustment = Payment.objects.filter(PaymentDate__lte=(str(search_date[3]))
-                                        ,PaymentSupplierCode=(str(Customer[0]['id']))
-                                        ,is_Deleted=0
-                                        ,PaymentDiv=11
-                                        )
-    Adjustment = list(Adjustment.values('PaymentMoney'))
+    #前月までの仕入額計
+    StockPrvSum =  RequestResult.objects.annotate(
+        monthly=TruncMonth('InvoiceIssueDate')
+        ).values(
+            'monthly'
+        ).filter(
+            InvoiceIssueDate__lte=(str(search_date[3])),
+            OrderingId__SupplierCode=(str(Customer[0]['id'])),
+            InvoiceNUmber__gt=0,
+            InvoiceIssueDiv=1,
+            is_Deleted=0,
+            ).annotate(
+                    Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()),
+                )
+
+    #消費税調整抽出
+    Adjustment = Payment.objects.values('PaymentSupplierCode').annotate(
+                                        Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
+                                        ).filter(PaymentDate__lte=(str(search_date[3]))
+                                                ,PaymentSupplierCode=(str(Customer[0]['id']))
+                                                ,is_Deleted=0
+                                                ,PaymentDiv=11
+                                                )
+
     #0判定
     if Adjustment:
-        AdjustmentTotal = int(Adjustment[0]['PaymentMoney'])
+        AdjustmentTotal = int(Adjustment[0]['Adjustment_total'])
     else:
         AdjustmentTotal = 0
 
-    #0判定
+    #残高消費税計算
+    StockPrvTotal = 0
+    StockPrvtax = 0
     if StockPrvSum:
-        StockPrvTotal = int(StockPrvSum[0]['Abs_total'])
-        StockPrvtax = int(StockPrvSum[0]['Abs_total']) * 0.1 + int(AdjustmentTotal)
-        StockPrvtax = int(StockPrvtax)
-    else:
-        StockPrvTotal = 0
-        StockPrvtax = 0
+        for q in StockPrvSum:
+            StockPrvTotal+=int(q['Abs_total'])
+            tax = int(q['Abs_total'])
+            StockPrvtax+= int(tax*0.1)
+        StockPrvtax+= int(AdjustmentTotal)
+
     #前回買掛額算出
     PrevBill = int(Customer[0]['LastPayable']) - int(PayPrvTotal) + int(StockPrvTotal) + int(StockPrvtax)
     #当月支払合計額
     queryset = Payment.objects.filter(PaymentDate__range=(str(search_date[0]),str(search_date[1])),PaymentSupplierCode=(str(Customer[0]['id'])),is_Deleted=0)
     queryset = queryset.filter(~Q(PaymentDiv=11))
 
-    PaySum = list(queryset.values('PaymentSupplierCode').annotate(Pay_total=Coalesce(Sum('PaymentMoney'),0,output_field=DecimalField())))
+    PaySum = list(queryset.values('PaymentSupplierCode').annotate(Pay_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())))
     #0判定
     if PaySum:
         PayTotal = int(PaySum[0]['Pay_total'])
@@ -208,7 +220,7 @@ def PrevBalance(search_date, Customer):
                 )
 
     SrockSum =  list(queryset.values('OrderingId__SupplierCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=DecimalField())))
+        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField())))
     #0判定
     if SrockSum:
         StockTotal = int(SrockSum[0]['Abs_total'])
