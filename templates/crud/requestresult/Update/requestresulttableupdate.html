@@ -87,8 +87,9 @@
 		<div class="table-responsive table-container">
 			<div class="table-sticky-container-small">
 				<table class="table table-sticky-sm table-bordered" id="detailtblrow">
-					<thead class="thead-light">
-						<tr>
+					<!-- <thead class="thead-light"> -->
+					<thead>
+						<tr class="bg-info">
 							<th scope="col" class="text-center check">&nbsp&nbsp</th>
 							<th scope="col" class="text-center items">項番</th>
 							<th scope="col" class="text-center coloritem">色番</th>
@@ -193,14 +194,14 @@
 	</div>
 	<div class="form-group">
 		<div class="text-left">
-			<button type="button" id="add" class="btn btn-primary btn-sm list_add">追加</button>
+			<button type="button" id="add" class="btn btn-info btn-sm list_add">追加</button>
 		</div>
 		<div class="table-responsive table-container">
 			<div class="table-sticky-container-small">
 				{{ inlinesRecord.management_form }}
 				<table class="table table-sticky table-sm" id="tblrow">
 					<thead>
-						<tr class="bg-primary">
+						<tr class="bg-info">
 							<th scope="col" class="text-center check"></th>
 							<th scope="col" class="text-center check">削除</th>
 							<th scope="col" class="text-center items">項番</th>
