@@ -1,0 +1,104 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">月末契約残管理</li>
+			<div class="container">
+				<div class="text-right">
+					<span><button type="button" id="modalOpen" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal">契約残抽出</button></span>
+				</div>
+			</div>	
+        </ol>
+    </nav>
+    <div class="form-group">
+        <form method="post" id="form">
+        {% csrf_token %}
+            <div style="height: 80px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="table-responsive table-container" style="height: 500px;">
+                <div class="table-sticky-container-small" style="height: 500px;">
+                    <table class="table table-sticky" id="detailtblrow">
+                        <thead>
+                            <tr class="bg-primary">
+                                <th scope="col" class="text-center" style="width: 1%;"></th>
+                                <th scope="col" class="text-center items">オーダーNo</th>
+                                <th scope="col" class="text-center coloritem">依頼先名</th>
+                                <th scope="col" class="text-center coloritem">担当者名</th>
+                                <th scope="col" class="text-center coloritem">商品名</th>
+                                <th scope="col" class="text-center items">番手</th>
+                                <th scope="col" class="text-center items">残数量</th>
+                                <th scope="col" class="text-center items">仕入単価</th>
+                                <th scope="col" class="text-center items">仕入金額</th>
+                                <th scope="col" class="text-center items">加工単価</th>
+                                <th scope="col" class="text-center items">加工金額</th>
+                                <th scope="col" class="text-center items">売上単価</th>
+                                <th scope="col" class="text-center items">売上金額</th>
+                                <th scope="col" class="text-center items">粗利益</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in form %}
+                            <tr class="list_formset">
+                                {% if data.DetailVolume > 0 %}
+                                <td class="tableid" style="vertical-align:bottom;"></td>
+                                <input type="hidden" class="form-control OrderingTableId" data-id-format="id_OrderingTableId-%d-id" data-name-format="OrderingTableId-%d-id" id="id_OrderingTableId-{{ forloop.counter0 }}-id" name="OrderingTableId-{{ forloop.counter0 }}-id" value="{{ data.OrderingId__id }}">
+                                <input type="hidden" class="form-control OrderingDetailId" data-id-format="id_OrderingTableId-%d-OrderingDetailId" data-name-format="OrderingTableId-%d-OrderingDetailId" id="id_OrderingTableId-{{ forloop.counter0 }}-OrderingDetailId" name="OrderingTableId-{{ forloop.counter0 }}-OrderingDetailId" value="{{ data.OrderingDetailId__id }}">
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.OrderingTableId__SlipDiv }} - {{ data.OrderingTableId__OrderNumber }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.RequestCustomer }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.Manager_firstname }} {{ data.Manager_lastname }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.ProductName }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.OrderingCount }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.DetailVolume }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.DetailUnitPrice |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.PurchasePrice |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.ProcessingUnitPrice |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.ProcessingAmount |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.DetailSellPrice |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.SellPrice |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.GrossProfit |floatformat:0 | intcomma }}</td>
+                                <input type="hidden" class="form-control" data-id-format="id_form-%d-id" data-name-format="form-%d-id" id="id_form-{{ forloop.counter0 }}-id" name="form-{{ forloop.counter0 }}-id" value="{{ data.id }}">
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <!-- <div class="text-right">
+                <button type="button" id="output" class="btn btn-primary btn-sm">&nbsp;&nbsp;Excel出力&nbsp;&nbsp;</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{{ previewurl }}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+            </div>  -->
+            <!-- <ol>
+            </ol> -->
+            {% include "crud/contract/list/contractmodal.html" %}
+            <!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\contractlist.js' %}" charset="UTF-8"></script>
+        </form>
+	</div>
+</div>
+{% endblock %}

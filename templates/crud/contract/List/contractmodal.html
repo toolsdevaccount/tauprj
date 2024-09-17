@@ -1,0 +1,38 @@
+            <!-- コード抽出 -->
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="label1">月末契約残情報抽出</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="id_TargetMonth">対象年月</label>
+                                    <input type="tel" class="form-control flatpickrformat" name="TargetMonth" id="id_TargetMonth" value="{{ GetMonth |date:'Y-m-d' }}">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="id_Manager">担当者</label>
+									<input type="tel" class="form-control" list="ManagerCode" autocomplete="new-password" name="Manager" id="id_Manager">
+									<datalist id="ManagerCode">
+                                        {% for data in Manager %}
+                                            <option value="{{ data.first_name }} {{ data.last_name }}" label="{{ data.id }}"></option>
+                                        {% endfor %}
+                                    </datalist>  
+                                    <input type="hidden" name="Manager" id="id_Manager">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="issue" class="btn btn-success">抽出</button>
+                            <button type="button" id="output" class="btn btn-success">&nbsp;&nbsp;Excel出力&nbsp;&nbsp;</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                        </div>
+                    </div>
+                </div>
+            </div>

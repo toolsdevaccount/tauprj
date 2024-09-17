@@ -230,7 +230,9 @@ def getcolor(pk):
             ' ( '
             '  SELECT '
             '	 a.id			                                                        AS id '
-            '	,concat(substr(b.McdColorNumber,1,8)," ",substr(b.McdColor,1,8))        AS color '
+            #'	,concat(substr(b.McdColorNumber,1,8)," ",substr(b.McdColor,1,8))        AS color '
+            # カラーのみ
+            '	,substr(b.McdColor,1,20)                                                AS color '
             '	,substr(c.McdSize,1,7)			                                        AS size ' 
             '	,max(a.PodVolume) 	                                                    AS max_value '
             '  	,substr(b.McdColorNumber,1,6)                                           AS colorNumber '

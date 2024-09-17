@@ -260,13 +260,16 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     itemNo17total = 0
 
     style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_CENTER)
+    #フォントサイズ8
+    style8 = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=8, alignment=TA_LEFT)
     styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_LEFT)
     styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
 
     for i in range(9):
         if i<l:
             row = dtcolor[i]
-            itemNo11 = Paragraph(row[0],styleLeft)
+            #itemNo11 = Paragraph(row[0],styleLeft)
+            itemNo11 = Paragraph(row[0],style8)
             item = row[2]
             Vol = item.split(',')
             col = len(Vol)

@@ -3,7 +3,7 @@ from django.urls import path
 from . views import viewscustomer, viewsinit,viewsordering, viewsmerchandise, viewsproductorder, viewsdeposit, viewspayment, viewsrequestresult
 from . views import viewsdailyupdate, viewsindividualinvoice, viewsinvoice, viewsCustomerMonthly, viewsSupplierMonthly
 from . views import viewsRequestCumulativelist, viewsSalesLedger, viewsPurchaseLedger, viewsunpaid, viewsUnPaidView, viewsUnPaidList
-from . views import viewsSalesPersonList, viewshistory, viewsstock
+from . views import viewsSalesPersonList, viewshistory, viewsstock, viewscontract
 from . output import viewspopdf, viewsProductPdf, viewsindiinvoicepdf, viewsinvoicepdf, viewsCustomerMonthlypdf
 from . output import viewsSupplierMonthlypdf, viewsRequestCumulativepdf, viewsSalesLedgerpdf, viewsPurchaseLedgerpdf, viewsUnPaidListpdf
 from . output import viewsSalesPersonpdf
@@ -147,6 +147,12 @@ urlpatterns = [
     path('history/list/', viewshistory.HistoryListView.as_view(), name='historylist'),
     # 履歴明細
     path('history/detail/<int:pk>/', viewshistory.HistoryDetailView.as_view(), name='historydetail'),
+    # 月末契約残管理
+    path('contract/', viewscontract.ContractManageView.as_view(), name='contract'),
+    # 契約残抽出
+    path('contract/list/<int:TargetMonth>/<int:ManagerCode>', viewscontract.ContractManageView.List, name='contractlist'),
+    # Excel出力処理
+    path('contract/Excel/<int:TargetMonth>/<int:ManagerCode>', viewscontract.ContractManageView.excel_output, name='excel_output'),
 
     # 在庫一覧
     path('stock/list/', viewsstock.StockListView.as_view(), name='stocklist'),
