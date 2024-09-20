@@ -223,8 +223,8 @@ def getcolor(pk):
     sql = (
             ' select '
             '	  color '
-            '    ,group_concat(size order by size) key_list ' 
-            '    ,group_concat(max_value order by size) value_list '
+            '    ,group_concat(size order by id,size) key_list ' 
+            '    ,group_concat(max_value order by id,size) value_list '
             '    ,colorNumber '
             ' from '
             ' ( '

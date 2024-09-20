@@ -10,6 +10,8 @@ from imagekit.processors import ResizeToFill
 
 import os
 from django.core.exceptions import ValidationError
+# 全角半角判定
+import unicodedata
 
 MAX_SIZE = 2 * 1000 * 1000
 
@@ -17,6 +19,22 @@ MAX_SIZE = 2 * 1000 * 1000
 def validate_max_size(value):
     if value.size > MAX_SIZE:
         raise ValidationError( "ファイルサイズが上限(" + str(MAX_SIZE/1000000) + "MB)を超えています。送信されたファイルサイズ: " + str(value.size/1000000) + "MB")
+
+# 全角チェック
+def validate_full_width_character(value):
+    charactor = str(value.name)
+    text_counter = 0
+    for width_character in charactor:
+        j = unicodedata.east_asian_width(width_character)
+        if 'F' == j:
+            text_counter = 1
+        elif 'W' == j:
+            text_counter = 1
+        elif 'A' == j:
+            text_counter = 1
+
+    if text_counter == 1:
+        raise ValidationError( "ファイル名に全角が含まれています")
 
 # Create your models here.
 class prefecture(models.Model):
@@ -359,7 +377,7 @@ class MerchandiseDetail(models.Model):
 # 商品マスターアップロードファイルテーブル
 class MerchandiseFileUpload(models.Model):
     McdDtuploadid = models.ForeignKey(Merchandise, on_delete=models.PROTECT, blank=True, null=True, related_name='McdDtuploadid', verbose_name="商品マスタid")
-    uploadPath = models.ImageField(upload_to='photos/%Y/%m/%d',blank=True, null=True, validators=[validate_max_size], verbose_name="アップロードファイルパス")
+    uploadPath = models.ImageField(upload_to='photos/%Y/%m/%d',blank=True, null=True, validators=[validate_max_size,validate_full_width_character], verbose_name="アップロードファイルパス")
     #middle = ImageSpecField(source='uploadPath', processors=[ResizeToFill(600, 600)], format="JPEG", options={'quality': 75})
     middle = ImageSpecField(source='uploadPath', processors=[ResizeToFill(600, 400)],  format="JPEG",  options={'quality': 75})  
     Created_id = models.BigIntegerField(null=False,blank=True,default=0,verbose_name="登録者id")

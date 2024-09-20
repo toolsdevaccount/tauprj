@@ -31,7 +31,9 @@
 								</div>
 							</td>
 							<td class="text-center">
-								<button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-html="true" data-placement="right" title="画像<br><img src={{ image.middle.url }}>">
+								<button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-html="true" data-placement="right" title="画像<br><img src={{ image.middle.url }} width='400' height='300' alt style='width: 50px; height: auto;'>">
+								<!-- <button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-html="true" data-placement="right" title="画像<br><img src={{ MEDIA_URL }}>{{ image.picture }}"> -->
+								<!-- <button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-html="true" data-placement="right" title="画像<br><img src='/media/{{ form.uploadPath.value }}' width='400' height='300' alt style='width: 50px; height: auto;'>"> -->
 									画像を表示
 								</button>
 								<!-- <a href="/media/{{ form.uploadPath.value }}" target="_blank" rel="noopener noreferrer">{{ form.uploadPath.value | default_if_none:'' }}</a> -->
