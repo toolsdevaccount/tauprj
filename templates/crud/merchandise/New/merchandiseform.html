@@ -12,8 +12,8 @@
 	<div class="form-group">
         <form method="post" id="form" enctype="multipart/form-data">
             {% csrf_token %}
-            <div style="height: 30px;">
-                <div class="w-50 h-25 mx-auto">
+            <div style="height: 40px;">
+                <div class="w-50 h-15 mx-auto">
                     {% if messages %}
                     <ul class="messages_ul">
                         {% for message in messages %}
@@ -27,185 +27,199 @@
                     {% endif %}
                 </div>
             </div>
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
-                <a class="nav-link active" id="item1-tab" data-toggle="tab" href="#item1" role="tab" aria-controls="item1" aria-selected="true">基本情報</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" id="item2-tab" data-toggle="tab" href="#item2" role="tab" aria-controls="item2" aria-selected="false">商品明細</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="item3-tab" data-toggle="tab" href="#item3" role="tab" aria-controls="item3" aria-selected="false">カラー</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="item4-tab" data-toggle="tab" href="#item4" role="tab" aria-controls="item4" aria-selected="false">サイズ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="item5-tab" data-toggle="tab" href="#item5" role="tab" aria-controls="item5" aria-selected="false">画像添付</a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab">
-                    <div class="card-body">
-                        <div class="form-row">
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdTreatmentCode">扱区分</label>
-                                {% if form.errors.McdTreatmentCode %}
-                                {% for error in form.errors.McdTreatmentCode %}
-                                <select class="custom-select is-invalid" name="McdTreatmentCode" id="id_McdTreatmentCode">
-                                    {% for data in form.McdTreatmentCode %}
-                                    {{ data }}
+            <div class="card mx-auto" style="width: 80rem;">
+                <div class="card-header">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                        <a class="nav-link active" id="item1-tab" data-toggle="tab" href="#item1" role="tab" aria-controls="item1" aria-selected="true">基本情報</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" id="item2-tab" data-toggle="tab" href="#item2" role="tab" aria-controls="item2" aria-selected="false">商品明細</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="item3-tab" data-toggle="tab" href="#item3" role="tab" aria-controls="item3" aria-selected="false">カラー</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="item4-tab" data-toggle="tab" href="#item4" role="tab" aria-controls="item4" aria-selected="false">サイズ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="item5-tab" data-toggle="tab" href="#item5" role="tab" aria-controls="item5" aria-selected="false">画像添付</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="item1" role="tabpanel" aria-labelledby="item1-tab">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdTreatmentCode">扱区分</label>
+                                    {% if form.errors.McdTreatmentCode %}
+                                    {% for error in form.errors.McdTreatmentCode %}
+                                    <select class="custom-select is-invalid" name="McdTreatmentCode" id="id_McdTreatmentCode">
+                                        {% for data in form.McdTreatmentCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <select class="custom-select" name="McdTreatmentCode" id="id_McdTreatmentCode">
-                                    {% for data in form.McdTreatmentCode %}
-                                    {{ data }}
+                                    {% else %}
+                                    <select class="custom-select" name="McdTreatmentCode" id="id_McdTreatmentCode">
+                                        {% for data in form.McdTreatmentCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdManagerCode">担当者</label>
+                                    {% if form.errors.McdManagerCode %}
+                                    {% for error in form.errors.McdManagerCode %}
+                                    <select class="custom-select is-invalid" name="McdManagerCode" id="id_McdManagerCode">
+                                        {% for data in form.McdManagerCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                {% endif %}
+                                    {% else %}
+                                    <select class="custom-select" name="McdManagerCode" id="id_McdManagerCode">
+                                        {% for data in form.McdManagerCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdManagerCode">担当者</label>
-                                {% if form.errors.McdManagerCode %}
-                                {% for error in form.errors.McdManagerCode %}
-                                <select class="custom-select is-invalid" name="McdManagerCode" id="id_McdManagerCode">
-                                    {% for data in form.McdManagerCode %}
-                                    {{ data }}
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdTempPartNumber">仮品番</label>
+                                    {% if form.errors.McdTempPartNumber %}
+                                    {% for error in form.errors.McdTempPartNumber %}
+                                    <input type="tel" class="form-control is-invalid" autocomplete="new-password" name="McdTempPartNumber" id="id_McdTempPartNumber" value="{{ form.McdTempPartNumber.value | default_if_none:'' }}">
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <select class="custom-select" name="McdManagerCode" id="id_McdManagerCode">
-                                    {% for data in form.McdManagerCode %}
-                                    {{ data }}
+                                    {% else %}
+                                    <input type="tel" class="form-control" autocomplete="new-password" name="McdTempPartNumber" id="id_McdTempPartNumber" value="{{ form.McdTempPartNumber.value | default_if_none:'' }}">
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdPartNumber">本品番</label>
+                                    {% if form.errors.McdPartNumber %}
+                                    {% for error in form.errors.McdPartNumber %}
+                                    <input type="tel" class="form-control is-invalid" autocomplete="new-password" name="McdPartNumber" id="id_McdPartNumber" value="{{ form.McdPartNumber.value | default:"" }}">
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                {% endif %}
+                                    {% else %}
+                                    <input type="tel" class="form-control" autocomplete="new-password" name="McdPartNumber" id="id_McdPartNumber" value="{{ form.McdPartNumber.value | default:"" }}">
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdTempPartNumber">仮品番</label>
-                                {% if form.errors.McdTempPartNumber %}
-                                {% for error in form.errors.McdTempPartNumber %}
-                                <input type="tel" class="form-control is-invalid" autocomplete="new-password" name="McdTempPartNumber" id="id_McdTempPartNumber" value="{{ form.McdTempPartNumber.value | default_if_none:'' }}">
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <input type="tel" class="form-control" autocomplete="new-password" name="McdTempPartNumber" id="id_McdTempPartNumber" value="{{ form.McdTempPartNumber.value | default_if_none:'' }}">
-                                {% endif %}
-                            </div>
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdPartNumber">本品番</label>
-                                {% if form.errors.McdPartNumber %}
-                                {% for error in form.errors.McdPartNumber %}
-                                <input type="tel" class="form-control is-invalid" autocomplete="new-password" name="McdPartNumber" id="id_McdPartNumber" value="{{ form.McdPartNumber.value | default:"" }}">
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <input type="tel" class="form-control" autocomplete="new-password" name="McdPartNumber" id="id_McdPartNumber" value="{{ form.McdPartNumber.value | default:"" }}">
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-2">
-                                <label for="id_ProductName">仕入単価</label>
-                                {% if form.errors.ProductName %}
-                                {% for error in form.errors.ProductName %}
-                                <input type="tel" step="0.1" class="form-control is-invalid McdUnitPrice" autocomplete="new-password" name="McdUnitPrice" id="id_McdUnitPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdUnitPrice.value | default:"0"  }}">
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <input type="tel" step="0.1" class="form-control McdUnitPrice" autocomplete="new-password" name="McdUnitPrice" id="id_McdUnitPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdUnitPrice.value | default:"0"  }}">
-                                {% endif %}
-                            </div>
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdUnitCode">仕入単位</label>
-                                {% if form.errors.McdUnitCode %}
-                                {% for error in form.errors.McdUnitCode %}
-                                <select class="custom-select is-invalid" name="McdUnitCode" id="id_McdUnitCode">
-                                    {% for data in form.McdUnitCode %}
-                                    {{ data }}
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="id_ProductName">仕入単価</label>
+                                    {% if form.errors.ProductName %}
+                                    {% for error in form.errors.ProductName %}
+                                    <input type="tel" step="0.1" class="form-control is-invalid McdUnitPrice" autocomplete="new-password" name="McdUnitPrice" id="id_McdUnitPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdUnitPrice.value | default:"0"  }}">
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <select class="custom-select" name="McdUnitCode" id="id_McdUnitCode">
-                                    {% for data in form.McdUnitCode %}
-                                    {{ data }}
+                                    {% else %}
+                                    <input type="tel" step="0.1" class="form-control McdUnitPrice" autocomplete="new-password" name="McdUnitPrice" id="id_McdUnitPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdUnitPrice.value | default:"0"  }}">
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdUnitCode">仕入単位</label>
+                                    {% if form.errors.McdUnitCode %}
+                                    {% for error in form.errors.McdUnitCode %}
+                                    <select class="custom-select is-invalid" name="McdUnitCode" id="id_McdUnitCode">
+                                        {% for data in form.McdUnitCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                {% endif %}
+                                    {% else %}
+                                    <select class="custom-select" name="McdUnitCode" id="id_McdUnitCode">
+                                        {% for data in form.McdUnitCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdSellPrice">販売単価</label>
-                                {% if form.errors.McdSellPrice %}
-                                {% for error in form.errors.McdSellPrice %}
-                                <input type="tel" class="form-control is-invalid McdSellPrice" autocomplete="new-password" name="McdSellPrice" id="id_McdSellPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdSellPrice.value | default:"0" }}">
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <input type="tel" class="form-control McdSellPrice" autocomplete="new-password" name="McdSellPrice" id="id_McdSellPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdSellPrice.value | default:"0" }}">
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdProcessfee">加工賃</label>
-                                {% if form.errors.McdProcessfee %}
-                                {% for error in form.errors.McdProcessfee %}
-                                <input type="tel" class="form-control is-invalid McdProcessfee" autocomplete="new-password" name="McdProcessfee" id="id_McdProcessfee" style="text-align: right;" onInput="checkForm(this)" onchange="comma(this);" value="{{ form.McdProcessfee.value | default:"0" }}">
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <input type="tel" class="form-control McdProcessfee" autocomplete="new-password" name="McdProcessfee" id="id_McdProcessfee" style="text-align: right;" onInput="checkForm(this)" onchange="comma(this);" value="{{ form.McdProcessfee.value | default:"0" }}">
-                                {% endif %}
-                            </div>
-                            <div class="form-group col-sm-2">
-                                <label for="id_McdProcessCode">加工単位</label>
-                                {% if form.errors.McdProcessCode %}
-                                {% for error in form.errors.McdProcessCode %}
-                                <select class="custom-select is-invalid" name="McdProcessCode" id="id_McdProcessCode">
-                                    {% for data in form.McdProcessCode %}
-                                    {{ data }}
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdSellPrice">販売単価</label>
+                                    {% if form.errors.McdSellPrice %}
+                                    {% for error in form.errors.McdSellPrice %}
+                                    <input type="tel" class="form-control is-invalid McdSellPrice" autocomplete="new-password" name="McdSellPrice" id="id_McdSellPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdSellPrice.value | default:"0" }}">
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                                {% else %}
-                                <select class="custom-select" name="McdProcessCode" id="id_McdProcessCode">
-                                    {% for data in form.McdProcessCode %}
-                                    {{ data }}
+                                    {% else %}
+                                    <input type="tel" class="form-control McdSellPrice" autocomplete="new-password" name="McdSellPrice" id="id_McdSellPrice" style="text-align: right;" onchange="comma(this);" value="{{ form.McdSellPrice.value | default:"0" }}">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdProcessfee">加工賃</label>
+                                    {% if form.errors.McdProcessfee %}
+                                    {% for error in form.errors.McdProcessfee %}
+                                    <input type="tel" class="form-control is-invalid McdProcessfee" autocomplete="new-password" name="McdProcessfee" id="id_McdProcessfee" style="text-align: right;" onInput="checkForm(this)" onchange="comma(this);" value="{{ form.McdProcessfee.value | default:"0" }}">
+                                    <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </select>
-                                {% endif %}
+                                    {% else %}
+                                    <input type="tel" class="form-control McdProcessfee" autocomplete="new-password" name="McdProcessfee" id="id_McdProcessfee" style="text-align: right;" onInput="checkForm(this)" onchange="comma(this);" value="{{ form.McdProcessfee.value | default:"0" }}">
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-sm-3">
+                                    <label for="id_McdProcessCode">加工単位</label>
+                                    {% if form.errors.McdProcessCode %}
+                                    {% for error in form.errors.McdProcessCode %}
+                                    <select class="custom-select is-invalid" name="McdProcessCode" id="id_McdProcessCode">
+                                        {% for data in form.McdProcessCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <select class="custom-select" name="McdProcessCode" id="id_McdProcessCode">
+                                        {% for data in form.McdProcessCode %}
+                                        {{ data }}
+                                        {% endfor %}
+                                    </select>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane" id="item2" role="tabpanel" aria-labelledby="item2-tab">
+                        <div class="card-body">
+                            {% include "crud/merchandise/new/merchandisetable.html" %}
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="item3" role="tabpanel" aria-labelledby="item3-tab">
+                        <div class="card-body">
+                            {% include "crud/merchandise/new/merchandisecolor.html" %}
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="item4" role="tabpanel" aria-labelledby="item4-tab">
+                        <div class="card-body">
+                            {% include "crud/merchandise/new/merchandisesize.html" %}
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="item5" role="tabpanel" aria-labelledby="item5-tab">
+                        <div class="card-body">
+                            {% include "crud/merchandise/new/merchandisefile.html" %}
+                        </div>
+                    </div>
                 </div>
-                <div class="tab-pane" id="item2" role="tabpanel" aria-labelledby="item2-tab">
-                    {% include "crud/merchandise/new/merchandisetable.html" %}
+                <div class="card-footer">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-info btn-sm">&nbsp;&nbsp;登&nbsp;&nbsp;録&nbsp;&nbsp;</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{% url 'myapp:merchandiselist' %}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+                    </div>
                 </div>
-                <div class="tab-pane" id="item3" role="tabpanel" aria-labelledby="item3-tab">
-                    {% include "crud/merchandise/new/merchandisecolor.html" %}
-                </div>
-                <div class="tab-pane" id="item4" role="tabpanel" aria-labelledby="item4-tab">
-                    {% include "crud/merchandise/new/merchandisesize.html" %}
-                </div>
-                <div class="tab-pane" id="item5" role="tabpanel" aria-labelledby="item5-tab">
-                    {% include "crud/merchandise/new/merchandisefile.html" %}
-                </div>
-            </div>
-            <div class="text-right">
-                <button type="submit" class="btn btn-info btn-sm">&nbsp;&nbsp;登&nbsp;&nbsp;録&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{% url 'myapp:merchandiselist' %}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
             </div>
         </form>
     </div>
