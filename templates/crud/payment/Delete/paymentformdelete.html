@@ -26,11 +26,14 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="tab-content">
-                <div>
+            <div class="card mx-auto" style="width: 60rem;">
+                <div class="card-header">
+                    支払情報削除
+                </div>
+                <div class="tab-content">
                     <div class="card-body">
                         <div class="form-row">
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_PaymentDate">支払日</label>
                                 {% if form.errors.PaymentDate %}
                                 {% for error in form.errors.PaymentDate %}
@@ -41,7 +44,7 @@
                                     <input type="tel" class="form-control flatpickr" autocomplete="new-password" name="PaymentDate" id="id_PaymentDate" value="{{ object.PaymentDate }}" style="pointer-events: none;" tabindex="-1">
                                 {% endif %}
                             </div>
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_PaymentSupplierCode">支払先</label>
                                 {% if form.errors.PaymentSupplierCode %}
                                 {% for error in form.errors.PaymentSupplierCode %}
@@ -65,7 +68,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_PaymentMoney">支払金額</label>
                                 {% if form.errors.PaymentMoney %}
                                 {% for error in form.errors.PaymentMoney %}
@@ -76,7 +79,7 @@
                                 <input type="text" class="form-control text-right PaymentMoney" autocomplete="new-password" name="PaymentMoney" id="id_PaymentMoney" onchange="comma(this);" value="{{ object.PaymentMoney | intcomma }}" readonly>
                                 {% endif %}
                             </div>
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_PaymentDiv">支払区分</label>
                                 <select class="custom-select" name="PaymentDiv" id="id_PaymentDiv" style="pointer-events: none;" tabindex="-1">
                                     {% for data in form.PaymentDiv %}
@@ -86,7 +89,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-sm-4">
+                            <div class="form-group col-sm-8">
                                 <label for="id_PaymentSummary">摘要</label>
                                 {% if form.errors.PaymentSummary %}
                                 {% for error in form.errors.PaymentSummary %}
@@ -100,67 +103,69 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            {% block extrajs %}
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-            <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-            {% load static %}
-            <script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
-            {% endblock %}       
-            <div class="text-right">
-                <button type="button" id="modalOpen" class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#modal">&nbsp;&nbsp;削&nbsp;&nbsp;除&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{{ request.META.HTTP_REFERER }}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
-            </div>
-            <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="label1">削除</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            削除してよろしいですか
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="delete" class="btn btn-danger">削除</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">中止</button>
+                {% block extrajs %}
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+                <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+                {% load static %}
+                <script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+                {% endblock %}       
+                <div class="card-footer">
+                    <div class="text-right">
+                        <button type="button" id="modalOpen" class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#modal">&nbsp;&nbsp;削&nbsp;&nbsp;除&nbsp;&nbsp;</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{{ request.META.HTTP_REFERER }}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+                    </div>
+                </div>
+                <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="label1">削除</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                削除してよろしいですか
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="delete" class="btn btn-danger">削除</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">中止</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <script>
-                var btn = document.getElementById('modalOpen');
-                var cls = document.getElementById('modalClose');
-                var dlt = document.getElementById('delete');
-                var modal = document.getElementsByClassName('modal fade');
+                <script>
+                    var btn = document.getElementById('modalOpen');
+                    var cls = document.getElementById('modalClose');
+                    var dlt = document.getElementById('delete');
+                    var modal = document.getElementsByClassName('modal fade');
 
-                btn.addEventListener('click', function() {
-                    for(i=0;i<modal.length;i++){
-                        modal[i].style.opacity = '1';
-                        modal[i].style.visibility = 'visible';
+                    btn.addEventListener('click', function() {
+                        for(i=0;i<modal.length;i++){
+                            modal[i].style.opacity = '1';
+                            modal[i].style.visibility = 'visible';
+                        }
+                    })
+
+                    dlt.addEventListener('click', function() {
+                        // submit前にカンマをはずす
+                        var PaymentMoney = removeComma($(".PaymentMoney").val());
+
+                        $(".PaymentMoney").val(PaymentMoney);
+                        document.delform.submit();
+                    })
+                    function removeComma(number) {
+                        var removed = number.replace(/,/g, '');
+                        return parseInt(removed, 10);
                     }
-                })
-
-                dlt.addEventListener('click', function() {
-                    // submit前にカンマをはずす
-                    var PaymentMoney = removeComma($(".PaymentMoney").val());
-
-                    $(".PaymentMoney").val(PaymentMoney);
-                    document.delform.submit();
-                })
-                function removeComma(number) {
-                    var removed = number.replace(/,/g, '');
-                    return parseInt(removed, 10);
-                }
-            </script>
-        </div>
-    </form>
+                </script>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

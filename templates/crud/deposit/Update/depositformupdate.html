@@ -11,7 +11,7 @@
     </nav>
 	<div class="form-group">
         <form method="post" id="form">{% csrf_token %}
-            <div style="height: 30px;">
+            <div style="height: 80px;">
                 <div class="w-50 h-25 mx-auto">
                     {% if messages %}
                     <ul class="messages_ul">
@@ -26,11 +26,14 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="tab-content">
-                <div>
+            <div class="card mx-auto" style="width: 60rem;">
+                <div class="card-header">
+                    入金情報変更
+                </div>
+                <div class="tab-content">
                     <div class="card-body">
                         <div class="form-row">
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_DepositDate">入金日</label>
                                 {% if form.errors.DepositDate %}
                                 {% for error in form.errors.DepositDate %}
@@ -41,7 +44,7 @@
                                     <input type="tel" class="form-control flatpickr" autocomplete="new-password" name="DepositDate" id="id_DepositDate" value="{{ form.DepositDate.value }}">
                                 {% endif %}
                             </div>
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_DepositCustomerCode">得意先</label>
                                 {% if form.errors.DepositCustomerCode %}
                                 {% for error in form.errors.DepositCustomerCode %}
@@ -65,7 +68,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_DepositMoney">入金金額</label>
                                 {% if form.errors.DepositMoney %}
                                 {% for error in form.errors.DepositMoney %}
@@ -76,7 +79,7 @@
                                 <input type="text" class="form-control text-right DepositMoney" autocomplete="new-password" name="DepositMoney" id="id_DepositMoney" onchange="comma(this);" value="{{ form.DepositMoney.value | intcomma }}">
                                 {% endif %}
                             </div>
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <label for="id_DepositDiv">入金区分</label>
                                 <select class="custom-select" name="DepositDiv" id="id_DepositDiv">
                                     {% for data in form.DepositDiv %}
@@ -86,7 +89,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-sm-4">
+                            <div class="form-group col-sm-8">
                                 <label for="id_DepositSummary">摘要</label>
                                 {% if form.errors.DepositSummary %}
                                 {% for error in form.errors.DepositSummary %}
@@ -100,22 +103,24 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            {% block extrajs %}
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-            <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-            {% load static %}
-            <script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
-            <script src="{% static '\js\commadepopay.js' %}" charset="UTF-8"></script>
-            {% endblock %}       
-            <div class="text-right">
-                <button type="submit" class="btn btn-info btn-sm">&nbsp;&nbsp;保&nbsp;&nbsp;存&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{{ request.META.HTTP_REFERER }}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+                {% block extrajs %}
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+                <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+                {% load static %}
+                <script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\datalist.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+                <script src="{% static '\js\commadepopay.js' %}" charset="UTF-8"></script>
+                {% endblock %}       
+                <div class="card-footer">      
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-info btn-sm">&nbsp;&nbsp;保&nbsp;&nbsp;存&nbsp;&nbsp;</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{{ request.META.HTTP_REFERER }}'">&nbsp;&nbsp;中&nbsp;&nbsp;止&nbsp;&nbsp;</button>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
