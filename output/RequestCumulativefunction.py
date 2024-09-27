@@ -22,6 +22,10 @@ def printstring(pdf_canvas, dt, serch_date):
     #ページ数
     req = math.ceil(rec/param)
     k = 0
+    #合計
+    Sell=0
+    Supplier=0
+    Gross=0
 
     for i in range(req):
         # 集計開始年月日
@@ -76,9 +80,6 @@ def printstring(pdf_canvas, dt, serch_date):
         table.drawOn(pdf_canvas, 10*mm, 265.0*mm)
 
         data =[]
-        Sell=0
-        Supplier=0
-        Gross=0
         styleLeft = ParagraphStyle(name='Normal', fontName='游明朝 標準', fontSize=9, alignment=TA_LEFT)
         styleRight = ParagraphStyle(name='Normal', fontName='游明朝 標準', fontSize=9, alignment=TA_RIGHT)
 
