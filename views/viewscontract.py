@@ -205,16 +205,17 @@ def treatment(TargetMonth, ManagerCode):
         temptable.append(q)
         for d in OrderDetail_row:
             if SlipDiv=="B" and OrderNumber == d['OrderingTableId__OrderNumber'] and d['OrderingTableId__SlipDiv'] == 'S':
+                #Bの仕入単価保存
+                PUnitPrice=q['DetailUnitPrice']
                 #Sの仕入単価をBの仕入単価に設定
-                q['ProcessingUnitPrice']=q['DetailUnitPrice']
+                q['DetailUnitPrice']=d['DetailUnitPrice']
                 #仕入単価再計算
                 UnitPrice=q['DetailUnitPrice'] 
                 PuchasePrice=int(total)*int(UnitPrice)
                 q['PurchasePrice']=PuchasePrice
                 #Bの仕入単価をBの加工単価に設定
-                q['ProcessingUnitPrice']=d['DetailUnitPrice']
+                q['ProcessingUnitPrice']=PUnitPrice
                 #加工単価計算
-                PUnitPrice=d['DetailUnitPrice']
                 ProcessingAmount=int(total)*int(PUnitPrice)
                 q['ProcessingAmount']=ProcessingAmount
                 #粗利再計算

@@ -53,8 +53,8 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.drawString(410, 740, contents)
 
     # ロゴ追加
-    #img = './mysite/myapp/templates/image/image1.jpg'
-    img = './static/image/image1.jpg'
+    img = './mysite/myapp/templates/image/image1.jpg'
+    #img = './static/image/image1.jpg'
     pdf_canvas.drawImage(img, 165*mm, 258*mm , 45.0*mm, 12.0*mm)
 
     pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
@@ -176,7 +176,6 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
             else:
                 DtlPrice = Paragraph(row[30] + row[15],styleRight)
 
-            #DtlPrice = Paragraph(row[30] + row[15],styleRight)
             data += [
                     [ProductName, OrderingCount, StainMixRatio, DtlPrice, UnitDiv],
             ]
@@ -268,7 +267,6 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     for i in range(9):
         if i<l:
             row = dtcolor[i]
-            #itemNo11 = Paragraph(row[0],styleLeft)
             itemNo11 = Paragraph(row[0],style8)
             item = row[2]
             Vol = item.split(',')
@@ -289,7 +287,7 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
                     if Vol[0]=='0':   #0を空白に変換する
                         itemNo12 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo12 = Paragraph(f"{int(Vol[0]):,}",styleRight)
+                        itemNo12 = Paragraph(f"{Decimal(Vol[0]):,}",styleRight)
 
                     total += Decimal(Vol[0])
                     itemNo12total += Decimal(Vol[0])
@@ -297,38 +295,38 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
                     if Vol[1]=='0':   #0を空白に変換する
                         itemNo13 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo13 = Paragraph(f"{int(Vol[1]):,}",styleRight)
+                        itemNo13 = Paragraph(f"{Decimal(Vol[1]):,}",styleRight)
                     total += Decimal(Vol[1])
                     itemNo13total += Decimal(Vol[1])
                 if k==2:
                     if Vol[2]=='0':   #0を空白に変換する   
                         itemNo14 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo14 = Paragraph(f"{int(Vol[2]):,}",styleRight)
+                        itemNo14 = Paragraph(f"{Decimal(Vol[2]):,}",styleRight)
                     total += Decimal(Vol[2])
                     itemNo14total += Decimal(Vol[2])
                 if k==3:
                     if Vol[3]=='0':   #0を空白に変換する
                         itemNo15 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo15 = Paragraph(f"{int(Vol[3]):,}",styleRight)
+                        itemNo15 = Paragraph(f"{Decimal(Vol[3]):,}",styleRight)
                     total += Decimal(Vol[3])
                     itemNo15total += Decimal(Vol[3])
                 if k==4:
                     if Vol[4]=='0':   #0を空白に変換する   
                         itemNo16 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo16 = Paragraph(f"{int(Vol[4]):,}",styleRight)
+                        itemNo16 = Paragraph(f"{Decimal(Vol[4]):,}",styleRight)
                     total += Decimal(Vol[4])
                     itemNo16total += Decimal(Vol[4])
                 if k==5:   
                     if Vol[5]=='0':   #0を空白に変換する   
                         itemNo17 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo17 = Paragraph(f"{int(Vol[5]):,}",styleRight)
+                        itemNo17 = Paragraph(f"{Decimal(Vol[5]):,}",styleRight)
                     total += Decimal(Vol[5])
                     itemNo17total += Decimal(Vol[5])
-            detailtotal = Paragraph(f"{int(total):,}",styleRight)
+            detailtotal = Paragraph(f"{Decimal(total):,}",styleRight)
             data += [
                 [itemNo11,itemNo12,itemNo13,itemNo14,itemNo15,itemNo16,itemNo17,detailtotal] ,
             ]
@@ -336,35 +334,35 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
             if i==8:
                 # 総合計の計算
                 itemtotal = Decimal(itemNo12total) + Decimal(itemNo13total) + Decimal(itemNo14total) + Decimal(itemNo15total) + Decimal(itemNo16total) + Decimal(itemNo17total)
-                itemtotal = Paragraph(f"{int(itemtotal):,}",styleRight)
+                itemtotal = Paragraph(f"{Decimal(itemtotal):,}",styleRight)
                 # 指定した列の右寄せ
                 if Decimal(itemNo12total) != 0:
-                    itemNo12total = Paragraph(f"{int(itemNo12total):,}",styleRight)
+                    itemNo12total = Paragraph(f"{Decimal(itemNo12total):,}",styleRight)
                 else:
                     itemNo12total = ''
 
                 if Decimal(itemNo13total) != 0:
-                    itemNo13total = Paragraph(f"{int(itemNo13total):,}",styleRight)
+                    itemNo13total = Paragraph(f"{Decimal(itemNo13total):,}",styleRight)
                 else:
                     itemNo13total = ''
 
                 if Decimal(itemNo14total) != 0:
-                    itemNo14total = Paragraph(f"{int(itemNo14total):,}",styleRight)
+                    itemNo14total = Paragraph(f"{Decimal(itemNo14total):,}",styleRight)
                 else:
                     itemNo14total = ''
 
                 if Decimal(itemNo15total) != 0:
-                    itemNo15total = Paragraph(f"{int(itemNo15total):,}",styleRight)
+                    itemNo15total = Paragraph(f"{Decimal(itemNo15total):,}",styleRight)
                 else:
                     itemNo15total = ''
 
                 if Decimal(itemNo16total) != 0:
-                    itemNo16total = Paragraph(f"{int(itemNo16total):,}",styleRight)
+                    itemNo16total = Paragraph(f"{Decimal(itemNo16total):,}",styleRight)
                 else:
                     itemNo16total = ''
 
                 if Decimal(itemNo17total) != 0:
-                    itemNo17total = Paragraph(f"{int(itemNo17total):,}",styleRight)
+                    itemNo17total = Paragraph(f"{Decimal(itemNo17total):,}",styleRight)
                 else:
                     itemNo17total = ''
 
