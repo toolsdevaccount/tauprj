@@ -206,11 +206,9 @@ def PrevBalance(search_date, Customer):
                     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
                 )
 
-    #0判定
-    if SellPrvSum:
-        MoneyTotal = int(SellPrvSum[0]['Abs_total'])
-    else:
-        MoneyTotal = 0
+    MoneyTotal = 0
+    for d in SellPrvSum:
+        MoneyTotal+=int(d['Abs_total'])
 
     #残高消費税計算
     SellPrvTotal = 0
