@@ -287,46 +287,46 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
                     if Vol[0]=='0':   #0を空白に変換する
                         itemNo12 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo12 = Paragraph(f"{Decimal(Vol[0]):,}",styleRight)
+                        itemNo12 = Paragraph(f"{int(Decimal(Vol[0])):,}",styleRight)
 
-                    total += Decimal(Vol[0])
-                    itemNo12total += Decimal(Vol[0])
+                    total += int(Decimal(Vol[0]))
+                    itemNo12total += int(Decimal(Vol[0]))
                 if k==1:
                     if Vol[1]=='0':   #0を空白に変換する
                         itemNo13 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo13 = Paragraph(f"{Decimal(Vol[1]):,}",styleRight)
-                    total += Decimal(Vol[1])
-                    itemNo13total += Decimal(Vol[1])
+                        itemNo13 = Paragraph(f"{int(Decimal(Vol[1])):,}",styleRight)
+                    total += int(Decimal(Vol[1]))
+                    itemNo13total += int(Decimal(Vol[1]))
                 if k==2:
                     if Vol[2]=='0':   #0を空白に変換する   
                         itemNo14 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo14 = Paragraph(f"{Decimal(Vol[2]):,}",styleRight)
-                    total += Decimal(Vol[2])
-                    itemNo14total += Decimal(Vol[2])
+                        itemNo14 = Paragraph(f"{int(Decimal(Vol[2])):,}",styleRight)
+                    total += int(Decimal(Vol[2]))
+                    itemNo14total += int(Decimal(Vol[2]))
                 if k==3:
                     if Vol[3]=='0':   #0を空白に変換する
                         itemNo15 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo15 = Paragraph(f"{Decimal(Vol[3]):,}",styleRight)
-                    total += Decimal(Vol[3])
-                    itemNo15total += Decimal(Vol[3])
+                        itemNo15 = Paragraph(f"{int(Decimal(Vol[3])):,}",styleRight)
+                    total += int(Decimal(Vol[3]))
+                    itemNo15total += int(Decimal(Vol[3]))
                 if k==4:
                     if Vol[4]=='0':   #0を空白に変換する   
                         itemNo16 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo16 = Paragraph(f"{Decimal(Vol[4]):,}",styleRight)
-                    total += Decimal(Vol[4])
-                    itemNo16total += Decimal(Vol[4])
+                        itemNo16 = Paragraph(f"{int(Decimal(Vol[4])):,}",styleRight)
+                    total += int(Decimal(Vol[4]))
+                    itemNo16total += int(Decimal(Vol[4]))
                 if k==5:   
                     if Vol[5]=='0':   #0を空白に変換する   
                         itemNo17 = Paragraph(f" ",styleRight)
                     else:
-                        itemNo17 = Paragraph(f"{Decimal(Vol[5]):,}",styleRight)
-                    total += Decimal(Vol[5])
-                    itemNo17total += Decimal(Vol[5])
-            detailtotal = Paragraph(f"{Decimal(total):,}",styleRight)
+                        itemNo17 = Paragraph(f"{int(Decimal(Vol[5])):,}",styleRight)
+                    total += int(Decimal(Vol[5]))
+                    itemNo17total += int(Decimal(Vol[5]))
+            detailtotal = Paragraph(f"{int(Decimal(total)):,}",styleRight)
             data += [
                 [itemNo11,itemNo12,itemNo13,itemNo14,itemNo15,itemNo16,itemNo17,detailtotal] ,
             ]
