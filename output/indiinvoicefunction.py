@@ -187,7 +187,9 @@ def printstring(pdf_canvas,dt,dt_own):
                 if row['SellPrice'] == '0':
                     variPrice = ' '
                 else:
-                    variPrice = row['SellPrice']
+                    #variPrice = row['SellPrice']
+                    #2024-10-25 不具合発生により変更
+                    variPrice = int(row['SellPrice'])
 
                 SellPrice = Paragraph('{:,.0f}'.format(variPrice),styleRight)
 
