@@ -178,7 +178,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         # 出荷先住所
         font_size = 9
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(255, 425, dt[0]['ShippingCode__PostCode']) 
+        pdf_canvas.drawString(255, 425, '〒 ' + dt[0]['ShippingCode__PostCode']) 
         font_size = 9
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(310, 425, dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + 
