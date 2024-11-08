@@ -130,6 +130,7 @@ def printstring(pdf_canvas,dt,dt_own):
         data =[]
         l=len(dt)
         #total=0
+        styleLeftmin = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=8, alignment=TA_LEFT)
         styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_LEFT)
         styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
         styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_CENTER)
@@ -153,7 +154,10 @@ def printstring(pdf_canvas,dt,dt_own):
 
                 ShippingDate = Paragraph(ShippDate,styleCenter)
                 # 品名
-                ProductName = Paragraph(row['OrderingId__ProductName'],styleLeft)
+                if len(row['OrderingId__ProductName']) > 10:
+                    ProductName = Paragraph(row['OrderingId__ProductName'],styleLeftmin)
+                else:
+                    ProductName = Paragraph(row['OrderingId__ProductName'],styleLeft)
                 # 品番
                 ColorNumber = Paragraph(row['OrderingDetailId__DetailColorNumber'],styleLeft)
                 # 番手

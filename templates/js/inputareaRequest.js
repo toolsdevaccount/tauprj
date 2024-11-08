@@ -1,15 +1,5 @@
 $(function(){
-    $('#form').submit(function() {
-        //var DetailUnitPrice = removeComma($(".DetailUnitPrice").val());
-        //var DetailPrice = removeComma($(".DetailPrice").val());
-        //var DetailOverPrice = removeComma($(".DetailOverPrice").val());
-        //var DetailSellPrice = removeComma($(".DetailSellPrice").val());
-
-        //$(".DetailUnitPrice").val(DetailUnitPrice);
-        //$(".DetailPrice").val(DetailPrice);
-        //$(".DetailOverPrice").val(DetailOverPrice);
-        //$(".DetailSellPrice").val(DetailSellPrice);
-
+    $('#form').submit(function(event) {
         //フォームを送信する直前 tableの行数を取得
         var row = tblrow.rows.length -1;                    //表題分差引く
         $('[name=OrderingId-TOTAL_FORMS]').val(row);        // 行数を書き換えてPOST
@@ -19,14 +9,50 @@ $(function(){
         var tr = table.querySelectorAll("tr");
         for(var i = 0; i < tr.length; i++) {
             var item = tr[i].style.backgroundColor;
-            if(item=='rgb(238, 238, 255)'){
-                return;
-            }
         }
-        // 明細行が選択されていないとき       
-        alert("明細行が選択されていません.");
 
-        return false;
+        if(item==''){
+            alert("明細行が選択されていません.");
+            return false;   
+        }
+
+        event.preventDefault();
+        var form = $(this);
+        $.ajax({
+            url: form.prop('action'), 
+            method: form.prop('method'), 
+            data: form.serialize(), 
+            timeout: 10000, 
+            dataType: 'json', 
+        })
+        .done(function(received_data) {
+            var answer = received_data['answer'];
+
+            html = '';
+            html = html + '<li class="alert alert-success list-unstyled alert-dismissible fade show" role="alert" id="fadeout">' + answer ;
+            html = html + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+            html = html + '<span aria-hidden="true">&times;</span>';
+            html = html + '</button>';
+            html = html + '</li>';
+
+            $('#answer').html(html);
+
+            window.setTimeout("$('#fadeout').fadeOut()", 2000);
+        })
+
+        .fail(function(xhr) {
+            var answer = xhr.responseText;
+
+            html = '';
+            html = html + '<li class="alert alert-danger list-unstyled alert-dismissible fade show" role="alert" id="fadeout">' + answer ;
+            html = html + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+            html = html + '<span aria-hidden="true">&times;</span>';
+            html = html + '</button>';
+            html = html + '</li>';
+            $('#answer').html(html);
+
+            window.setTimeout("$('#fadeout').fadeOut()", 2000);
+        });
     });
 
     $('#list').addInputArea({

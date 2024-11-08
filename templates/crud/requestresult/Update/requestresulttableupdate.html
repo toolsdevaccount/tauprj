@@ -87,7 +87,6 @@
 		<div class="table-responsive table-container">
 			<div class="table-sticky-container-small">
 				<table class="table table-sticky-sm table-bordered" id="detailtblrow">
-					<!-- <thead class="thead-light"> -->
 					<thead>
 						<tr class="bg-info">
 							<th scope="col" class="text-center check">&nbsp&nbsp</th>
@@ -217,12 +216,8 @@
 						</tr>
 					</thead>
 					<tbody id="list">
-						{% for form in inlinesRecord %}
 						<tr class="list_var">
-							{% if form.id.value is not None %}
-							<!-- <input type="hidden" data-id-format="id_OrderingId-%d-DELETE" data-name-format="OrderingId-%d-DELETE" name="OrderingId-0-DELETE" id="id_OrderingId-0-DELETE"> -->
 							<input type="hidden" data-id-format="id_OrderingId-%d-id" data-name-format="OrderingId-%d-id" name="OrderingId-0-id" id="id_OrderingId-0-id" value="{{ form.id.value }}">
-							{% endif %}
 							<td id="detail">
 								<input type="hidden" data-id-format="id_OrderingId-%d-OrderingDetailId" data-name-format="OrderingId-%d-OrderingDetailId" name="OrderingId-0-OrderingDetailId" id="id_OrderingId-0-OrderingDetailId" value="{{ form.OrderingDetailId.value }}">
 							</td>
@@ -233,120 +228,49 @@
 							</td>
 							<td>
 								<div id="div" class="fds-table__td-content">
-								{% if form.errors.ResultItemNumber %}
-								{% for error in form.errors.ResultItemNumber %}
-									<input type="tel" class="form-control is-invalid ResultItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingId-%d-ResultItemNumber" data-name-format="OrderingId-%d-ResultItemNumber"
-									name="OrderingId-0-ResultItemNumber" id="id_OrderingId-0-ResultItemNumber" value="{{ form.ResultItemNumber.value  | default:'0001' }}">
-									<div class="invalid-feedback">{{ error }}</div>
-								{% endfor %}
-								{% else %}
 									<input type="tel" class="form-control ResultItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingId-%d-ResultItemNumber" data-name-format="OrderingId-%d-ResultItemNumber"
 									name="OrderingId-0-ResultItemNumber" id="id_OrderingId-0-ResultItemNumber" value="{{ form.ResultItemNumber.value  | default:'0001' }}">
-								{% endif %}
 								</div>
 							</td>
 							<td>
-								{% if form.errors.ResultDate %}
-								{% for error in form.errors.ResultDate %}
-									<input type="tel" class="form-control is-invalid ResultDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultDate" data-name-format="OrderingId-%d-ResultDate" 
-									name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value="{{ form.ResultDate.value | default:'' }}">                                   
-									<div class="invalid-feedback">{{ error }}</div>
-								{% endfor %}
-								{% else %}
-								{% if form.ResultDate.value == "2000-01-01" %}
 								<input type="tel" class="form-control ResultDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultDate" data-name-format="OrderingId-%d-ResultDate" 
-									name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value="{{ '' }}">                                   
-								{% else %}
-								<input type="tel" class="form-control ResultDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultDate" data-name-format="OrderingId-%d-ResultDate" 
-									name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value="{{ form.ResultDate.value | default:'' }}">                                   
-								{% endif %}
-								{% endif %}
+								name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value="{{ form.ResultDate.value | default:'' }}">                                   
 							</td>
 							<td>
-								{% if form.errors.ShippingDate %}
-								{% for error in form.errors.ShippingDate %}
-									<input type="tel" class="form-control is-invalid ShippingDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" 
-									name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value="{{ form.ShippingDate.value | default:'' }}">                                   
-									<div class="invalid-feedback">{{ error }}</div>
-								{% endfor %}
-								{% else %}
-								{% if form.ResultDate.value == "2000-01-01" %}
-									<input type="tel" class="form-control ShippingDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" 
-									name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value="{{ '' }}">
-								{% else %}
-									<input type="tel" class="form-control ShippingDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" 
-									name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value="{{ form.ShippingDate.value | default:'' }}">
-								{% endif %}
-								{% endif %}
+								<input type="tel" class="form-control ShippingDate flatpickr" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" 
+								name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value="{{ form.ShippingDate.value | default:'' }}">
 							</td>
 							<td>
-								{% if form.errors.ShippingVolume %}
-								{% for error in form.errors.ShippingVolume %}
-									<input type="tel" step="0.1" class="form-control is-invalid ShippingVolume text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingVolume" data-name-format="OrderingId-%d-ShippingVolume"
-									name="OrderingId-0-ShippingVolume" id="id_OrderingId-0-ShippingVolume" onchange="financial_shipp(this);" value="{{ form.ShippingVolume.value | intcomma }}">                                   
-									<div class="invalid-feedback">{{ error }}</div>
-								{% endfor %}
-								{% else %}
-									<input type="tel" step="0.1" class="form-control ShippingVolume text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingVolume" data-name-format="OrderingId-%d-ShippingVolume" 
-									name="OrderingId-0-ShippingVolume" id="id_OrderingId-0-ShippingVolume" onchange="financial_shipp(this);" value="{{ form.ShippingVolume.value | intcomma }}">                                   
-								{% endif %}
+								<input type="tel" step="0.1" class="form-control ShippingVolume text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingVolume" data-name-format="OrderingId-%d-ShippingVolume" 
+								name="OrderingId-0-ShippingVolume" id="id_OrderingId-0-ShippingVolume" onchange="financial_shipp(this);" value="{{ form.ShippingVolume.value | intcomma | default:'0.00' }}">                                   
 							</td>
 							<td>
-								{% if form.errors.SlipNumber %}
-								{% for error in form.errors.SlipNumber %}
-									<input type="tel" class="form-control is-invalid SlipNumber text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-SlipNumber" data-name-format="OrderingId-%d-SlipNumber"
-									name="OrderingId-0-SlipNumber" id="id_OrderingId-0-SlipNumber" value="{{ form.SlipNumber.value | default_if_none:"" }}">                                   
-									<div class="invalid-feedback">{{ error }}</div>
-								{% endfor %}
-								{% else %}
-									<input type="tel" class="form-control SlipNumber text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-SlipNumber" data-name-format="OrderingId-%d-SlipNumber" 
-									name="OrderingId-0-SlipNumber" id="id_OrderingId-0-SlipNumber" value="{{ form.SlipNumber.value | default_if_none:"" }}">                                   
-								{% endif %}
+								<input type="tel" class="form-control SlipNumber text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-SlipNumber" data-name-format="OrderingId-%d-SlipNumber" 
+								name="OrderingId-0-SlipNumber" id="id_OrderingId-0-SlipNumber" value="{{ form.SlipNumber.value | default_if_none:"" }}">                                   
 							</td>
 							<td>
-								{% if form.errors.ResultSummary %}
-								{% for error in form.errors.ResultSummary %}
-									<input type="text" class="form-control is-invalid" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultSummary" data-name-format="OrderingId-%d-ResultSummary"
-									name="OrderingId-0-ResultSummary" id="id_OrderingId-0-ResultSummary" value="{{ form.ResultSummary.value | default_if_none:"" }}">                                   
-									<div class="invalid-feedback">{{ error }}</div>
-								{% endfor %}
-								{% else %}
-									<input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultSummary" data-name-format="OrderingId-%d-ResultSummary" 
-									name="OrderingId-0-ResultSummary" id="id_OrderingId-0-ResultSummary" value="{{ form.ResultSummary.value | default_if_none:"" }}">                                   
-								{% endif %}
+								<input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultSummary" data-name-format="OrderingId-%d-ResultSummary" 
+								name="OrderingId-0-ResultSummary" id="id_OrderingId-0-ResultSummary" value="{{ form.ResultSummary.value | default_if_none:"" }}">                                   
 							</td>
 							<td class="text-center">
 								<div class="form-check">
-									{% if form.ResultMoveDiv.value == 1 %}
-									<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-0-ResultMoveDiv" name="OrderingId-0-ResultMoveDiv" checked>
-									{% else %}
-									<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-0-ResultMoveDiv" name="OrderingId-0-ResultMoveDiv">
-									{% endif %}
+									<input type="checkbox" class="form-check-input position-static ResultMoveDiv" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-0-ResultMoveDiv" name="OrderingId-0-ResultMoveDiv">
 								</div>
 							</td>
 							<td class="text-center">
 								<div class="form-check">
-									{% if form.ResultGainDiv.value == 1 %}
-									<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-0-ResultGainDiv" name="OrderingId-0-ResultGainDiv" checked>
-									{% else %}
-									<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-0-ResultGainDiv" name="OrderingId-0-ResultGainDiv">
-									{% endif %}
+									<input type="checkbox" class="form-check-input position-static ResultGainDiv" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-0-ResultGainDiv" name="OrderingId-0-ResultGainDiv">
 								</div>
 							</td>
 							<td class="text-center">
 								<div class="form-check">
-									{% if form.ResultDecreaseDiv.value == 1 %}
-									<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-0-ResultDecreaseDiv" name="OrderingId-0-ResultDecreaseDiv" checked>
-									{% else %}
-									<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-0-ResultDecreaseDiv" name="OrderingId-0-ResultDecreaseDiv">
-									{% endif %}
+									<input type="checkbox" class="form-check-input position-static ResultDecreaseDiv" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-0-ResultDecreaseDiv" name="OrderingId-0-ResultDecreaseDiv">
 								</div>
 							</td>
 							<td>
 								<span class="list_del"><button type="button" class="btn btn-outline-danger btn-sm">削除</button></span>
 							</td>
 						</tr>
-						{% endfor %}
 					</tbody>
 				</table>
 			</div>
@@ -368,6 +292,7 @@
 <script src="{% static '\js\tab.js' %}" charset="UTF-8"></script>
 <script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
 <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\requestresultfirst.js' %}" charset="UTF-8"></script>
 <script>
 $('.tableid').on('click', function(){
     var idx=$(this).closest('tr').prop('rowIndex');
@@ -381,9 +306,7 @@ $('.tableid').on('click', function(){
     $.ajax({
         url: "{% url 'myapp:exec_result' %}",
         method: "GET",
-        // プレーンテキストを受信（他にはhtml、xml、script、json、jsonp等）
         dataType: 'json',
-        // リクエストパラメータ「?param=明細id」
         data: {
             param: id,
         },
@@ -395,7 +318,6 @@ $('.tableid').on('click', function(){
             // 項番作成
             item = parseInt(item ,10);
             var result = item.toString().padStart( 4, '0');
-
             //HTML要素
             texthtml = ''
             texthtml = texthtml + '<tr class="list_var">';
@@ -411,7 +333,7 @@ $('.tableid').on('click', function(){
             texthtml = texthtml + '	<td><input type="tel" class="form-control ResultItemNumber" autocomplete="new-password" style="text-align: right;" data-id-format="id_OrderingId-%d-ResultItemNumber" data-name-format="OrderingId-%d-ResultItemNumber" name="OrderingId-0-ResultItemNumber" id="id_OrderingId-0-ResultItemNumber" value=' + result + '></td>';
             texthtml = texthtml + '	<td><input type="tel" class="form-control ResultDate" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultDate" data-name-format="OrderingId-%d-ResultDate" name="OrderingId-0-ResultDate" id="id_OrderingId-0-ResultDate" value=""></td>';
             texthtml = texthtml + '	<td><input type="tel" class="form-control ShippingDate" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingDate" data-name-format="OrderingId-%d-ShippingDate" name="OrderingId-0-ShippingDate" id="id_OrderingId-0-ShippingDate" value=""></td>';                                  
-            texthtml = texthtml + '	<td><input type="tel" step="0.1" class="form-control ShippingVolume text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingVolume" data-name-format="OrderingId-%d-ShippingVolume" name="OrderingId-0-ShippingVolume" id="id_OrderingId-0-ShippingVolume" data-empty-val="false" onchange="financial_shipp(this);" value="{{ "0.0" | intcomma }}"></td>';
+            texthtml = texthtml + '	<td><input type="tel" step="0.1" class="form-control ShippingVolume text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-ShippingVolume" data-name-format="OrderingId-%d-ShippingVolume" name="OrderingId-0-ShippingVolume" id="id_OrderingId-0-ShippingVolume" data-empty-val="false" onchange="financial_shipp(this);" value="{{ "0.00" | intcomma }}"></td>';
             texthtml = texthtml + '	<td><input type="tel" class="form-control SlipNumber text-right" autocomplete="new-password" data-id-format="id_OrderingId-%d-SlipNumber" data-name-format="OrderingId-%d-SlipNumber" name="OrderingId-0-SlipNumber" id="id_OrderingId-0-SlipNumber" value={{"" | default_if_none:"" }}></td>';
             texthtml = texthtml + '	<td><input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultSummary" data-name-format="OrderingId-%d-ResultSummary"	name="OrderingId-0-ResultSummary" id="id_OrderingId-0-ResultSummary" value={{"" | default_if_none:"" }}></td>';
             texthtml = texthtml + '	<td class="text-center">';
@@ -485,29 +407,29 @@ $('.tableid').on('click', function(){
             texthtml = texthtml + '	<td><input type="text" class="form-control" autocomplete="new-password" data-id-format="id_OrderingId-%d-ResultSummary" data-name-format="OrderingId-%d-ResultSummary"	name="OrderingId-' + index + '-ResultSummary" id="id_OrderingId-' + index + '-ResultSummary" value="{{"' + list.ResultSummary + '" | default_if_none:"" }}"></td>';
             texthtml = texthtml + '	<td class="text-center">';
             texthtml = texthtml + '		<div class="form-check">';
-            if(list.ResultMoveDiv===1){
-                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-' + index + '-ResultMoveDiv" name="OrderingId-' + index + '-ResultMoveDiv" checked="checked">';
+            if(list.ResultMoveDiv===true){
+                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static ResultMoveDiv" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-' + index + '-ResultMoveDiv" name="OrderingId-' + index + '-ResultMoveDiv" checked="checked">';
             }else{
-                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-' + index + '-ResultMoveDiv" name="OrderingId-' + index + '-ResultMoveDiv">';
+                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static ResultMoveDiv" data-id-format="id_OrderingId-%d-ResultMoveDiv" data-name-format="OrderingId-%d-ResultMoveDiv" id="id_OrderingId-' + index + '-ResultMoveDiv" name="OrderingId-' + index + '-ResultMoveDiv">';
             }
             texthtml = texthtml + '		</div>';
             texthtml = texthtml + '	</td>';
             texthtml = texthtml + '	<td class="text-center">';
             texthtml = texthtml + '		<div class="form-check">';
-            if(list.ResultGainDiv===1){
-                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-' + index + '-ResultGainDiv" name="OrderingId-' + index + '-ResultGainDiv" checked="checked">';
+            if(list.ResultGainDiv===true){
+                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static ResultGainDiv" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-' + index + '-ResultGainDiv" name="OrderingId-' + index + '-ResultGainDiv" checked="checked">';
             }else{
-                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-' + index + '-ResultGainDiv" name="OrderingId-' + index + '-ResultGainDiv">';
+                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static ResultGainDiv" data-id-format="id_OrderingId-%d-ResultGainDiv" data-name-format="OrderingId-%d-ResultGainDiv" id="id_OrderingId-' + index + '-ResultGainDiv" name="OrderingId-' + index + '-ResultGainDiv">';
 
             }
             texthtml = texthtml + '		</div>';
             texthtml = texthtml + '	</td>';
             texthtml = texthtml + '	<td class="text-center">';
             texthtml = texthtml + '		<div class="form-check">';
-            if(list.ResultDecreaseDiv===1){
-                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-' + index + '-ResultDecreaseDiv" name="OrderingId-' + index + '-ResultDecreaseDiv"  checked="checked">';
+            if(list.ResultDecreaseDiv===true){
+                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static ResultDecreaseDiv" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-' + index + '-ResultDecreaseDiv" name="OrderingId-' + index + '-ResultDecreaseDiv"  checked="checked">';
             }else{
-                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-' + index + '-ResultDecreaseDiv" name="OrderingId-' + index + '-ResultDecreaseDiv">';
+                texthtml = texthtml + '			<input type="checkbox" class="form-check-input position-static ResultDecreaseDiv" data-id-format="id_OrderingId-%d-ResultDecreaseDiv" data-name-format="OrderingId-%d-ResultDecreaseDiv" id="id_OrderingId-' + index + '-ResultDecreaseDiv" name="OrderingId-' + index + '-ResultDecreaseDiv">';
             }
             texthtml = texthtml + '		</div>';
             texthtml = texthtml + '	</td>';
@@ -552,10 +474,5 @@ $('.tableid').on('click', function(){
         $('#resultGET').text('GET処理失敗.');
     });
 })
-</script>
-<script>
-$(document).ready(function(){
-	window.setTimeout("$('#fadeout').fadeOut()", 2000);
-});
 </script>
 {% endblock %}

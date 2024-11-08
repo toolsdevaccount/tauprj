@@ -1,19 +1,17 @@
-from django.shortcuts import render, redirect
-from urllib.parse import urlencode
+from django.shortcuts import redirect, HttpResponse
 from django.views.generic import ListView, UpdateView
 from myapp.models import OrderingTable, OrderingDetail, CustomerSupplier, RequestResult
 from django.contrib.auth.mixins import LoginRequiredMixin
 from myapp.form.formsrequestresult import RequestResultForm, RequestRecordFormset, RequestResultFormset, SearchForm
 from myapp.views import viewsGetUrlFunction
 # 検索機能のために追加
-from django.db.models import Q
+from django.db.models import Q, FilteredRelation
+
 # 日時
 from django.utils import timezone
 import datetime
 # Transaction
 from django.db import transaction
-# SQL直接実行
-from django.db import connection
 # ajax
 from django.http import JsonResponse
 # メッセージ
@@ -149,15 +147,10 @@ class RequestResultUpdateView(LoginRequiredMixin,UpdateView):
         incoming_url = self.request.META['HTTP_REFERER']
         #listViewに戻るURLを取得
         self.request.session['requestpageno'] = viewsGetUrlFunction.GetUrl(param, incoming_url)
-
-        #TEST
-        #a = list(OrderingDetail.objects.values(
-        #    'OrderingDetailId__ShippingVolume',
-        #    ).filter(OrderingTableId_id=pk,is_Deleted=0))
-        #print(a)
-
+       
         context = super(RequestResultUpdateView, self).get_context_data(**kwargs)
-        context.update(dict(formset=RequestResultFormset(self.request.POST or None, instance=self.get_object(), queryset=OrderingDetail.objects.filter(OrderingTableId_id=pk,is_Deleted=0))),
+        context.update(dict(
+                       formset=RequestResultFormset(self.request.POST or None, instance=self.get_object(), queryset=OrderingDetail.objects.filter(OrderingTableId_id=pk,is_Deleted=0))),
                        inlinesRecord=RequestRecordFormset(self.request.POST or None, instance=self.get_object(), queryset=RequestResult.objects.filter(is_Deleted=0, OrderingDetailId_id=key)),
                        previewurl=self.request.session['requestpageno'],
                        row=param,
@@ -168,39 +161,25 @@ class RequestResultUpdateView(LoginRequiredMixin,UpdateView):
     def exec_ajax_result(request):
         if request.method == 'GET':  # GETの処理
             param = request.GET.get("param")  # GETパラメータ
-            #
-            def dictfetchall(cursor):
-                "Return all rows from a cursor as a dict"
-                columns = [col[0] for col in cursor.description]
-                return [
-                    dict(zip(columns, row))
-                    for row in cursor.fetchall()
-                ]
-            # 取得するSQL
-            with connection.cursor() as cursor:
-                cursor.execute(
-                                " select "
-                                    " id                    AS id, "
-                                    " ResultItemNumber      AS ResultItemNumber, "
-                                    " ResultDate            AS ResultDate, "
-                                    " ShippingDate          AS ShippingDate, "
-                                    " ShippingVolume        AS ShippingVolume, "
-                                    " SlipNumber            AS SlipNumber, "
-                                    " ResultSummary         AS ResultSummary, "
-                                    " ResultMoveDiv         AS ResultMoveDiv, "
-                                    " ResultGainDiv         AS ResultGainDiv, "
-                                    " ResultDecreaseDiv     AS ResultDecreaseDiv, "
-                                    " OrderingDetailId_id   AS OrderingDetailId_id "
-                                " from " 
-                                    " myapp_requestresult "
-                                " where "
-                                "     OrderingDetailId_id = %s "
-                                " and is_Deleted = 0 "
-                            , [str(param)])
-                detail = dictfetchall(cursor)
+            detail = RequestResult.objects.values(
+                'id',
+                'ResultItemNumber',
+                'ResultDate',
+                'ShippingDate',
+                'ShippingVolume',
+                'SlipNumber',
+                'ResultSummary',
+                'ResultMoveDiv',
+                'ResultGainDiv',
+                'ResultDecreaseDiv',
+                'OrderingDetailId_id',  
+            ).filter(
+                OrderingDetailId_id=param,
+                is_Deleted=0,
+            )
 
             context = {
-                'list': detail,
+                'list': list(detail),
             }
 
             return JsonResponse(context)
@@ -213,53 +192,56 @@ class RequestResultUpdateView(LoginRequiredMixin,UpdateView):
             inlinesRecord = RequestRecordFormset(self.request.POST,instance=post)
             
             if self.request.method == 'POST' and inlinesRecord.is_valid():
-                if inlinesRecord.is_valid():
-                    instances = inlinesRecord.save(commit=False)
-                    # 明細のfileを取り出して更新
-                    for file in instances:
-                        file.Created_id = self.request.user.id
-                        file.Updated_id = self.request.user.id
-                        file.Created_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
-                        file.Updated_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
-                        file.save()
-                    # 削除チェックがついたfileを取り出して更新
-                    for file in inlinesRecord.deleted_objects:
-                        file.Updated_id = self.request.user.id
-                        file.Updated_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
-                        file.is_Deleted = True
-                        file.save()
+                if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    if inlinesRecord.is_valid():
+                        instances = inlinesRecord.save(commit=False)
+                        # 明細のfileを取り出して更新
+                        for file in instances:
+                            file.Created_id = self.request.user.id
+                            file.Updated_id = self.request.user.id
+                            file.Created_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
+                            file.Updated_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
+                            file.save()
+                        # 削除チェックがついたfileを取り出して更新
+                        for file in inlinesRecord.deleted_objects:
+                            file.Updated_id = self.request.user.id
+                            file.Updated_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
+                            file.is_Deleted = True
+                            file.save()
             else:
                 # is_validがFalseの場合はエラー文を表示
-                message = "更新エラーが発生しました"
+                message = "更新エラーが発生しました.\n入力値を確認してください."
                 logger.error(message)
-                messages.error(self.request,message) 
                 #ListViewに戻るときに色を付加する
                 incoming_url = self.request.session['requestpageno']
                 param=self.request.POST.get('row')
                 #listViewに戻るURLを取得
                 self.request.META['HTTP_REFERER'] = viewsGetUrlFunction.GetUrl(param, incoming_url)
 
-                return self.render_to_response(self.get_context_data(form=form, formset=self.formset_class)) 
+                return HttpResponse(message, status=400, content_type='application/json')
 
             message = "更新が正常に終了しました"
-            messages.add_message(self.request, messages.SUCCESS, message)
             #ListViewに戻るときに色を付加する
             incoming_url = self.request.session['requestpageno']
             param=self.request.POST.get('row')
             #listViewに戻るURLを取得
             self.request.META['HTTP_REFERER'] = viewsGetUrlFunction.GetUrl(param, incoming_url)
+            dict = {
+                    "answer": message,
+                    }
 
-            return self.render_to_response(self.get_context_data(form=form, formset=self.formset_class))
+            return JsonResponse(dict)
         except Exception as e:
             message = "更新エラーが発生しました"
             logger.error(message)
-            messages.error(self.request,message) 
+            #messages.error(self.request,message) 
             #ListViewに戻るときに色を付加する
             incoming_url = self.request.session['requestpageno']
             param=self.request.POST.get('row')
             #listViewに戻るURLを取得
             self.request.META['HTTP_REFERER'] = viewsGetUrlFunction.GetUrl(param, incoming_url)
 
+            #return JsonResponse(message, safe=False)
             return self.render_to_response(self.get_context_data(form=form, formset=self.formset_class)) 
 
     # バリデーションエラー時
