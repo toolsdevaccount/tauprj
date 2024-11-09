@@ -93,13 +93,13 @@ class UnPaidListView(LoginRequiredMixin,ListView):
                             "Updated_at":Updated_at,
                             "Updated_id":User,
                             })
-                    message = "更新が正常に終了しました"
-                    #ListViewに戻るときに色を付加する
-                    dict = {
-                            "answer": message,
-                            }
+                message = "更新が正常に終了しました"
+                #ListViewに戻るときに色を付加する
+                dict = {
+                        "answer": message,
+                        }
 
-                    return JsonResponse(dict)
+                return JsonResponse(dict)
             except Exception as e:
                 # is_validがFalseの場合はエラー文を表示
                 message = "更新エラーが発生しました.\n入力値を確認してください."
