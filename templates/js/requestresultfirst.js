@@ -7,7 +7,6 @@ $(document).ready(function(){
 
 	// Ajax通信を開始
 	$.ajax({
-		//url: "{% url 'myapp:exec_result' %}",
 		url: "/requestresult/edit/exec_result",
 		method: "GET",
 		dataType: 'json',

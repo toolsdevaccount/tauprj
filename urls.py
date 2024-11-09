@@ -64,19 +64,10 @@ urlpatterns = [
     ###################################################  実績入力 ############################################################   
     # 受発注実績一覧
     path('requestresult/list/', viewsrequestresult.RequestResultListView.as_view(), name='requestresultlist'),
-    # 受発注実績登録
-    #path('requestresult/new/<int:pk>/', viewsrequestresult.RequestResultCreateView.as_view(), name='requestresultnew'),
     # 受発注実績編集
     path('requestresult/edit/<int:pk>/<int:row>/', viewsrequestresult.RequestResultUpdateView.as_view(), name='requestresultedit'),
     # Ajax処理
     path("requestresult/edit/exec_result/", viewsrequestresult.RequestResultUpdateView.exec_ajax_result, name='exec_result'),
-    # 更新Ajax処理
-    #path("requestresult/edit/exec_renew/", viewsrequestresult.RequestResultUpdateView.as_view(), name='exec_renew'),
-
-    # 受発注実績削除
-    #path('requestresult/delete/<int:pk>/', viewsrequestresult.RequestResultDeleteView.as_view(), name='requestresultdelete'),
-    # Ajax処理
-    #path("requestresult/new/exec/", viewsrequestresult.RequestResultCreateView.exec_ajax, name='exec'),
     # 本番環境Media参照
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),  #追加
     ###################################################  入金支払入力 #########################################################   
@@ -138,7 +129,8 @@ urlpatterns = [
     ###################################################  相殺未払処理 ###########################################################   
     # 未払入力
     path('unpaid/view/', viewsUnPaidView.UnPaidView.as_view(), name='unpaidview'),
-    path('unpaid/update/<int:TargetMonth>/', viewsunpaid.update, name='unpaidupdate'),
+    path('unpaid/updatelist/<int:TargetMonth>/', viewsunpaid.UnPaidListView.List, name='unpaidupdatelist'),
+    path('unpaid/update', viewsunpaid.UnPaidListView.update, name='unpaidupdate'),
     # 未払一覧表
     path('unpaid/list/', viewsUnPaidList.UnPaidListView.as_view(), name='unpaidlist'),
     path('unpaid/pdf/<int:TargetMonth>/<str:element>/', viewsUnPaidListpdf.pdf, name='UnPaidListpdf'), 

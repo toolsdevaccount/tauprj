@@ -1,4 +1,4 @@
-from django.shortcuts import redirect,render
+from django.shortcuts import render, HttpResponse
 from myapp.models import RequestResult,CustomerSupplier
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,10 +7,12 @@ from django.db import transaction
 # models
 from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
+from dateutil import relativedelta
+# ajax
+from django.http import JsonResponse
 # 日時
 from django.utils import timezone
 import datetime
-from dateutil import relativedelta
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
@@ -32,60 +34,78 @@ class UnPaidListView(LoginRequiredMixin,ListView):
         queryset = super().get_queryset(**kwargs)
 
         return queryset
+    def List(request,TargetMonth):
+        search_date = conversion(TargetMonth)
+        queryset =  RequestResult.objects.values(
+            'id',
+            'OrderingId__SupplierCode_id__CustomerCode',
+            'OrderingId__SupplierCode_id__CustomerName',
+            'OrderingId__ProductName',
+            'OrderingId__OrderingCount',
+            'OrderingDetailId__DetailColorNumber',
+            'OrderingDetailId__DetailColor',
+            'InvoiceIssueDate',
+            'ShippingDate',
+            'PaymentInputDiv',
+            'SlipNumber',
+            ).annotate(
+                Supplier_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()
+            )).filter(
+                PaymentInputDiv=False, 
+                InvoiceIssueDate__lte=str(search_date[1]),
+                InvoiceNUmber__gt=0,
+                InvoiceIssueDiv=1,
+                is_Deleted=0,
+                ResultMoveDiv=0,
+                    ).order_by(
+                        'OrderingId__SupplierCode_id__CustomerCode',
+                        'InvoiceIssueDate',
+                        'ShippingDate',
+                    )
+        context = {
+            'form': queryset,
+        }
 
+        return render(request, 'crud/unpaid/unpaidformupdate.html', context)
 
-@transaction.atomic # トランザクション設定
-def update(request,TargetMonth):
-    search_date = conversion(TargetMonth)
-    queryset =  RequestResult.objects.values(
-        'id',
-        'OrderingId__SupplierCode_id__CustomerCode',
-        'OrderingId__SupplierCode_id__CustomerName',
-        'OrderingId__ProductName',
-        'OrderingId__OrderingCount',
-        'OrderingDetailId__DetailColorNumber',
-        'OrderingDetailId__DetailColor',
-        'InvoiceIssueDate',
-        'ShippingDate',
-        'PaymentInputDiv',
-        'SlipNumber',
-        ).annotate(
-            Supplier_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()
-        )).filter(PaymentInputDiv=False, InvoiceIssueDate__lte=str(search_date[1]),InvoiceNUmber__gt=0,InvoiceIssueDiv=1,is_Deleted=0
-                  ).order_by(
-                      'OrderingId__SupplierCode_id__CustomerCode',
-                      'InvoiceIssueDate',
-                      'ShippingDate',
-                )
-    
-    leng= len(queryset)
+    @transaction.atomic # トランザクション設定
+    def update(request):
+        if request.method == 'POST':
+            i=0
+            leng=request.POST.get("counter")
+            leng=int(leng)+1
 
-    if request.method == 'POST':
-        try:
-            for i in range(leng):
-                pk=request.POST.get("form-" + str(i) + "-id")
-                Updated_at = timezone.now() + datetime.timedelta(hours=9)
-                User = request.user.id
-                input_PaymentInputDiv = request.POST.get("form-" + str(i) + "-PaymentInputDiv")
-                if input_PaymentInputDiv==None:
-                    input_PaymentInputDiv='False'
-                else:
-                    input_PaymentInputDiv='True'
-                RequestResult.objects.update_or_create(pk=pk, defaults={"PaymentInputDiv":input_PaymentInputDiv,
-                                                                        "Updated_at":Updated_at,
-                                                                        "Updated_id":User,
-                                                                        })
-            return redirect('myapp:index')
-        except Exception as e:
-            message = "更新エラーが発生しました"
-            logger.error(message)
-            messages.add_message(request, messages.ERROR, message)
+            try:
+                for i in range(leng):
+                    pk=request.POST.get("form-" + str(i) + "-id")
+                    Updated_at = timezone.now() + datetime.timedelta(hours=9)
+                    User = request.user.id
+                    #支払済区分
+                    input_PaymentInputDiv = request.POST.get("form-" + str(i) + "-PaymentInputDiv")
+                    if input_PaymentInputDiv==None:
+                        input_PaymentInputDiv='False'
+                    else:
+                        input_PaymentInputDiv='True'
+                    RequestResult.objects.update_or_create(
+                        pk=pk, 
+                        defaults={
+                            "PaymentInputDiv":input_PaymentInputDiv,
+                            "Updated_at":Updated_at,
+                            "Updated_id":User,
+                            })
+                    message = "更新が正常に終了しました"
+                    #ListViewに戻るときに色を付加する
+                    dict = {
+                            "answer": message,
+                            }
 
-    context = {
-        'form': queryset,
-    }
-
-    return render(request, 'crud/unpaid/unpaidformupdate.html', context)
+                    return JsonResponse(dict)
+            except Exception as e:
+                # is_validがFalseの場合はエラー文を表示
+                message = "更新エラーが発生しました.\n入力値を確認してください."
+                logger.error(message)
+                #ListViewに戻るときに色を付加する
+                return HttpResponse(message, status=400, content_type='application/json')
 
 def conversion(TargetMonth):
     # 月初、月末を算出する
