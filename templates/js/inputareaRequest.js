@@ -51,7 +51,6 @@ $(function(){
             html = html + '</li>';
             $('#answer').html(html);
 
-            window.setTimeout("$('#fadeout').fadeOut()", 2000);
         });
     });
 
