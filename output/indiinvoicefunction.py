@@ -102,9 +102,9 @@ def printstring(pdf_canvas,dt,dt_own):
         # 品名、番手、色番、色名、数量、単位、単価、希望納期、回答納期、備考(中央寄せ)
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, textColor='white', alignment=TA_CENTER)
         itemNo0 = Paragraph('出荷日',style)
-        itemNo1 = Paragraph('品名',style)
-        itemNo2 = Paragraph('品番',style)
-        itemNo3 = Paragraph('番手',style)
+        itemNo1 = Paragraph('品名／品番',style)
+        itemNo2 = Paragraph('番手',style)
+        itemNo3 = Paragraph('色番',style)
         itemNo4 = Paragraph('色名',style)
         itemNo5 = Paragraph('数量',style)
         itemNo6 = Paragraph('単位',style)
@@ -198,7 +198,7 @@ def printstring(pdf_canvas,dt,dt_own):
                 SellPrice = Paragraph('{:,.0f}'.format(variPrice),styleRight)
 
                 data += [
-                        [ShippingDate, ProductName, ColorNumber, OrderingCount,  DetailColor, ShippingVolume, DetailUnitDiv, DetailSellPrice, SellPrice, ResultSummary],
+                        [ShippingDate, ProductName, OrderingCount, ColorNumber,   DetailColor, ShippingVolume, DetailUnitDiv, DetailSellPrice, SellPrice, ResultSummary],
                 ]
             else:
                 data += [

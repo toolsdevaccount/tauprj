@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 # 日時
 import datetime
 from dateutil import relativedelta
-
+#Pagenation
+from django.core.paginator import Page
 
 # 個別請求情報一覧/検索
 class individualinvoiceListView(LoginRequiredMixin,ListView):
@@ -66,7 +67,7 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
         # 削除済除外
         queryset = queryset.filter(is_Deleted=0,DailyUpdateDiv=1)
         # 発行日が前月月初か個別請求書未発行のもの
-        queryset = queryset.filter(Q(InvoiceIssueDate__gt=startdate) | Q(InvoiceIssueDiv=0))
+        #queryset = queryset.filter(Q(InvoiceIssueDate__gt=startdate) | Q(InvoiceIssueDiv=0))
 
         if query:
             queryset = queryset.filter(
@@ -117,5 +118,11 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
         
         form = IndividualSearchForm(initial=default_data) # 検索フォーム
         context['invsearch'] = form
-
+        # Pagination
+        page: Page = context["page_obj"]
+        # get_elided_page_rangeの結果を、paginator_range変数から使用可能
+        context["paginator_range"] = page.paginator.get_elided_page_range(
+                                                           page.number,
+                                                           on_each_side=2,
+                                                           on_ends=1)
         return context

@@ -18,6 +18,8 @@ from django.contrib import messages
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#Pagenation
+from django.core.paginator import Page
 
 # 受発注一覧/検索
 class OrderingListView(LoginRequiredMixin,ListView):
@@ -128,6 +130,13 @@ class OrderingListView(LoginRequiredMixin,ListView):
         
         form = SearchForm(initial=default_data) # 検索フォーム
         context['search'] = form
+        # Pagination
+        page: Page = context["page_obj"]
+        # get_elided_page_rangeの結果を、paginator_range変数から使用可能
+        context["paginator_range"] = page.paginator.get_elided_page_range(
+                                                           page.number,
+                                                           on_each_side=2,
+                                                           on_ends=1)
         return context
 
 # 受発注情報登録
@@ -197,17 +206,6 @@ class OrderingCreateView(LoginRequiredMixin,CreateView):
     def form_invalid(self,form):
         # セッションにデータを格納
         self.request.session['form_data'] = self.request.POST
-
-        #context = self.get_context_data(form=form)
-        #context["DestinationCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('CustomerCode').filter(is_Deleted=0)
-        #context["SupplierCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').filter(Q(MasterDiv=3) | Q(MasterDiv=4),is_Deleted=0).order_by('CustomerCode')
-        #context["ShippingCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('CustomerCode').filter(is_Deleted=0)
-        #context["CustomerCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').filter(Q(MasterDiv=2) | Q(MasterDiv=4),is_Deleted=0).order_by('CustomerCode')
-        #context["RequestCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('CustomerCode').filter(is_Deleted=0)
-        #context["StainShippingCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('CustomerCode').filter(is_Deleted=0)
-        #context["ApparelCode"] = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('CustomerCode').filter(is_Deleted=0)
-
-
         message = "登録エラーが発生しました"
         logger.error(message)
         messages.error(self.request,message) 
@@ -270,6 +268,20 @@ class orderingUpdateView(LoginRequiredMixin,UpdateView):
 
                     # 削除チェックがついたfileを取り出して更新
                     for file in formset.deleted_objects:
+                        pk=file.id
+                        Cnt = RequestResult.objects.filter(is_Deleted=0,OrderingDetailId=pk).count()
+                        if Cnt > 0:
+                            message = "実績が存在するため削除できません。実績を削除してください。"
+                            logger.error(message)
+                            messages.error(self.request,message) 
+                            #ListViewに戻るときに色を付加する
+                            incoming_url = self.request.session['oredringpageno']
+                            param=self.request.POST.get('row')
+                            #listViewに戻るURLを取得
+                            self.request.META['HTTP_REFERER'] = viewsGetUrlFunction.GetUrl(param, incoming_url)
+
+                            return self.render_to_response(self.get_context_data(form=form, formset=self.formset_class))
+
                         file.Updated_id = self.request.user.id
                         file.Updated_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時
                         file.is_Deleted = True

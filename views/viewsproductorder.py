@@ -21,6 +21,8 @@ from django.contrib import messages
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#Pagenation
+from django.core.paginator import Page
 
 # 受発注一覧/検索
 class ProductOrderListView(LoginRequiredMixin,ListView):
@@ -135,6 +137,13 @@ class ProductOrderListView(LoginRequiredMixin,ListView):
         
         form = SearchForm(initial=default_data) # 検索フォーム
         context['posearch'] = form
+        # Pagination
+        page: Page = context["page_obj"]
+        # get_elided_page_rangeの結果を、paginator_range変数から使用可能
+        context["paginator_range"] = page.paginator.get_elided_page_range(
+                                                           page.number,
+                                                           on_each_side=2,
+                                                           on_ends=1)
         return context
 
 # 製品受発注情報登録

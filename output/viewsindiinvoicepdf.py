@@ -102,7 +102,7 @@ def Own_Company():
     return Own_Company
 
 def connect(pkfrom,isdate):
-    queryset =  RequestResult.objects.filter(InvoiceNUmber=(str(pkfrom)),OrderingDetailId__DetailSellPrice__gt=0)
+    queryset =  RequestResult.objects.filter(InvoiceNUmber=(str(pkfrom)),OrderingDetailId__DetailSellPrice__gt=0,is_Deleted=0)
     result = list(queryset.values(
                             'InvoiceNUmber',
                             'OrderingId__SlipDiv',

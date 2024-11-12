@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from urllib.parse import urlencode
 from django.views.generic import ListView,CreateView, UpdateView
-from myapp.models import CustomerSupplier
+from myapp.models import CustomerSupplier, OrderingTable
 from myapp.form.forms import CustomerSupplierForm, CustomerSearchForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from myapp.views import viewsGetUrlFunction
@@ -16,6 +16,8 @@ from django.contrib import messages
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#Pagenation
+from django.core.paginator import Page
 
 # 得意先仕入先マスター一覧/検索
 class CustomerSupplierListView(LoginRequiredMixin,ListView):
@@ -71,6 +73,13 @@ class CustomerSupplierListView(LoginRequiredMixin,ListView):
         
         form = CustomerSearchForm(initial=default_data) # 検索フォーム
         context['cmsearch'] = form
+        # Pagination
+        page: Page = context["page_obj"]
+        # get_elided_page_rangeの結果を、paginator_range変数から使用可能
+        context["paginator_range"] = page.paginator.get_elided_page_range(
+                                                           page.number,
+                                                           on_each_side=2,
+                                                           on_ends=1)
         return context
        
 # 得意先仕入先マスター登録
@@ -210,6 +219,28 @@ class CustomerSupplierDeleteView(LoginRequiredMixin,UpdateView):
         try:
             if self.request.method == "POST":
                 post = form.save(commit=False)
+                pk=post.id
+                Cnt = OrderingTable.objects.filter(
+                    Q(DestinationCode=pk) |
+                    Q(SupplierCode=pk) |
+                    Q(ShippingCode=pk) |
+                    Q(CustomeCode=pk) |
+                    Q(RequestCode=pk) |
+                    Q(StainShippingCode=pk) |
+                    Q(ApparelCode=pk),
+                    is_Deleted=0,
+                    ).count()
+                if Cnt > 0:
+                    message = "受発注データが存在するため削除できません。"
+                    logger.error(message)
+                    messages.error(self.request,message) 
+                    #ListViewに戻るときに色を付加する
+                    incoming_url = self.request.session['customerpageno']
+                    param=self.request.POST.get('row')
+                    #listViewに戻るURLを取得
+                    self.request.META['HTTP_REFERER'] = viewsGetUrlFunction.GetUrl(param, incoming_url)
+
+                    return self.render_to_response(self.get_context_data(form=form))
     
                 post.Updated_id = self.request.user.id
                 post.Updated_at = timezone.now() + datetime.timedelta(hours=9) # 現在の日時

@@ -13,6 +13,8 @@ from decimal import Decimal
 # LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#Pagenation
+from django.core.paginator import Page
 
 # 個別請求情報一覧/検索
 class DailyUpdateListView(LoginRequiredMixin,ListView):
@@ -23,7 +25,13 @@ class DailyUpdateListView(LoginRequiredMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        # Pagination
+        page: Page = context["page_obj"]
+        # get_elided_page_rangeの結果を、paginator_range変数から使用可能
+        context["paginator_range"] = page.paginator.get_elided_page_range(
+                                                           page.number,
+                                                           on_each_side=2,
+                                                           on_ends=1)
         return context
 
 class DailyUpdateView(LoginRequiredMixin,CreateView):

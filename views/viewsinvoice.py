@@ -13,6 +13,8 @@ from django.db.models.functions import Abs
 # LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#Pagenation
+from django.core.paginator import Page
 
 # 請求情報一覧/検索
 class invoiceListView(LoginRequiredMixin,ListView):
@@ -113,5 +115,11 @@ class invoiceListView(LoginRequiredMixin,ListView):
         context.update(InvoiceCustomerCode_To = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('id').filter(is_Deleted=0),)
         context.update(InvoiceCustomerCode_Max = CustomerSupplier.objects.values('id','CustomerCode','CustomerOmitName').order_by('id').reverse().filter(is_Deleted=0).first())
         context.update(Closing = ClosingChoiceForm())
-    
+        # Pagination
+        page: Page = context["page_obj"]
+        # get_elided_page_rangeの結果を、paginator_range変数から使用可能
+        context["paginator_range"] = page.paginator.get_elided_page_range(
+                                                           page.number,
+                                                           on_each_side=2,
+                                                           on_ends=1)   
         return context
