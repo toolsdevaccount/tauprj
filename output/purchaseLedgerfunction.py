@@ -204,7 +204,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                 #消費税調整
                 if row['Division']=='3':
                     Adjust = Paragraph(f"{int(row['Detailsellprice']):,}",styleRight)
-                    Adjustment = int(row['Detailsellprice'])
+                    Adjustment += int(row['Detailsellprice'])
                 else:
                     Adjust = Paragraph('',styleRight)
 

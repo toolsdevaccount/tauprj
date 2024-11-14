@@ -199,15 +199,18 @@ def PrevBalance(search_date, Customer):
     CarryForward = int(PrevBill) - int(PayTotal)   
 
     #当月支払消費税調整額
-    Adjustment = Payment.objects.filter(PaymentDate__range=(str(search_date[0]),str(search_date[1])),
-                                        PaymentSupplierCode=(str(Customer[0]['id']))
-                                        ,is_Deleted=0
-                                        ,PaymentDiv=11
-                                        )
-    Adjustment = list(Adjustment.values('PaymentMoney'))
+    Adjustment = Payment.objects.values('PaymentSupplierCode').annotate(
+                                        Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
+                                        ).filter(
+                                             PaymentDate__range=(str(search_date[0]),str(search_date[1]))
+                                            ,PaymentSupplierCode=(str(Customer[0]['id']))
+                                            ,is_Deleted=0
+                                            ,PaymentDiv=11
+                                            )
+    Adjustment = list(Adjustment.values('Adjustment_total'))
     #0判定
     if Adjustment:
-        AdjustmentTotal = int(Adjustment[0]['PaymentMoney'])
+        AdjustmentTotal = int(Adjustment[0]['Adjustment_total'])
     else:
         AdjustmentTotal = 0
 
