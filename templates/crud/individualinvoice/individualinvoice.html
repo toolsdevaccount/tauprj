@@ -110,18 +110,15 @@
 					var InvNumber_from = document.getElementById('id_InvoiceNumber_From').value;
 					var InvNumber_to = document.getElementById('id_InvoiceNumber_To').value;
 					var InvNumber_date = document.getElementById('id_date_issue').value;
-					var url = "/individualinvoice/pdf/123/456/789";
+					var url = "/individualinvoice/pdf";
 					// 入力値チェック
 					if(InvNumber_from==''||InvNumber_to==''||InvNumber_date==''){
 						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
 						return false;
 					}
 					InvNumber_date = InvNumber_date.replace(/-/g,'');
-					url = url.replace(/123/,InvNumber_from);
-					url = url.replace(/456/,InvNumber_to);
-					url = url.replace(/789/,InvNumber_date);
+					url = url + "?inv_from=" + InvNumber_from + "&inv_to=" + InvNumber_to + "&inv_date=" + InvNumber_date;
 
-					//location.href = url;
 					window.open(url, '_blank');
 				})
             </script>

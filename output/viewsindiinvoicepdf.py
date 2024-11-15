@@ -15,7 +15,7 @@ from django.contrib import messages
 import logging
 logger = logging.getLogger(__name__)
 
-def pdf(request,pkfrom,pkto,isdate):
+def pdf(request):
     try:
         strtime = timezone.now() + datetime.timedelta(hours=9)
         filename = "IndividualInvoice_" + strtime.strftime('%Y%m%d%H%M%S') + ".pdf"
@@ -24,14 +24,18 @@ def pdf(request,pkfrom,pkto,isdate):
         #response['Content-Disposition'] = 'attachment; filename=' + filename + '.pdf'
         #Webに表示
         response['Content-Disposition'] = 'filename="{}"'.format(filename)
+        #Getパラメータ
+        pkfrom = request.GET.get("inv_from")
+        pkto = request.GET.get("inv_to")
+        isdate = request.GET.get("inv_date")
 
         pkfromdef = pkfrom  # 個別請求書番号初期値をコピー
         result = make(pkfrom,pkto,isdate,response)
         cnt = 0
-        cnt = pkto - pkfromdef +1
+        cnt = int(pkto) - int(pkfromdef) +1
         for i in range(cnt):
             if i>0:
-                pkfromdef+= 1
+                pkfromdef= int(pkfromdef)+1
             UpdateQuery(pkfromdef,isdate)
     except Exception as e:
         message = "PDF作成時にエラーが発生しました"
@@ -47,13 +51,13 @@ def pdf(request,pkfrom,pkto,isdate):
 
 def make(pkfrom,pkto,isdate,response):
     pdf_canvas = set_info(response) # キャンバス名
-    cnt = pkto - pkfrom +1
+    cnt = int(pkto) - int(pkfrom)+1
     prcnt=0
 
     dt_own = Own_Company()
     for i in range(cnt):
         if i>0:
-            pkfrom+= 1     
+            pkfrom=int(pkfrom)+1
         dt = connect(pkfrom,isdate)
         if len(dt)==0:
             # ループの先頭に戻る

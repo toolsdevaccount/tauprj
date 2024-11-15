@@ -132,7 +132,7 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 
 .table-sticky-container {
     /* height: 580px; */
-    height: 520px;
+    height: 500px;
     overflow: auto;
 }
 

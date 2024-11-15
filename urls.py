@@ -97,7 +97,7 @@ urlpatterns = [
     # 個別請求書一覧
     path('individualinvoice/list/', viewsindividualinvoice.individualinvoiceListView.as_view(), name='individualinvoicelist'),
     # 個別請求書PDF出力
-    path('individualinvoice/pdf/<int:pkfrom>/<int:pkto>/<int:isdate>/', viewsindiinvoicepdf.pdf, name='individualinvoicepdf'), 
+    path('individualinvoice/pdf', viewsindiinvoicepdf.pdf, name='individualinvoicepdf'), 
     # 一括請求一覧
     path('invoice/list/', viewsinvoice.invoiceListView.as_view(), name='invoicelist'),
     # 一括請求書PDF出力
@@ -150,7 +150,6 @@ urlpatterns = [
     path('stock/list/', viewsstock.StockListView.as_view(), name='stocklist'),
     # 在庫明細
     path('stock/detail/<int:pk>/', viewsstock.StockDetailView.as_view(), name='stockdetail'),
-
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

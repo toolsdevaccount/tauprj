@@ -16,7 +16,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
     if rec==0:
         rec=1
     #行数
-    param=32
+    param=31
     #ページ数
     req = math.ceil(rec/param)
     k = 0
@@ -35,14 +35,14 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         # 請求先
         font_size = 12
         pdf_canvas.setFont("游ゴシック 標準", font_size)
-        pdf_canvas.drawString(30, 795, '〒 ' + dt[i]['PostCode'])
-        pdf_canvas.drawString(30, 780, dt[i]['PrefecturesCode__prefecturename'] + dt[i]['Municipalities'] + dt[i]['Address'])
-        pdf_canvas.drawString(60, 760, dt[i]['BuildingName'])
+        pdf_canvas.drawString(30, 795, '〒 ' + dt[0]['PostCode'])
+        pdf_canvas.drawString(30, 780, dt[0]['PrefecturesCode__prefecturename'] + dt[0]['Municipalities'] + dt[0]['Address'])
+        pdf_canvas.drawString(60, 760, dt[0]['BuildingName'])
         font_size = 14
         pdf_canvas.setFont("游ゴシック 標準", font_size)
-        pdf_canvas.drawString(30, 740, dt[i]['CustomerName'] + '　' + '御中')
+        pdf_canvas.drawString(30, 740, dt[0]['CustomerName'] + '　' + '御中')
 
-        match dt[i]['ClosingDate']:
+        match dt[0]['ClosingDate']:
             case 0:
                 Closing=''
             case 5:
@@ -106,19 +106,28 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         #取引銀行名
         font_size = 9
         pdf_canvas.setFont("游ゴシック 標準", font_size)
-        pdf_canvas.drawString(393, 700, '取引銀行：みずほ銀行青山支店 当座0131545')
+        pdf_canvas.drawString(393, 700, '取引銀行：みずほ銀行青山支店 普通3258651')
         # 登録番号
         font_size = 9
         pdf_canvas.setFont("游ゴシック 標準", font_size)
         pdf_canvas.drawString(458, 690, '登録番号：T9011201025256')
 
-        # 残高
-        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
-        itemNo10 = Paragraph(f"{int(dt_Prev[0]):,}",styleRight)
-        itemNo11 = Paragraph(f"{int(dt_Prev[1]):,}",styleRight)
-        itemNo12 = Paragraph(f"{int(dt_Prev[2]):,}",styleRight)
-        itemNo13 = Paragraph(f"{int(dt_Prev[3]):,}",styleRight)
-        itemNo14 = Paragraph(f"{int(dt_Prev[4]):,}",styleRight)
+        # 残高(1ページ目とそれ以降処理分岐)
+        if i==0:
+            styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
+            itemNo10 = Paragraph(f"{int(dt_Prev[0]):,}",styleRight)
+            itemNo11 = Paragraph(f"{int(dt_Prev[1]):,}",styleRight)
+            itemNo12 = Paragraph(f"{int(dt_Prev[2]):,}",styleRight)
+            itemNo13 = Paragraph(f"{int(dt_Prev[3]):,}",styleRight)
+            itemNo14 = Paragraph(f"{int(dt_Prev[4]):,}",styleRight)
+        else:
+            styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
+            itemNo10 = Paragraph('*',styleRight)
+            itemNo11 = Paragraph('*',styleRight)
+            itemNo12 = Paragraph('*',styleRight)
+            itemNo13 = Paragraph('*',styleRight)
+            itemNo14 = Paragraph('*',styleRight)
+
         data =[['前回請求額','ご入金額','繰越額','当月税抜ご請求額','消費税額 10%'],
             [itemNo10, itemNo11, itemNo12, itemNo13, itemNo14],]
 
@@ -138,8 +147,12 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         table.wrapOn(pdf_canvas, 10*mm, 10*mm)
         table.drawOn(pdf_canvas, 10*mm, 227.0*mm)
 
-        # 当月税込請求額
-        itemNo15 = Paragraph(f"{int(dt_Prev[5]):,}",styleRight)
+        # 当月税込請求額(1ページ目とそれ以降処理分岐)
+        if i==0:
+            itemNo15 = Paragraph(f"{int(dt_Prev[5]):,}",styleRight)
+        else:
+            itemNo15 = Paragraph('*',styleRight)
+
         data =[['当月税込御請求額'],
             [itemNo15],
             ]
@@ -190,13 +203,20 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
         styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_CENTER)
 
-        #繰越
-        DateFrom = datetime.datetime.strptime(Date_From, '%Y-%m-%d') 
-        ResultDate = Paragraph(DateFrom.strftime('%y%m%d'),styleCenter)
-        InvoiceNumber = Paragraph('',styleCenter)
-        ProductName = Paragraph('繰越',styleLeft)
-        ShippingVolume = Paragraph('',styleRight)      
-        Prceeds = Paragraph(f"{int(dt_Prev[0]):,}",styleRight)
+        #繰越(1ページ目とそれ以降処理分岐)
+        if i==0:
+            DateFrom = datetime.datetime.strptime(Date_From, '%Y-%m-%d') 
+            ResultDate = Paragraph(DateFrom.strftime('%y%m%d'),styleCenter)
+            InvoiceNumber = Paragraph('',styleCenter)
+            ProductName = Paragraph('繰越',styleLeft)
+            ShippingVolume = Paragraph('',styleRight)      
+            Prceeds = Paragraph(f"{int(dt_Prev[0]):,}",styleRight)
+        else:
+            ResultDate = Paragraph('',styleCenter)
+            InvoiceNumber = Paragraph('',styleCenter)
+            ProductName = Paragraph('',styleLeft)
+            ShippingVolume = Paragraph('',styleRight)      
+            Prceeds = Paragraph('',styleRight)
 
         data = [
                 [ResultDate, InvoiceNumber, ProductName, '', ShippingVolume, '', Prceeds, ''],
@@ -209,6 +229,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
                 ('INNERGRID', (0, 0), (-1, -1), 0.50, colors.dimgray),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
+        
 
         if i==0:
             k=0
@@ -261,7 +282,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
             # 変数加算
             k += 1
 
-        table.wrapOn(pdf_canvas, 10*mm, 10*mm)
-        table.drawOn(pdf_canvas, 10*mm, 0.0*mm)
+        table.wrapOn(pdf_canvas, 10*mm, 10.0*mm)
+        table.drawOn(pdf_canvas, 10*mm, 6.5*mm)
 
         pdf_canvas.showPage()
