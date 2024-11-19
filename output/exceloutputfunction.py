@@ -189,6 +189,19 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell.value = '=SUM(W' + str(row) + ':W'+ str(i-1) + ')'
             cell.fill = fill_gray
             cell.border = border_aro
+
+            cell = sheet['X' + str(i) ]
+            cell.font = font
+            cell.value = ''
+            cell.fill = fill_gray
+            cell.border = border_aro
+
+            cell = sheet['Y' + str(i) ]
+            cell.font = font
+            cell.value = ''
+            cell.fill = fill_gray
+            cell.border = border_aro
+
             rows.append(str(i))
             i+=1
             j=0
@@ -327,164 +340,189 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell.value = '=ROUNDDOWN(K' + str(i) + '*V' + str(i) + ',0)'
             cell.border = border_aro
 
+            cell = sheet['X' + str(i) ]
+            cell.font = font
+            cell.number_format = 'yyyy年mm月dd日'
+            cell.value = book['SpecifyDeliveryDate']
+            cell.border = border_aro
+
+            cell = sheet['Y' + str(i) ]
+            cell.font = font
+            cell.number_format = 'yyyy年mm月dd日'
+            cell.value = book['StainAnswerDeadline']
+            cell.border = border_aro
+
             i+=1
             j+=1
 
         comparison = book['OrderingTableId__SlipDiv']
 
     #最後の小計
-    cell = sheet['A' + str(i) ]
-    cell.font = font
-    cell.value = comparison + str('-小計') 
-    cell.fill = fill_gray
-    cell.border = border_aro
+    if j!=0:
+        cell = sheet['A' + str(i) ]
+        cell.font = font
+        cell.value = comparison + str('-小計') 
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['B' + str(i) ]
-    cell.font = font
-    cell.value = '' 
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['B' + str(i) ]
+        cell.font = font
+        cell.value = '' 
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['C' + str(i) ]
-    cell.font = font
-    cell.value = ''
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['C' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['D' + str(i) ] 
-    cell.font = font
-    cell.value = ''
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['D' + str(i) ] 
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['E' + str(i) ]
-    cell.font = font
-    cell.value = ''
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['E' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['F' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    cell.value = '=SUM(F' + str(row) + ':F'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['F' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(F' + str(row) + ':F'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['G' + str(i) ]
-    cell.font = font
-    cell.value = ''
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['G' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['H' + str(i) ]
-    cell.font = font           
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(H' + str(row) + ':H'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['H' + str(i) ]
+        cell.font = font           
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(H' + str(row) + ':H'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['I' + str(i) ]
-    cell.font = font
-    cell.value = ''
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['I' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['J' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(J' + str(row) + ':J'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['J' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(J' + str(row) + ':J'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['K' + str(i) ]
-    cell.font = font
-    cell.value = ''
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['K' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['L' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(L' + str(row) + ':L'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['L' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(L' + str(row) + ':L'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['M' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(M' + str(row) + ':M'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['M' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(M' + str(row) + ':M'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['N' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    cell.value = '=SUM(N' + str(row) + ':N'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['N' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(N' + str(row) + ':N'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['O' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(O' + str(row) + ':O'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['O' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(O' + str(row) + ':O'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['P' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    cell.value = '=SUM(P' + str(row) + ':P'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['P' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(P' + str(row) + ':P'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['Q' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(Q' + str(row) + ':Q'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['Q' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(Q' + str(row) + ':Q'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['R' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    cell.value = '=SUM(R' + str(row) + ':R'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['R' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(R' + str(row) + ':R'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['S' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(S' + str(row) + ':S'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['S' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(S' + str(row) + ':S'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['T' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    cell.value = '=SUM(T' + str(row) + ':T'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['T' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(T' + str(row) + ':T'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['U' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(U' + str(row) + ':U'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['U' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(U' + str(row) + ':U'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['V' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    cell.value = '=SUM(V' + str(row) + ':V'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['V' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(V' + str(row) + ':V'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
 
-    cell = sheet['W' + str(i) ]
-    cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    cell.value = '=SUM(W' + str(row) + ':W'+ str(i-1) + ')'
-    cell.fill = fill_gray
-    cell.border = border_aro
+        cell = sheet['W' + str(i) ]
+        cell.font = font
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(W' + str(row) + ':W'+ str(i-1) + ')'
+        cell.fill = fill_gray
+        cell.border = border_aro
+
+        cell = sheet['X' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
+
+        cell = sheet['Y' + str(i) ]
+        cell.font = font
+        cell.value = ''
+        cell.fill = fill_gray
+        cell.border = border_aro
 
     #総合計
     rows.append(str(i))
@@ -713,6 +751,18 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
         else:
             DetailVolume+= '+W' + str(rows[t])
     cell.value = DetailVolume
+    cell.fill = fill_gray
+    cell.border = border_aro
+
+    cell = sheet['X' + str(i+1) ]
+    cell.font = font
+    cell.value = ''
+    cell.fill = fill_gray
+    cell.border = border_aro
+
+    cell = sheet['Y' + str(i+1) ]
+    cell.font = font
+    cell.value = ''
     cell.fill = fill_gray
     cell.border = border_aro
 

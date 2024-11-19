@@ -137,6 +137,8 @@ def treatment(TargetMonth, ManagerCode):
             GrossProfit=Max('DetailUnitDiv'),
             ProcessingUnitPrice=Max(0),
             ProcessingAmount=Max(0),
+            SpecifyDeliveryDate=Max('SpecifyDeliveryDate'),
+            StainAnswerDeadline=Max('StainAnswerDeadline'),
             ).filter(OrderingDate & 
                     Q(Condition_ManagerCode), 
                     Q(OrderingTableId__SlipDiv="A") | 
@@ -146,8 +148,9 @@ def treatment(TargetMonth, ManagerCode):
                     is_Deleted=0, OrderingTableId__is_Deleted=0,
                     ).order_by(
                         'OrderingTableId__SlipDiv',
-                        'OrderingTableId__OrderNumber'                        
+                        'OrderingTableId__OrderNumber'
                     )
+
     ResultTotal = RequestResult.objects.values(
         'OrderingId__SlipDiv',
         'OrderingId__OrderNumber',
