@@ -69,8 +69,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
             cell = sheet['F' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0.00;[red]-#,##0.00'
-            cell.value = '=SUM(F' + str(row) + ':F'+ str(i-1) + ')'
+            cell.value = ''
             cell.fill = fill_gray
             cell.border = border_aro
 
@@ -81,8 +80,8 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell.border = border_aro
 
             cell = sheet['H' + str(i) ]
-            cell.font = font           
-            cell.number_format = '#,##0;[red]-#,##0'
+            cell.font = font
+            cell.number_format = '#,##0.00;[red]-#,##0.00'
             cell.value = '=SUM(H' + str(row) + ':H'+ str(i-1) + ')'
             cell.fill = fill_gray
             cell.border = border_aro
@@ -94,7 +93,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell.border = border_aro
 
             cell = sheet['J' + str(i) ]
-            cell.font = font
+            cell.font = font           
             cell.number_format = '#,##0;[red]-#,##0'
             cell.value = '=SUM(J' + str(row) + ':J'+ str(i-1) + ')'
             cell.fill = fill_gray
@@ -115,14 +114,13 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
             cell = sheet['M' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=SUM(M' + str(row) + ':M'+ str(i-1) + ')'
+            cell.value = ''
             cell.fill = fill_gray
             cell.border = border_aro
 
             cell = sheet['N' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0.00;[red]-#,##0.00'
+            cell.number_format = '#,##0;[red]-#,##0'
             cell.value = '=SUM(N' + str(row) + ':N'+ str(i-1) + ')'
             cell.fill = fill_gray
             cell.border = border_aro
@@ -192,13 +190,15 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
             cell = sheet['X' + str(i) ]
             cell.font = font
-            cell.value = ''
+            cell.number_format = '#,##0.00;[red]-#,##0.00'
+            cell.value = '=SUM(X' + str(row) + ':X'+ str(i-1) + ')'
             cell.fill = fill_gray
             cell.border = border_aro
 
             cell = sheet['Y' + str(i) ]
             cell.font = font
-            cell.value = ''
+            cell.number_format = '#,##0;[red]-#,##0'
+            cell.value = '=SUM(Y' + str(row) + ':Y'+ str(i-1) + ')'
             cell.fill = fill_gray
             cell.border = border_aro
 
@@ -234,62 +234,62 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
             cell = sheet['F' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0.00;[red]-#,##0.00'
-            cell.value = book['DetailVolume']
+            cell.number_format = 'yyyy年mm月dd日'
+            cell.value = book['SpecifyDeliveryDate']
             cell.border = border_aro
 
             cell = sheet['G' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = book['DetailUnitPrice']
+            cell.number_format = 'yyyy年mm月dd日'
+            cell.value = book['StainAnswerDeadline']
             cell.border = border_aro
 
             cell = sheet['H' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(F' + str(i) + '*G' + str(i) + ',0)'
+            cell.number_format = '#,##0.00;[red]-#,##0.00'
+            cell.value = book['DetailVolume']
             cell.border = border_aro
 
             cell = sheet['I' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = book['ProcessingUnitPrice']
+            cell.value = book['DetailUnitPrice']
             cell.border = border_aro
 
             cell = sheet['J' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(F' + str(i) + '*I' + str(i) + ',0)'
+            cell.value = '=ROUNDDOWN(H' + str(i) + '*I' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['K' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = book['DetailSellPrice']
+            cell.value = book['ProcessingUnitPrice']
             cell.border = border_aro
 
             cell = sheet['L' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(F' + str(i) + '*K' + str(i) + ',0)'
+            cell.value = '=ROUNDDOWN(H' + str(i) + '*K' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['M' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=L' + str(i) + '-H' + str(i) + '-J' + str(i)
+            cell.value = book['DetailSellPrice']
             cell.border = border_aro
 
             cell = sheet['N' + str(i) ]
             cell.font = font
-            cell.number_format = '#,##0.00;[red]-#,##0.00'
-            cell.value = 0
+            cell.number_format = '#,##0;[red]-#,##0'
+            cell.value = '=ROUNDDOWN(H' + str(i) + '*M' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['O' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(K' + str(i) + '*N' + str(i) + ',0)'
+            cell.value = '=N' + str(i) + '-J' + str(i) + '-L' + str(i)
             cell.border = border_aro
 
             cell = sheet['P' + str(i) ]
@@ -301,7 +301,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell = sheet['Q' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(K' + str(i) + '*P' + str(i) + ',0)'
+            cell.value = '=ROUNDDOWN(M' + str(i) + '*P' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['R' + str(i) ]
@@ -313,7 +313,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell = sheet['S' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(K' + str(i) + '*R' + str(i) + ',0)'
+            cell.value = '=ROUNDDOWN(M' + str(i) + '*R' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['T' + str(i) ]
@@ -325,7 +325,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell = sheet['U' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(K' + str(i) + '*T' + str(i) + ',0)'
+            cell.value = '=ROUNDDOWN(M' + str(i) + '*T' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['V' + str(i) ]
@@ -337,19 +337,19 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
             cell = sheet['W' + str(i) ]
             cell.font = font
             cell.number_format = '#,##0;[red]-#,##0'
-            cell.value = '=ROUNDDOWN(K' + str(i) + '*V' + str(i) + ',0)'
+            cell.value = '=ROUNDDOWN(M' + str(i) + '*V' + str(i) + ',0)'
             cell.border = border_aro
 
             cell = sheet['X' + str(i) ]
             cell.font = font
-            cell.number_format = 'yyyy年mm月dd日'
-            cell.value = book['SpecifyDeliveryDate']
+            cell.number_format = '#,##0.00;[red]-#,##0.00'
+            cell.value = 0
             cell.border = border_aro
 
             cell = sheet['Y' + str(i) ]
             cell.font = font
-            cell.number_format = 'yyyy年mm月dd日'
-            cell.value = book['StainAnswerDeadline']
+            cell.number_format = '#,##0;[red]-#,##0'
+            cell.value = '=ROUNDDOWN(M' + str(i) + '*X' + str(i) + ',0)'
             cell.border = border_aro
 
             i+=1
@@ -391,8 +391,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
         cell = sheet['F' + str(i) ]
         cell.font = font
-        cell.number_format = '#,##0.00;[red]-#,##0.00'
-        cell.value = '=SUM(F' + str(row) + ':F'+ str(i-1) + ')'
+        cell.value = ''
         cell.fill = fill_gray
         cell.border = border_aro
 
@@ -403,8 +402,8 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
         cell.border = border_aro
 
         cell = sheet['H' + str(i) ]
-        cell.font = font           
-        cell.number_format = '#,##0;[red]-#,##0'
+        cell.font = font
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
         cell.value = '=SUM(H' + str(row) + ':H'+ str(i-1) + ')'
         cell.fill = fill_gray
         cell.border = border_aro
@@ -416,7 +415,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
         cell.border = border_aro
 
         cell = sheet['J' + str(i) ]
-        cell.font = font
+        cell.font = font           
         cell.number_format = '#,##0;[red]-#,##0'
         cell.value = '=SUM(J' + str(row) + ':J'+ str(i-1) + ')'
         cell.fill = fill_gray
@@ -437,14 +436,13 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
         cell = sheet['M' + str(i) ]
         cell.font = font
-        cell.number_format = '#,##0;[red]-#,##0'
-        cell.value = '=SUM(M' + str(row) + ':M'+ str(i-1) + ')'
+        cell.value = ''
         cell.fill = fill_gray
         cell.border = border_aro
 
         cell = sheet['N' + str(i) ]
         cell.font = font
-        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.number_format = '#,##0;[red]-#,##0'
         cell.value = '=SUM(N' + str(row) + ':N'+ str(i-1) + ')'
         cell.fill = fill_gray
         cell.border = border_aro
@@ -514,13 +512,15 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
         cell = sheet['X' + str(i) ]
         cell.font = font
-        cell.value = ''
+        cell.number_format = '#,##0.00;[red]-#,##0.00'
+        cell.value = '=SUM(X' + str(row) + ':X'+ str(i-1) + ')'
         cell.fill = fill_gray
         cell.border = border_aro
 
         cell = sheet['Y' + str(i) ]
         cell.font = font
-        cell.value = ''
+        cell.number_format = '#,##0;[red]-#,##0'
+        cell.value = '=SUM(Y' + str(row) + ':Y'+ str(i-1) + ')'
         cell.fill = fill_gray
         cell.border = border_aro
 
@@ -558,13 +558,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
     cell = sheet['F' + str(i+1) ]
     cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
-    for t in range(len(rows)):
-        if t==0:
-            DetailVolume= '=F' + str(rows[t])
-        else:
-            DetailVolume+= '+F' + str(rows[t])
-    cell.value = DetailVolume
+    cell.value = ''
     cell.fill = fill_gray
     cell.border = border_aro
 
@@ -575,8 +569,8 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
     cell.border = border_aro
 
     cell = sheet['H' + str(i+1) ]
-    cell.font = font           
-    cell.number_format = '#,##0;[red]-#,##0'
+    cell.font = font
+    cell.number_format = '#,##0.00;[red]-#,##0.00'
     for t in range(len(rows)):
         if t==0:
             DetailVolume= '=H' + str(rows[t])
@@ -593,7 +587,7 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
     cell.border = border_aro
 
     cell = sheet['J' + str(i+1) ]
-    cell.font = font
+    cell.font = font           
     cell.number_format = '#,##0;[red]-#,##0'
     for t in range(len(rows)):
         if t==0:
@@ -624,19 +618,13 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
     cell = sheet['M' + str(i+1) ]
     cell.font = font
-    cell.number_format = '#,##0;[red]-#,##0'
-    for t in range(len(rows)):
-        if t==0:
-            DetailVolume= '=M' + str(rows[t])
-        else:
-            DetailVolume+= '+M' + str(rows[t])
-    cell.value = DetailVolume
+    cell.value = ''
     cell.fill = fill_gray
     cell.border = border_aro
 
     cell = sheet['N' + str(i+1) ]
     cell.font = font
-    cell.number_format = '#,##0.00;[red]-#,##0.00'
+    cell.number_format = '#,##0;[red]-#,##0'
     for t in range(len(rows)):
         if t==0:
             DetailVolume= '=N' + str(rows[t])
@@ -756,13 +744,25 @@ def exceloutput(request, table, fileNameDate, ManagerCode):
 
     cell = sheet['X' + str(i+1) ]
     cell.font = font
-    cell.value = ''
+    cell.number_format = '#,##0.00;[red]-#,##0.00'
+    for t in range(len(rows)):
+        if t==0:
+            DetailVolume= '=X' + str(rows[t])
+        else:
+            DetailVolume+= '+X' + str(rows[t])
+    cell.value = DetailVolume
     cell.fill = fill_gray
     cell.border = border_aro
 
     cell = sheet['Y' + str(i+1) ]
     cell.font = font
-    cell.value = ''
+    cell.number_format = '#,##0;[red]-#,##0'
+    for t in range(len(rows)):
+        if t==0:
+            DetailVolume= '=Y' + str(rows[t])
+        else:
+            DetailVolume+= '+Y' + str(rows[t])
+    cell.value = DetailVolume
     cell.fill = fill_gray
     cell.border = border_aro
 
