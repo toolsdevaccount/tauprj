@@ -42,6 +42,8 @@
                                 <th scope="col" class="text-center coloritem">担当者名</th>
                                 <th scope="col" class="text-center coloritem">商品名</th>
                                 <th scope="col" class="text-center items">番手</th>
+                                <th scope="col" class="text-center days">希望納期</th>
+                                <th scope="col" class="text-center days">回答納期</th>
                                 <th scope="col" class="text-center items">残数量</th>
                                 <th scope="col" class="text-center items">仕入単価</th>
                                 <th scope="col" class="text-center items">仕入金額</th>
@@ -64,6 +66,8 @@
                                 <td class="text-left" style="vertical-align:bottom;">{{ data.Manager_firstname }} {{ data.Manager_lastname }}</td>
                                 <td class="text-left" style="vertical-align:bottom;">{{ data.ProductName }}</td>
                                 <td class="text-left" style="vertical-align:bottom;">{{ data.OrderingCount }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.SpecifyDeliveryDate | default:'' }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.StainAnswerDeadline | default:'' }}</td>
                                 <td class="text-right" style="vertical-align:bottom;">{{ data.DetailVolume }}</td>
                                 <td class="text-right" style="vertical-align:bottom;">{{ data.DetailUnitPrice |floatformat:0 | intcomma }}</td>
                                 <td class="text-right" style="vertical-align:bottom;">{{ data.PurchasePrice |floatformat:0 | intcomma }}</td>

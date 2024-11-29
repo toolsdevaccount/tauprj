@@ -27,22 +27,22 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
 
         # title
-        font_size = 18
+        font_size = 16
         pdf_canvas.setFont('游ゴシック 標準', font_size)
 
         if dt[0]['OutputDiv']==2:
-            pdf_canvas.drawString(190, 670, '染 付 依 頼 書')
+            pdf_canvas.drawString(250, 810, '染 付 依 頼 書')
         if dt[0]['OutputDiv']==3:
-            pdf_canvas.drawString(150, 670, 'ビ ー カ ー 染 付 依 頼 書')
+            pdf_canvas.drawString(200, 810, 'ビ ー カ ー 染 付 依 頼 書')
 
         # 線の太さ
         pdf_canvas.setLineWidth(0.25)
 
         # 依頼日
-        OrderingDate = dt[0]['OrderingDate'].strftime('%Y年%m月%d日') 
         font_size = 11
+        OrderingDate = dt[0]['OrderingDate'].strftime('%Y年%m月%d日') 
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(393, 670, OrderingDate)
+        pdf_canvas.drawString(480, 790, OrderingDate)
 
         # 発注先
         if str(dt[0]['TitleDiv'])=='0':
@@ -55,40 +55,38 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
             Title=''
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(20, 640, dt[0]['DestinationCode__CustomerName'] + '　' + 
+        pdf_canvas.drawString(43, 770, dt[0]['DestinationCode__CustomerName'] + '　' + 
                               dt[0]['SupplierPerson'] + Title)
-        pdf_canvas.line(20, 632, 175, 632) 
+        #pdf_canvas.line(20, 632, 175, 632) 
 
         # 自社情報
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(292, 620, '株式会社')
+        pdf_canvas.drawString(357, 740, '株式会社')
 
         pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         font_size = 18
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
-        pdf_canvas.drawString(345, 620, contents)
+        pdf_canvas.drawString(410, 740, contents)
 
         # ロゴ追加
-        #img = './mysite/myapp/templates/image/image1.jpg'
-        img = './static/image/image1.jpg'
-        pdf_canvas.drawImage(img, 134*mm, 216*mm, 45.0*mm, 12.0*mm)
+        img = './mysite/myapp/templates/image/image1.jpg'
+        #img = './static/image/image1.jpg'
+        #pdf_canvas.drawImage(img, 134*mm, 216*mm, 45.0*mm, 12.0*mm)
+        pdf_canvas.drawImage(img, 165*mm, 258*mm, 45.0*mm, 12.0*mm)
 
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-
-        #pdf_canvas.drawString(410, 605, dt[0]['ManagerCode__first_name'] + dt[0]['ManagerCode__last_name'])
-        pdf_canvas.drawString(292, 590, '〒 ' + dt_own[0]['PostCode'])
-        pdf_canvas.drawString(292, 580, dt_own[0]['PrefecturesCode__prefecturename'] + dt_own[0]['Municipalities'] + 
-                              dt_own[0]['Address'] + dt_own[0]['BuildingName'])
-        pdf_canvas.drawString(317, 570, 'TEL: ' + dt_own[0]['PhoneNumber'] + ' FAX: ' + dt_own[0]['FaxNumber'])
+        pdf_canvas.drawString(357, 720, '〒 ' + dt_own[0]['PostCode'])
+        pdf_canvas.drawString(357, 710, dt_own[0]['PrefecturesCode__prefecturename'] + dt_own[0]['Municipalities'] + dt_own[0]['Address'] + dt_own[0]['BuildingName'])
+        pdf_canvas.drawString(357, 700, 'TEL: ' + dt_own[0]['PhoneNumber'] + ' FAX: ' + dt_own[0]['FaxNumber'])
 
         # メッセージ
         font_size = 9
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(20, 570,'下記の通りご依頼致します。')
+        pdf_canvas.drawString(43, 700,'下記の通りご依頼致します。')
 
         # line 
         pdf_canvas.setStrokeColor(dimgrey)
@@ -212,7 +210,8 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         table = Table(data, colWidths=(12*mm, 20*mm, 29*mm, 14*mm, 12*mm, 12*mm, 12*mm, 52*mm), rowHeights=4.5*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
-                ('BACKGROUND', (0, 0), (-1, -1), colors.skyblue),
+                #('BACKGROUND', (0, 0), (-1, -1), colors.skyblue),
+                ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgrey),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.dimgrey),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
