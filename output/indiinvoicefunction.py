@@ -36,14 +36,6 @@ def printstring(pdf_canvas,dt,dt_own):
         font_size = 18
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(308, 470, '納　品　書')
-        # 得意先コード
-        #CustomerCode = dt[0]['OrderingId__CustomeCode_id__CustomerCode']
-        # 請求先
-        # font_size = 12
-        # pdf_canvas.setFont('游ゴシック 標準', font_size)
-        # pdf_canvas.drawString(30, 810, '〒' + dt[0]['OrderingId__CustomeCode_id__PostCode'])
-        # pdf_canvas.drawString(42, 790, dt[0]['Address'])
-        # pdf_canvas.drawString(100, 770, dt[0]['OrderingId__CustomeCode_id__BuildingName'])
         font_size = 16
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(20, 390, dt[0]['OrderingId__CustomeCode_id__CustomerName'] + '　' + '御中')
@@ -81,8 +73,8 @@ def printstring(pdf_canvas,dt,dt_own):
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
 
         # 会社ロゴ
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 207*mm, 131*mm, 45.0*mm, 12.0*mm)
 
         # 自社住所
@@ -114,7 +106,6 @@ def printstring(pdf_canvas,dt,dt_own):
         data = [
             [itemNo0, itemNo1, itemNo2, itemNo3, itemNo4, itemNo5, itemNo6, itemNo7, itemNo8, itemNo9],
         ]
-        #table = Table(data, colWidths=(15.0*mm, 39.0*mm, 15.0*mm, 15.0*mm, 25.0*mm, 15*mm, 12*mm, 25*mm, 25*mm, 52*mm), rowHeights=7.0*mm)
         table = Table(data, colWidths=(15.0*mm, 39.0*mm, 15.0*mm, 22.0*mm, 45.0*mm, 15*mm, 12*mm, 18*mm, 25*mm, 32*mm), rowHeights=7.0*mm)
 
         table.setStyle(TableStyle([
@@ -122,7 +113,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.50,  colors.dimgray),
                 # 背景色 先頭
-                #('BACKGROUND', (0, 0), (-1, -1), colors.skyblue),
                 ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
@@ -207,7 +197,6 @@ def printstring(pdf_canvas,dt,dt_own):
                         ['','','','','','','','','',''],
                 ]
 
-            #table = Table(data, colWidths=(15.0*mm, 39.0*mm, 15.0*mm, 15.0*mm, 25.0*mm, 15*mm, 12*mm, 25*mm, 25*mm, 52*mm), rowHeights=7.0*mm)
             table = Table(data, colWidths=(15.0*mm, 39.0*mm, 15.0*mm, 22.0*mm, 45.0*mm, 15*mm, 12*mm, 18*mm, 25*mm, 32*mm), rowHeights=7.0*mm)
             table.setStyle(TableStyle([
                     ('LINEBEFORE', (0, 0), (0, 11), 0.50, colors.dimgray),
@@ -252,13 +241,11 @@ def printstring(pdf_canvas,dt,dt_own):
             [itemNo10, itemNo11,''],
         ]
 
-        #table = Table(data, colWidths=(25*mm, 25*mm, 52*mm), rowHeights=7.0*mm)
         table = Table(data, colWidths=(30*mm, 25*mm, 32*mm), rowHeights=7.0*mm)
         table.setStyle(TableStyle([
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
                 ('LINEBEFORE', (1, 0), (2, 0), 0.50, colors.dimgray),
                 # 背景色
-                #('BACKGROUND', (0, 0), (0, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('VALIGN', (0, 0), (-1, -1), 'BOTTOM'),
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
@@ -278,7 +265,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
-                #('BACKGROUND', (0, 0), (0, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),

@@ -67,7 +67,6 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         table = Table(data, colWidths=(15*mm, 30*mm), rowHeights=(4*mm, 6*mm))
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
-                #('BACKGROUND', (0, 0), (1, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (1, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (1, 0), colors.white),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
@@ -92,8 +91,8 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         pdf_canvas.drawString(435, 745, contents)
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
         # 会社ロゴ
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 167*mm, 260*mm, 47.0*mm, 12.0*mm)
 
         # 自社住所
@@ -135,7 +134,6 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         table = Table(data, colWidths=(28*mm, 28*mm, 28*mm, 35*mm, 28*mm), rowHeights=(5*mm, 7*mm))
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
-                #('BACKGROUND', (0, 0), (4, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (4, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (4, 0), colors.white),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
@@ -162,7 +160,6 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         table = Table(data, colWidths=(35*mm), rowHeights=(5*mm, 7*mm))
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (0, 0), '游ゴシック 標準', 9),
-                #('BACKGROUND', (0, 0), (0, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
@@ -182,7 +179,6 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         itemNo1 = Paragraph('伝票番号',style)
         itemNo3 = Paragraph('品' + '&nbsp;&nbsp;'+ '&nbsp;&nbsp;' + '&nbsp;&nbsp;' + '名',style)
         itemNo4 = Paragraph('数' + '&nbsp;&nbsp;' + '量',style)
-        #itemNo5 = Paragraph('単' + '&nbsp;&nbsp;' + '価',style)
         itemNo6 = Paragraph('税抜金額',style)
         itemNo7 = Paragraph('摘' + '&nbsp;&nbsp;' + '要',style)
         data = [
@@ -193,7 +189,6 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 10),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.50, colors.dimgray),
-                #('BACKGROUND', (0, 0), (-1, -1), colors.skyblue),
                 ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                 ('SPAN', (2, 0), (3, 0)),
@@ -277,9 +272,6 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
                     ('LINEBEFORE', (4, 0), (4, 31), 0.50, colors.dimgray),
                     ('LINEBEFORE', (5, 0), (5, 31), 0.50, colors.dimgray),
                     ('LINEBEFORE', (6, 0), (6, 31), 0.50, colors.dimgray),
-                    #('LINEBEFORE', (7, 0), (7, 31), 0.50, colors.dimgray),
-                    #('LINEBEFORE', (8, 0), (8, 31), 0.50, colors.dimgray),
-                    #('LINEAFTER' , (7, 0), (7, 31), 0.50, colors.dimgray),
                     ('LINEAFTER' , (6, 0), (6, 31), 0.50, colors.dimgray),
                     ('LINEBELOW' , (0, 0), (9, 31), 0.50, colors.dimgray),
                     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),

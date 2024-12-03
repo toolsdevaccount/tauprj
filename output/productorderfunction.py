@@ -53,14 +53,11 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.drawString(410, 740, contents)
 
     # ロゴ追加
-    img = './mysite/myapp/templates/image/image1.jpg'
-    #img = './static/image/image1.jpg'
+    #img = './mysite/myapp/templates/image/image1.jpg'
+    img = './static/image/image1.jpg'
     pdf_canvas.drawImage(img, 165*mm, 258*mm , 45.0*mm, 12.0*mm)
 
     pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
-    #font_size = 10
-    #pdf_canvas.setFont('游ゴシック 標準', font_size)
-    #pdf_canvas.drawString(490, 740, dt[0][26] + dt[0][27])
 
     font_size = 10
     pdf_canvas.setFont('游ゴシック 標準', font_size)
@@ -77,14 +74,6 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     font_size = 10
     pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(130, 670,'下記の通り発注いたしますので、御手配のほどよろしくお願い申し上げます')
-
-    # line
-    #pdf_canvas.line(34, 660, 564, 660)  #上
-    #pdf_canvas.line(34, 660, 34, 600)   #左
-    #pdf_canvas.line(34, 600, 564, 600)  #下 
-    #pdf_canvas.line(564,660, 564, 600)  #右 
-    #pdf_canvas.line(34, 640, 564, 640)  #中横
-    #pdf_canvas.line(34, 620, 564, 620)  #中横
 
     # オーダーNO
     pdf_canvas.setFillColor(colors.HexColor("#87CAD7"))    # 塗りつぶしの色を設定
@@ -176,7 +165,6 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     table = Table(data, colWidths=(45*mm, 22*mm, 70*mm, 30*mm, 20*mm), rowHeights=7.0*mm)
     table.setStyle(TableStyle([
             ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
-            #('BACKGROUND', (0, 0), (4, 0), colors.skyblue),
             ('BACKGROUND', (0, 0), (4, 0), colors.HexColor("#87CAD7")),
             ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
             ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
@@ -268,7 +256,6 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     table = Table(data, colWidths=(39*mm, 21*mm, 21*mm, 21*mm, 21*mm, 21*mm, 21*mm, 22*mm), rowHeights=7.0*mm)
     table.setStyle(TableStyle([
             ('FONT', (0, 0), (-1, -1), '游ゴシック 太字', 9),
-            #('BACKGROUND', (0, 0), (7, 0), colors.skyblue),
             ('BACKGROUND', (0, 0), (7, 0), colors.HexColor("#87CAD7")),
             ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgrey),
             ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.dimgrey),
@@ -427,8 +414,8 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     for i in range(l):
         row = dtimage[i]
         if row[1]!="":
-            img = './mysite/media/' + row[1]
-            #img = './media/' + row[1]
+            #img = './mysite/media/' + row[1]
+            img = './media/' + row[1]
 
             if i==0:
                 pdf_canvas.drawImage(img, 16*mm, 25*mm , 30.0*mm, 30.0*mm, preserveAspectRatio=True)
@@ -441,18 +428,6 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(40, 190,'仮品番')
     pdf_canvas.drawString(100 ,190, dt[0][35])
-
-    # マーク名
-    #font_size = 9
-    #pdf_canvas.setFont('游ゴシック 標準', font_size)
-    #pdf_canvas.drawString(240, 190,'マーク')
-    #pdf_canvas.drawString(280, 190, dt[0][33])
-
-    # 備考
-    #font_size = 9
-    #pdf_canvas.setFont('游ゴシック 標準', font_size)
-    #pdf_canvas.drawString(240, 170,'備考')
-    #pdf_canvas.drawString(280, 170, textwrap.fill(dt[0][34], 20, max_lines=2, placeholder=' ~',))
 
     # 
     font_size = 14

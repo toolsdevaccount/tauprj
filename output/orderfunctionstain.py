@@ -69,9 +69,8 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(410, 740, contents)
 
         # ロゴ追加
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
-        #pdf_canvas.drawImage(img, 134*mm, 216*mm, 45.0*mm, 12.0*mm)
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 165*mm, 258*mm, 45.0*mm, 12.0*mm)
 
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
@@ -208,7 +207,6 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         table = Table(data, colWidths=(12*mm, 30*mm, 40*mm, 16*mm, 16*mm, 16*mm, 16*mm, 50*mm), rowHeights=7.5*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
-                #('BACKGROUND', (0, 0), (-1, -1), colors.skyblue),
                 ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgrey),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.dimgrey),
@@ -224,7 +222,6 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
             ]))
         table.wrapOn(pdf_canvas, 7*mm, 10*mm)
         table.drawOn(pdf_canvas, 7*mm, 153.0*mm)
-        #table.drawOn(pdf_canvas, 7*mm, 120.0*mm)
 
         data =[]
         l=len(dt)
@@ -295,7 +292,6 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
                             ['','','','','','',''],
                     ]
 
-            #table = Table(data, colWidths=(12*mm, 20*mm, 29*mm, 14*mm, 12*mm, 12*mm, 12*mm, 52*mm), rowHeights=9.0*mm)
             table = Table(data, colWidths=(12*mm, 30*mm, 40*mm, 16*mm, 16*mm, 16*mm, 16*mm, 50*mm), rowHeights=12.0*mm)
             table.setStyle(TableStyle([
                     ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 8),

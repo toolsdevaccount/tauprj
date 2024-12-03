@@ -83,7 +83,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
-                #('BACKGROUND', (0, 0), (0, 2), colors.skyblue),
                 ('BACKGROUND', (0, 0), (0, 2), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 2), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
@@ -105,7 +104,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
-                #('BACKGROUND', (0, 0), (0, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
@@ -126,8 +124,8 @@ def printstring(pdf_canvas,dt,dt_own):
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
 
         # 会社ロゴ
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 207*mm, 135*mm, 45.0*mm, 12.0*mm)
 
         # 自社情報
@@ -164,7 +162,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
-                #('BACKGROUND', (0, 0), (-1, -1), colors.skyblue),
                 ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
@@ -257,7 +254,6 @@ def printstring(pdf_canvas,dt,dt_own):
                         [Number, '','','','','','','','','',''],
                 ]
 
-            #table = Table(data, colWidths=(8*mm, 26*mm, 16*mm, 20*mm, 30*mm, 15*mm, 12*mm, 19*mm, 20*mm, 20*mm, 52*mm), rowHeights=7*mm)
             table = Table(data, colWidths=(8*mm, 46*mm, 16*mm, 20*mm, 34*mm, 15*mm, 12*mm, 19*mm, 20*mm, 20*mm, 32*mm), rowHeights=7*mm)
             table.setStyle(TableStyle([
                     ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
@@ -276,7 +272,6 @@ def printstring(pdf_canvas,dt,dt_own):
         table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
         table.drawOn(pdf_canvas, 4.0*mm, 33.0*mm)
 
-
         #摘要
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
 
@@ -293,7 +288,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('LINEABOVE', (0, 1), (0, 1), 0.50, colors.dimgray),
                 # 背景色 先頭
-                #('BACKGROUND', (0, 0), (0, 0), colors.skyblue),
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
