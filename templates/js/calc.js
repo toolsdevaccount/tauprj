@@ -39,13 +39,6 @@ function comma(obj)
 // 指定したエレメント(input)の横計を再計算してから取得
 function calc(obj)
 {
-    // 計算
-    //result = Number(price(obj)) + Number(overprice(obj));
-
-    //if (isNaN(result)){
-    //    result=0;
-    //}
-
     // 単価にカンマをつける
     detailprice = Number(price(obj)).toLocaleString();
 
@@ -84,6 +77,11 @@ function calc(obj)
 function removeComma(number) {
     var removed = number.replace(/,/g, '');
     return parseInt(removed, 10);
+}
+
+function removeCommaVolume(number) {
+    var removed = number.replace(/,/g, '');
+    return Number.parseFloat(removed).toFixed(2)
 }
 
 function order(obj)
