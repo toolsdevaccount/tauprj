@@ -30,6 +30,7 @@ def printstring(pdf_canvas,dt,dt_own):
         YuGosic = "YuGothR.ttc"
         YuGosicB = "YuGothB.ttc"
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
+        pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         # 線の太さ
         pdf_canvas.setLineWidth(0.25)
         # title
@@ -63,14 +64,12 @@ def printstring(pdf_canvas,dt,dt_own):
         # 自社情報
         font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(503, 380, '株式会社')
+        pdf_canvas.drawString(508, 380, '株式会社')
 
-        pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         font_size = 18
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
         pdf_canvas.drawString(552, 380, contents)
-        pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
 
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
@@ -262,6 +261,7 @@ def printstring(pdf_canvas,dt,dt_own):
         table = Table(data, colWidths=(30*mm, 51*mm), rowHeights=6*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 11),
+                ('FONT', (0, 0), (1, 0), '游ゴシック 太字', 11),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭

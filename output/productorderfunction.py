@@ -82,9 +82,10 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.line(110, 660, 110, 600) #中縦
     font_size = 9
     pdf_canvas.setFillColor(colors.white) 
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(40, 645,'オーダーNO')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(120,645, dt[0][3] + dt[0][4])
     pdf_canvas.rect(110, 640, 70, 20)               # 四角形を描画
     pdf_canvas.line(34, 640, 110, 640)              # オーダーNOの下
@@ -92,17 +93,19 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     # アパレル
     font_size = 9
     pdf_canvas.setFillColor(colors.white) 
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(40, 625,'アパレル')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(120,625, dt[0][8])
 
     # ブランド名
     font_size = 9
     pdf_canvas.setFillColor(colors.white) 
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(40, 605,'ブランド')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(120,605, dt[0][10])
     pdf_canvas.setFillColor(colors.HexColor("#87CAD7"))     # 塗りつぶしの色を設定
     pdf_canvas.rect(180, 640, 70, 20, fill=True)               # 四角形を描画
@@ -110,9 +113,10 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     # 本品番
     font_size = 9
     pdf_canvas.setFillColor(colors.white) 
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(200, 645,'本品番')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(260,645, dt[0][5])
     pdf_canvas.rect(250, 640, 120, 20)                          # 四角形を描画
 
@@ -122,9 +126,10 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.rect(370, 600, 70, 60, fill=True)                # 四角形を描画
     pdf_canvas.setFillColor(colors.white) 
     font_size = 9
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(380, 645,'商品コード')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(450, 645, dt[0][7])
     pdf_canvas.rect(440, 600, 125, 60)              # 四角形を描画
     pdf_canvas.line(370, 640, 565, 640)             # 商品コードの下
@@ -137,21 +142,23 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     # 納期
     font_size = 9
     pdf_canvas.setFillColor(colors.white) 
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(380, 625,'納　期')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(450, 625, dt[0][9])
 
     # 仕入単価
     font_size = 9
     pdf_canvas.setFillColor(colors.white) 
-    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    pdf_canvas.setFont('游ゴシック 太字', font_size)
     pdf_canvas.drawString(380, 605,'仕入単価')
     pdf_canvas.setFillColor(colors.black) 
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(450, 605, dt[0][28] + dt[0][11] + dt[0][29])
 
     # 品名、番手、混率、単価、条件
-    style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, textColor='white', alignment=TA_CENTER)
+    style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=9, textColor='white', alignment=TA_CENTER)
     itemNo0 = Paragraph('品' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '名',style)
     itemNo1 = Paragraph('番' + '&nbsp;&nbsp;&nbsp;&nbsp;' + '手',style)
     itemNo2 = Paragraph('混' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '率',style)

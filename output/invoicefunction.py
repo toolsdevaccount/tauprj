@@ -28,6 +28,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         YuGosic = "YuGothR.ttc"
         YuGosicB = "YuGothB.ttc"
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
+        pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         # title
         font_size = 18
         pdf_canvas.setFont("游ゴシック 標準", font_size)
@@ -66,7 +67,8 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
 
         table = Table(data, colWidths=(15*mm, 30*mm), rowHeights=(4*mm, 6*mm))
         table.setStyle(TableStyle([
-                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
+                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準',9),
+                ('FONT', (0, 0), (1, 0), '游ゴシック 太字', 9),
                 ('BACKGROUND', (0, 0), (1, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (1, 0), colors.white),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
@@ -82,14 +84,12 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         # 自社名
         font_size = 10
         pdf_canvas.setFont("游ゴシック 標準", font_size)
-        pdf_canvas.drawString(366, 745, '株式会社')
+        pdf_canvas.drawString(390, 745, '株式会社')
 
-        pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         font_size = 18
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
         pdf_canvas.drawString(435, 745, contents)
-        pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
@@ -133,7 +133,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
 
         table = Table(data, colWidths=(28*mm, 28*mm, 28*mm, 35*mm, 28*mm), rowHeights=(5*mm, 7*mm))
         table.setStyle(TableStyle([
-                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
+                ('FONT', (0, 0), (-1, -1), '游ゴシック 太字', 9),
                 ('BACKGROUND', (0, 0), (4, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (4, 0), colors.white),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
@@ -159,7 +159,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
 
         table = Table(data, colWidths=(35*mm), rowHeights=(5*mm, 7*mm))
         table.setStyle(TableStyle([
-                ('FONT', (0, 0), (0, 0), '游ゴシック 標準', 9),
+                ('FONT', (0, 0), (0, 0), '游ゴシック 太字', 9),
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
@@ -174,7 +174,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         table.drawOn(pdf_canvas, 168*mm, 227.0*mm)
 
         # 表題
-        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, textColor='white', alignment=TA_CENTER)
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=9, textColor='white', alignment=TA_CENTER)
         itemNo0 = Paragraph('年月日',style)
         itemNo1 = Paragraph('伝票番号',style)
         itemNo3 = Paragraph('品' + '&nbsp;&nbsp;'+ '&nbsp;&nbsp;' + '&nbsp;&nbsp;' + '名',style)

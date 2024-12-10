@@ -11,8 +11,8 @@ from django.utils import timezone
 import datetime
 from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,IntegerField,DecimalField
-from django.db.models.functions import Coalesce
+from django.db.models import Sum,F,IntegerField, DecimalField
+from django.db.models.functions import Coalesce, Cast
 from itertools import chain
 from django.db.models.functions import TruncMonth
 
@@ -248,6 +248,7 @@ def Detail(Customer, FromDate, ToDate ):
         InvoiceIssueDiv=1,
         is_Deleted=0,
         )
+
     queryset =  queryset.values(
         'InvoiceNUmber',
         'OrderingId__CustomeCode',
@@ -259,12 +260,14 @@ def Detail(Customer, FromDate, ToDate ):
         'InvoiceIssueDate',
         'SalesTaxRate'
         ).annotate(
-            Abs_total=Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),
-            Shipping_total=Sum('ShippingVolume')
+            #Abs_total=Cast(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice'),output_field=IntegerField()),
+            Abs_total=Cast(Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),output_field=IntegerField()),
+            Shipping_total=Sum('ShippingVolume'),
             ).order_by(
                 'InvoiceIssueDate',
                 'InvoiceNUmber'
                 )
+
     queryset =  queryset.values_list(
          'InvoiceIssueDate',
          'InvoiceNUmber',
@@ -274,6 +277,7 @@ def Detail(Customer, FromDate, ToDate ):
          'Abs_total',
          'SalesTaxRate',
         ).filter(Q(Abs_total__gt=0)|Q(Abs_total__lt=0))
+    
 
     #請求月入金レコード
     queryset_depo = Deposit.objects.filter(DepositDate__range=(str(FromDate),str(ToDate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)

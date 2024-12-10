@@ -187,7 +187,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(360, 545, 'TEL:' + dt[0]['ShippingCode__PhoneNumber'])
 
         # 項番、色番、カラー、仕立、数量、単価、希望納期、回答納期、摘要
-        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, textColor='white', alignment=TA_CENTER)
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=9, textColor='white', alignment=TA_CENTER)
         itemNo0 = Paragraph('項番',style)
         itemNo1 = Paragraph('色番',style)
         itemNo2 = Paragraph('色' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '名',style)

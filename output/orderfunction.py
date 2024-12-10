@@ -25,6 +25,7 @@ def printstring(pdf_canvas,dt,dt_own):
         YuGosic = "YuGothR.ttc"
         YuGosicB = "YuGothB.ttc"
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
+        pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         leftmargin = 2
         #width, height = B5
         # 線の太さ
@@ -71,6 +72,8 @@ def printstring(pdf_canvas,dt,dt_own):
         itemNo1 = Paragraph(address,style)
         itemNo2 = Paragraph(dt[0]['ShippingCode__PhoneNumber'],style)
 
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
+
         data = [
             ['出荷先', itemNo0],
             ['出荷先住所',itemNo1],
@@ -80,6 +83,7 @@ def printstring(pdf_canvas,dt,dt_own):
         table = Table(data, colWidths=(25*mm, 80*mm), rowHeights=5.0*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 11),
+                ('FONT', (0, 0), (0, 2), '游ゴシック 太字', 11),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
@@ -101,6 +105,7 @@ def printstring(pdf_canvas,dt,dt_own):
         table = Table(data, colWidths=(25*mm, 80*mm), rowHeights=5.0*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 11),
+                ('FONT', (0, 0), (0, 0), '游ゴシック 太字', 11),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
@@ -116,16 +121,14 @@ def printstring(pdf_canvas,dt,dt_own):
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(500, 390, '株式会社')
 
-        pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
         font_size = 18
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
         pdf_canvas.drawString(545, 390, contents)
-        pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
 
         # 会社ロゴ
-        #img = './mysite/myapp/templates/image/image1.jpg'
-        img = './static/image/image1.jpg'
+        img = './mysite/myapp/templates/image/image1.jpg'
+        #img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 207*mm, 135*mm, 45.0*mm, 12.0*mm)
 
         # 自社情報
@@ -138,7 +141,7 @@ def printstring(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(505, 330, 'TEL: ' + dt_own[0]['PhoneNumber'] + '　FAX: ' + dt_own[0]['FaxNumber'])
 
         # No, 品番、番手、色番、色名、数量、単位、単価、希望納期、回答納期、備考(中央寄せ)
-        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, textColor='white', alignment=TA_CENTER)
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=10, textColor='white', alignment=TA_CENTER)
         itemNo  = Paragraph('',style)
         itemNo0 = Paragraph('品名/品番',style)
         itemNo1 = Paragraph('番手',style)
@@ -274,9 +277,11 @@ def printstring(pdf_canvas,dt,dt_own):
 
         #摘要
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
+        styleBold = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=11, textColor='white', alignment=TA_LEFT)
 
+        Product = Paragraph('摘要',styleBold)
         data = [
-            ['摘要'],
+            [Product],
             ['出荷次第、オーダーNoを記入した納品書を翌日当社宛にご連絡ください。'],
             [''],
             [''],
