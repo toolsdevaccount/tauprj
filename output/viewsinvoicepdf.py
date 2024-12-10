@@ -11,7 +11,7 @@ from django.utils import timezone
 import datetime
 from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,IntegerField
+from django.db.models import Sum,F,IntegerField,DecimalField
 from django.db.models.functions import Coalesce
 from itertools import chain
 from django.db.models.functions import TruncMonth
@@ -158,8 +158,16 @@ def customer(i, dt_company):
 
 def PrevBalance(lastdate, Customer, FromDate, ToDate): 
     #前月までの入金額計
-    queryset = Deposit.objects.filter(DepositDate__lte=(str(lastdate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
-    DepoPrvSum = list(queryset.values('DepositCustomerCode').annotate(Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())))
+    queryset = Deposit.objects.filter(
+        DepositDate__lte=(str(lastdate)),
+        DepositCustomerCode=(str(Customer[0]['id'])),
+        is_Deleted=0
+        )
+    DepoPrvSum = list(queryset.values(
+        'DepositCustomerCode'
+        ).annotate(
+            Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())
+            ))
     #0判定
     if DepoPrvSum:
         DepoPrvTotal = int(DepoPrvSum[0]['Depo_total'])
@@ -167,28 +175,10 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
         DepoPrvTotal = 0
 
     #前月までの売上額計
-    # queryset =  RequestResult.objects.filter(InvoiceIssueDate__lte=(str(lastdate)),
-    #             OrderingId__CustomeCode=(str(Customer[0]['id'])),
-    #             InvoiceNUmber__gt=0,
-    #             InvoiceIssueDiv=1,
-    #             is_Deleted=0,
-    #             )
-    # SellPrvSum =  list(queryset.values('OrderingId__CustomeCode').annotate(
-    #     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())))
-    # #0判定
-    # if SellPrvSum:
-    #     SellPrvTotal = int(SellPrvSum[0]['Abs_total'])
-    #     SellPrvtax = int(SellPrvSum[0]['Abs_total']) * 0.1
-    #     SellPrvtax = int(SellPrvtax)
-    # else:
-    #     SellPrvTotal = 0
-    #     SellPrvtax = 0
-
-    #前月までの売上額計
     SellPrvSum =  RequestResult.objects.annotate(
-        monthly=TruncMonth('InvoiceIssueDate')
+        monthly=TruncMonth('InvoiceIssueDate'),
         ).values(
-            'monthly'
+            'monthly',
         ).filter(
             InvoiceIssueDate__lte=(str(lastdate)),
             OrderingId__CustomeCode=(str(Customer[0]['id'])),
@@ -196,18 +186,19 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
             InvoiceIssueDiv=1,
             is_Deleted=0,
             ).annotate(
-                    Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
-                )
+                Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
+            ).order_by(
+                'monthly',
+            )
 
     #残高消費税計算
-    SellPrvTotal = 0
-    SellPrvtax = 0
+    SellPrvTotal=0
+    SellPrvtax=0
     if SellPrvSum:
         for q in SellPrvSum:
             SellPrvTotal+=int(q['Abs_total'])
-            tax = int(q['Abs_total'])
-            SellPrvtax+= int(tax*0.1)
 
+        SellPrvtax=int(SellPrvTotal*0.1)
 
     #前回請求額算出
     PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
@@ -222,20 +213,25 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
     #繰越額
     CarryForward = int(PrevBill) - int(DepoTotal)   
     #請求月売上合計額
-    queryset =  RequestResult.objects.filter(InvoiceIssueDate__range=(str(FromDate),str(ToDate)),
-                OrderingId__CustomeCode=(str(Customer[0]['id'])),
-                InvoiceNUmber__gt=0,
-                InvoiceIssueDiv=1,
-                is_Deleted=0,
-                )
+    queryset =  RequestResult.objects.filter(
+        InvoiceIssueDate__range=(str(FromDate),str(ToDate)),
+        OrderingId__CustomeCode=(str(Customer[0]['id'])),
+        InvoiceNUmber__gt=0,
+        InvoiceIssueDiv=1,
+        is_Deleted=0,
+        )
 
-    SellSum =  list(queryset.values('OrderingId__CustomeCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())))
-    #0判定
-    if SellSum:
-        SellTotal = int(SellSum[0]['Abs_total'])
-    else:
-        SellTotal = 0
+    SellSum =  list(queryset.values(
+        'OrderingId__CustomeCode',
+        'InvoiceNUmber',        
+        ).annotate(
+        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())
+        ))
+
+    SellTotal = 0
+    for d in SellSum:
+        SellTotal+=int(d['Abs_total'])
+
     #請求月売上消費税額
     tax = int(SellTotal) * 0.1
     tax = int(tax)
@@ -245,21 +241,30 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
 
 def Detail(Customer, FromDate, ToDate ): 
     #請求月売上レコード
-    queryset =  RequestResult.objects.filter(InvoiceIssueDate__range=(str(FromDate),str(ToDate)),
-                OrderingId__CustomeCode=(str(Customer[0]['id'])),
-                InvoiceNUmber__gt=0,
-                InvoiceIssueDiv=1,
-                is_Deleted=0,
+    queryset =  RequestResult.objects.filter(
+        InvoiceIssueDate__range=(str(FromDate),str(ToDate)),
+        OrderingId__CustomeCode=(str(Customer[0]['id'])),
+        InvoiceNUmber__gt=0,
+        InvoiceIssueDiv=1,
+        is_Deleted=0,
+        )
+    queryset =  queryset.values(
+        'InvoiceNUmber',
+        'OrderingId__CustomeCode',
+        'OrderingId__SlipDiv',
+        'OrderingId__OrderNumber',
+        'OrderingId__CustomeCode_id__CustomerName',
+        'OrderingId__ProductName',
+        'OrderingId__OrderingCount',
+        'InvoiceIssueDate',
+        'SalesTaxRate'
+        ).annotate(
+            Abs_total=Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),
+            Shipping_total=Sum('ShippingVolume')
+            ).order_by(
+                'InvoiceIssueDate',
+                'InvoiceNUmber'
                 )
-    queryset =  queryset.values('InvoiceNUmber','OrderingId__CustomeCode','OrderingId__SlipDiv','OrderingId__OrderNumber',
-                                'OrderingId__CustomeCode_id__CustomerName','OrderingId__ProductName','OrderingId__OrderingCount',
-                                'InvoiceIssueDate','SalesTaxRate').annotate(
-                                    Abs_total=Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),
-                                    Shipping_total=Sum('ShippingVolume')
-                                    ).order_by(
-                                        'InvoiceIssueDate',
-                                        'InvoiceNUmber'
-                                    )
     queryset =  queryset.values_list(
          'InvoiceIssueDate',
          'InvoiceNUmber',

@@ -206,18 +206,15 @@ def PrevBalance(search_date, Customer):
                     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
                 )
 
-    MoneyTotal = 0
-    for d in SellPrvSum:
-        MoneyTotal+=int(d['Abs_total'])
-
     #残高消費税計算
-    SellPrvTotal = 0
-    SellPrvtax = 0
-    if MoneyTotal!=0:
+    SellPrvTotal=0
+    SellPrvtax=0
+    if SellPrvSum:
         for q in SellPrvSum:
             SellPrvTotal+=int(q['Abs_total'])
-            tax = int(q['Abs_total'])
-            SellPrvtax+= int(tax*0.1)
+
+        SellPrvtax=int(SellPrvTotal*0.1)
+
 
     #前回請求額算出
     PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
@@ -243,19 +240,17 @@ def PrevBalance(search_date, Customer):
                 InvoiceIssueDiv=1,
                 is_Deleted=0
                 )
+    SellSum =  list(queryset.values(
+        'OrderingId__CustomeCode',
+        'InvoiceNUmber',        
+        ).annotate(
+        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())
+        ))
 
-    SellSum =  list(queryset.values('OrderingId__CustomeCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())))
-    #0判定
-    if SellSum:
-        SellMoneyTotal = int(SellSum[0]['Abs_total'])
-    else:
-        SellMoneyTotal = 0
+    SellTotal = 0
+    for d in SellSum:
+        SellTotal+=int(d['Abs_total'])
 
-    if SellMoneyTotal!=0:
-        SellTotal = int(SellSum[0]['Abs_total'])
-    else:
-        SellTotal = 0
     #当月月売上消費税額
     tax = int(SellTotal) * 0.1
     tax = int(tax)
