@@ -186,22 +186,33 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
             InvoiceIssueDiv=1,
             is_Deleted=0,
             ).annotate(
-                Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
+                Abs_total=Coalesce(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice'),0,output_field=IntegerField()),
             ).order_by(
                 'monthly',
             )
 
+    #--------------------------------------------------------------------#
     #残高消費税計算
     SellPrvTotal=0
     SellPrvtax=0
-    if SellPrvSum:
-        for q in SellPrvSum:
-            SellPrvTotal+=int(q['Abs_total'])
-
-        SellPrvtax=int(SellPrvTotal*0.1)
+    tax=0
+    Abs_total=0
+    monthly=''
+    abc=list(SellPrvSum)
+    for i, q in enumerate(abc):
+        Abs_total+=q['Abs_total']
+        tax+=q['Abs_total']
+        if (monthly!=q['monthly'] and i>0) or i == len(abc) - 1:
+            SellPrvTotal+=Abs_total
+            SellPrvtax+= int(tax*0.1)
+            Abs_total=0
+            tax=0
+        monthly=q['monthly']      
+    #--------------------------------------------------------------------#
 
     #前回請求額算出
     PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
+
     #請求月入金合計額
     queryset = Deposit.objects.filter(DepositDate__range=(str(FromDate),str(ToDate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
     DepoSum = list(queryset.values('DepositCustomerCode').annotate(Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())))
@@ -221,12 +232,12 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
         is_Deleted=0,
         )
 
-    SellSum =  list(queryset.values(
+    SellSum = queryset.values(
         'OrderingId__CustomeCode',
-        'InvoiceNUmber',        
+        'InvoiceNUmber',
         ).annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())
-        ))
+            Abs_total=Coalesce(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice"),0,output_field=IntegerField()),
+        )
 
     SellTotal = 0
     for d in SellSum:
@@ -260,9 +271,8 @@ def Detail(Customer, FromDate, ToDate ):
         'InvoiceIssueDate',
         'SalesTaxRate'
         ).annotate(
-            #Abs_total=Cast(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice'),output_field=IntegerField()),
-            Abs_total=Cast(Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),output_field=IntegerField()),
-            Shipping_total=Sum('ShippingVolume'),
+            Abs_total=Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),
+            Shipping_total=Sum('ShippingVolume')
             ).order_by(
                 'InvoiceIssueDate',
                 'InvoiceNUmber'
@@ -276,8 +286,9 @@ def Detail(Customer, FromDate, ToDate ):
          'Shipping_total',
          'Abs_total',
          'SalesTaxRate',
-        ).filter(Q(Abs_total__gt=0)|Q(Abs_total__lt=0))
-    
+         ).filter(
+            Q(Abs_total__gt=0)|Q(Abs_total__lt=0)
+            )
 
     #請求月入金レコード
     queryset_depo = Deposit.objects.filter(DepositDate__range=(str(FromDate),str(ToDate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
@@ -286,7 +297,6 @@ def Detail(Customer, FromDate, ToDate ):
     #繰越レコードと売上レコードと入金レコードを結合
     obj = chain(queryset, queryset_depo)
     #日付順にソート
-    #result = sorted(obj)
     result = sorted(obj, key=lambda x: (x[0], int(x[6])))
 
     return result

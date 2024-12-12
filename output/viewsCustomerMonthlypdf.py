@@ -209,12 +209,12 @@ def PrevBalance(search_date, Customer):
     #残高消費税計算
     SellPrvTotal=0
     SellPrvtax=0
+    SellPrvCalc=0
     if SellPrvSum:
         for q in SellPrvSum:
             SellPrvTotal+=int(q['Abs_total'])
-
-        SellPrvtax=int(SellPrvTotal*0.1)
-
+            SellPrvCalc = int(q['Abs_total'])
+            SellPrvtax=SellPrvtax+int(SellPrvCalc*0.1)
 
     #前回請求額算出
     PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
