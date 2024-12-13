@@ -191,24 +191,19 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
                 'monthly',
             )
 
-    #--------------------------------------------------------------------#
-    #残高消費税計算
-    SellPrvTotal=0
-    SellPrvtax=0
-    tax=0
-    Abs_total=0
-    monthly=''
-    abc=list(SellPrvSum)
-    for i, q in enumerate(abc):
-        Abs_total+=q['Abs_total']
-        tax+=q['Abs_total']
-        if (monthly!=q['monthly'] and i>0) or i == len(abc) - 1:
-            SellPrvTotal+=Abs_total
+    #月ごとに集計----------------------------------------------------------#
+    SellPrvTotal = 0
+    SellPrvtax = 0
+    if SellPrvSum:
+        df = pd.DataFrame(SellPrvSum)
+        prvsalessum = df[['monthly','Abs_total']].groupby(['monthly'], as_index =False).sum()
+        _tuple =  [tuple(x) for x in prvsalessum.values]
+        #残高&消費税計算-------------------------------------------------------#
+        for q in _tuple:
+            SellPrvTotal+=int(q[1])
+            tax = int(q[1])
             SellPrvtax+= int(tax*0.1)
-            Abs_total=0
-            tax=0
-        monthly=q['monthly']      
-    #--------------------------------------------------------------------#
+        #--------------------------------------------------------------------#
 
     #前回請求額算出
     PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
