@@ -5,22 +5,22 @@ from reportlab.lib.pagesizes import A4, portrait
 from myapp.models import Deposit, CustomerSupplier, RequestResult
 from django.db.models import Q
 from myapp.output import invoicefunction
-
 # 日時
 from django.utils import timezone
 import datetime
 from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,IntegerField, DecimalField
-from django.db.models.functions import Coalesce, Cast
+from django.db.models import Sum,F,IntegerField
+from django.db.models.functions import Coalesce
 from itertools import chain
 from django.db.models.functions import TruncMonth
-
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#pandas
+import pandas as pd
 
 def pdf(request, pkclosing, invoiceDate_From, invoiceDate_To, element_From, element_To):
     try:
@@ -261,6 +261,7 @@ def Detail(Customer, FromDate, ToDate ):
         )
 
     queryset =  queryset.values(
+        'id',
         'InvoiceNUmber',
         'OrderingId__CustomeCode',
         'OrderingId__SlipDiv',
@@ -271,8 +272,8 @@ def Detail(Customer, FromDate, ToDate ):
         'InvoiceIssueDate',
         'SalesTaxRate'
         ).annotate(
-            Abs_total=Sum(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice")),
-            Shipping_total=Sum('ShippingVolume')
+            Abs_total=Coalesce(F("ShippingVolume") * F("OrderingDetailId__DetailSellPrice"),0,output_field=IntegerField()),
+            Shipping_total=Sum('ShippingVolume'),
             ).order_by(
                 'InvoiceIssueDate',
                 'InvoiceNUmber'
@@ -289,13 +290,17 @@ def Detail(Customer, FromDate, ToDate ):
          ).filter(
             Q(Abs_total__gt=0)|Q(Abs_total__lt=0)
             )
-
+    #--------------------------------------------------------------------#
+    df = pd.DataFrame(queryset, columns=['InvoiceDate','InvoiceNumber','ProductName','OrderingCount','Shipping_total','Abs_total','SalesTaxRate'])
+    sales_sum = df[['InvoiceDate','InvoiceNumber','ProductName','OrderingCount','Shipping_total','Abs_total','SalesTaxRate']].groupby(['InvoiceDate','InvoiceNumber','ProductName','OrderingCount'], as_index =False).sum()
+    _tuple =  [tuple(x) for x in sales_sum.values]
+    #--------------------------------------------------------------------#
     #請求月入金レコード
     queryset_depo = Deposit.objects.filter(DepositDate__range=(str(FromDate),str(ToDate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
     queryset_depo = queryset_depo.values_list('DepositDate','DepositSummary','DepositDiv__DepoPayDivname','DepositSummary','DepositSummary','DepositMoney','DepositDiv_id')
 
     #繰越レコードと売上レコードと入金レコードを結合
-    obj = chain(queryset, queryset_depo)
+    obj = chain(_tuple, queryset_depo)
     #日付順にソート
     result = sorted(obj, key=lambda x: (x[0], int(x[6])))
 
