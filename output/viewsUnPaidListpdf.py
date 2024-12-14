@@ -2,10 +2,10 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape  
-from myapp.models import RequestResult, CustomerSupplier
+from myapp.models import RequestResult
 from myapp.output import unpaidfunction
 # 検索機能のために追加
-from django.db.models import Q, Max
+from django.db.models import Max
 # 日時
 from django.utils import timezone
 import datetime
@@ -13,7 +13,6 @@ from dateutil import relativedelta
 # 計算用
 from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
-from itertools import chain
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
@@ -152,11 +151,13 @@ def Detail(search_date, Customer):
             InvoiceNUmber__gt=0,
             InvoiceIssueDiv=1,
             OrderingId__SupplierCode_id__CustomerCode=str(Customer),
+            is_Deleted = False,
             ).order_by(
                 'OrderingId__SupplierCode_id__CustomerCode',
                 'InvoiceIssueDate',
                 'ShippingDate',
                 )
+
     result=(list(queryset))
 
     return result
