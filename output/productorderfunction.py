@@ -29,7 +29,7 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     # 発注先
     font_size = 14
     pdf_canvas.setFont('游ゴシック 標準', font_size)
-    pdf_canvas.drawString(43, 770, dt[0][1] + '　' + dt[0][25] + dt[0][2])
+    pdf_canvas.drawString(43, 760, dt[0][1] + '　' + dt[0][25] + dt[0][2])
 
     # 発注日
     font_size = 11

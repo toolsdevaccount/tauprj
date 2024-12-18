@@ -30,7 +30,7 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-sm-2">
-					<input type="search" class="form-control flatpickr" name="ShippingDateFrom" id="ShippingDateFrom" autocomplete="new-password" placeholder="出荷日(以上)" value="{{ invsearch.ShippingDateFrom.value }}"/>
+					<input type="search" class="form-control flatpickr" name="InvoiceIssueDateFrom" id="InvoiceIssueDateFrom" autocomplete="new-password" placeholder="発行日(以上)" value="{{ invsearch.InvoiceIssueDateFrom.value }}"/>
 				</div>
 				<div class="text-right">
 					<label class="sr-only">検索</label>
@@ -199,6 +199,7 @@
 						<th scope="col" class="text-center" style="width: 15%">得意先名</th>
 						<th scope="col" class="text-center" style="width: 15%">商品名</th>
 						<th scope="col" class="text-center" style="width: 5%">番手</th>
+						<th scope="col" class="text-center" style="width: 7.5%">発行日</th>
 						<th scope="col" class="text-center" style="width: 7.5%">実績日</th>
 						<th scope="col" class="text-center" style="width: 7.5%">出荷日</th>
 						<th scope="col" class="text-center" style="width: 5%">出荷数</th>
@@ -213,6 +214,7 @@
 						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId__CustomeCode_id__CustomerName }}</td>
 						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId__ProductName }}</td>
 						<td class="text-left" style="vertical-align:bottom;">{{ InvoiceTable.OrderingId__OrderingCount }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.InvoiceIssueDate }}</td>
 						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.ResultDate }}</td>
 						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.ShippingDate }}</td>
 						<td class="text-right" style="vertical-align:bottom;">{{ InvoiceTable.Shipping_total|intcomma }}</td>

@@ -39,7 +39,7 @@ class InvoiceSearchForm(forms.Form):
         initial='',
         required=False,  # 必須ではない
     )
-    ShippingDateFrom = forms.CharField(
+    InvoiceIssueDateFrom = forms.CharField(
         initial='',
         required=False,  # 必須ではない
     )

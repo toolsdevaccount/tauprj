@@ -78,7 +78,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(357, 720, '〒 ' + dt_own[0]['PostCode'])
         pdf_canvas.drawString(357, 710, dt_own[0]['PrefecturesCode__prefecturename'] + dt_own[0]['Municipalities'] + dt_own[0]['Address'] + dt_own[0]['BuildingName'])
-        pdf_canvas.drawString(357, 700, 'TEL: ' + dt_own[0]['PhoneNumber'] + ' FAX: ' + dt_own[0]['FaxNumber'])
+        pdf_canvas.drawString(385, 700, 'TEL: ' + dt_own[0]['PhoneNumber'] + ' FAX: ' + dt_own[0]['FaxNumber'])
 
         # メッセージ
         font_size = 9
