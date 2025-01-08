@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import B5, landscape
+from reportlab.lib.pagesizes import A4, landscape
 from myapp.models import RequestResult,CustomerSupplier 
 from django.db.models.functions import Concat,Abs
 from django.db.models import F,Value
@@ -72,7 +72,7 @@ def make(pkfrom,pkto,isdate,response):
 
 #個別請求書
 def set_info(response):
-    pdf_canvas = canvas.Canvas(response,pagesize=landscape(B5))
+    pdf_canvas = canvas.Canvas(response,pagesize=landscape(A4))
     pdf_canvas.setAuthor("hpscript")
     pdf_canvas.setTitle("納品書")
     pdf_canvas.setSubject("納品書")
