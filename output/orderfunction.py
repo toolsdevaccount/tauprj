@@ -8,7 +8,6 @@ from reportlab.lib.enums import TA_RIGHT, TA_CENTER, TA_LEFT
 from reportlab.pdfbase.ttfonts import TTFont
 
 # 計算用
-from decimal import Decimal
 import math
 
 def printstring(pdf_canvas,dt,dt_own):
@@ -26,21 +25,19 @@ def printstring(pdf_canvas,dt,dt_own):
         YuGosicB = "YuGothB.ttc"
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
         pdfmetrics.registerFont(TTFont('游ゴシック 太字', YuGosicB))
-        leftmargin = 2
-        #width, height = B5
         # 線の太さ
         pdf_canvas.setLineWidth(0.25)
 
         # title
-        font_size = 18
+        font_size = 20
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(306, 470, '発　注　書')
+        pdf_canvas.drawString(370, 560, '発　注　書')
 
         # 注文日
         OrderingDate = dt[0]['OrderingDate'].strftime('%Y年%m月%d日') 
-        font_size = 11
+        font_size = 13
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(610, 460, OrderingDate)
+        pdf_canvas.drawString(730, 550, OrderingDate)
 
         # 発注先
         if str(dt[0]['TitleDiv'])=='0':
@@ -52,27 +49,27 @@ def printstring(pdf_canvas,dt,dt_own):
         else:
             Title=''
 
-        font_size = 16
+        font_size = 20
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(12, 440, str(dt[0]['DestinationCode__CustomerName']) + '　' + str(dt[0]['SupplierPerson']) + 
+        pdf_canvas.drawString(15, 520, str(dt[0]['DestinationCode__CustomerName']) + '　' + str(dt[0]['SupplierPerson']) + 
                               '　' + str(Title))
 
-        font_size = 11
+        font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(12, 410, '下記のとおり、発注致します。')
+        pdf_canvas.drawString(15, 485, '下記のとおり、発注致します。')
 
         #出荷先
         address = '〒 ' + dt[0]['ShippingCode__PostCode'] + '　' + dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + dt[0]['ShippingCode__Municipalities'] + dt[0]['ShippingCode__Address'] + dt[0]['ShippingCode__BuildingName']
         #住所文字数によってフォントを変更
         if len(address) > 30:
-            style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=8, alignment=TA_LEFT)
-        else:
             style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
+        else:
+            style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
         itemNo0 = Paragraph(dt[0]['ShippingCode__CustomerName'],style)
         itemNo1 = Paragraph(address,style)
         itemNo2 = Paragraph(dt[0]['ShippingCode__PhoneNumber'],style)
 
-        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
 
         data = [
             ['出荷先', itemNo0],
@@ -80,10 +77,10 @@ def printstring(pdf_canvas,dt,dt_own):
             ['出荷先TEL',itemNo2],
         ]
 
-        table = Table(data, colWidths=(25*mm, 80*mm), rowHeights=5.0*mm)
+        table = Table(data, colWidths=(30*mm, 95*mm), rowHeights=6.0*mm)
         table.setStyle(TableStyle([
-                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 11),
-                ('FONT', (0, 0), (0, 2), '游ゴシック 太字', 11),
+                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 12),
+                ('FONT', (0, 0), (0, 2), '游ゴシック 太字', 12),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
@@ -91,21 +88,21 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('TEXTCOLOR', (0, 0), (0, 2), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
-        table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 128.0*mm)
+        table.wrapOn(pdf_canvas, 5.0*mm, 10*mm)
+        table.drawOn(pdf_canvas, 5.0*mm, 152.0*mm)
 
         #オーダーNO
-        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=12, alignment=TA_LEFT)
         itemNo0 = Paragraph(dt[0]['SlipDiv'] + dt[0]['OrderNumber'],style)
 
         data = [
             ['オーダーNo', itemNo0],
         ]
 
-        table = Table(data, colWidths=(25*mm, 80*mm), rowHeights=5.0*mm)
+        table = Table(data, colWidths=(30*mm, 95*mm), rowHeights=6.0*mm)
         table.setStyle(TableStyle([
-                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 11),
-                ('FONT', (0, 0), (0, 0), '游ゴシック 太字', 11),
+                ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 12),
+                ('FONT', (0, 0), (0, 0), '游ゴシック 太字', 12),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
@@ -113,35 +110,35 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
-        table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 118.0*mm)
+        table.wrapOn(pdf_canvas, 5.0*mm, 10*mm)
+        table.drawOn(pdf_canvas, 5.0*mm, 140.0*mm)
 
         # 自社名
-        font_size = 10
+        font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(500, 390, '株式会社')
+        pdf_canvas.drawString(600, 465, '株式会社')
 
-        font_size = 18
+        font_size = 20
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
-        pdf_canvas.drawString(545, 390, contents)
+        pdf_canvas.drawString(655, 465, contents)
 
         # 会社ロゴ
-        #img = './mysite/myapp/templates/image/image1.jpg'
-        img = './static/image/image1.jpg'
-        pdf_canvas.drawImage(img, 207*mm, 135*mm, 45.0*mm, 12.0*mm)
+        img = './mysite/myapp/templates/image/image1.jpg'
+        #img = './static/image/image1.jpg'
+        pdf_canvas.drawImage(img, 245*mm, 161*mm, 60.0*mm, 15.0*mm)
 
         # 自社情報
-        font_size = 10
+        font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
 
-        pdf_canvas.drawString(485, 360, '〒 ' + dt_own[0]['PostCode'])
-        pdf_canvas.drawString(485, 345, dt_own[0]['PrefecturesCode__prefecturename'] + 
+        pdf_canvas.drawString(580, 430, '〒 ' + dt_own[0]['PostCode'])
+        pdf_canvas.drawString(580, 410, dt_own[0]['PrefecturesCode__prefecturename'] + 
                               dt_own[0]['Municipalities'] + dt_own[0]['Address'] + dt_own[0]['BuildingName'])
-        pdf_canvas.drawString(505, 330, 'TEL: ' + dt_own[0]['PhoneNumber'] + '　FAX: ' + dt_own[0]['FaxNumber'])
+        pdf_canvas.drawString(604, 390, 'TEL: ' + dt_own[0]['PhoneNumber'] + '　FAX: ' + dt_own[0]['FaxNumber'])
 
         # No, 品番、番手、色番、色名、数量、単位、単価、希望納期、回答納期、備考(中央寄せ)
-        style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=10, textColor='white', alignment=TA_CENTER)
+        style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=11, textColor='white', alignment=TA_CENTER)
         itemNo  = Paragraph('',style)
         itemNo0 = Paragraph('品名/品番',style)
         itemNo1 = Paragraph('番手',style)
@@ -158,26 +155,25 @@ def printstring(pdf_canvas,dt,dt_own):
              [itemNo, itemNo0, itemNo1, itemNo2, itemNo3, itemNo4, itemNo5, itemNo6, itemNo7, itemNo8, itemNo9],
          ]
 
-        #table = Table(data, colWidths=(8*mm, 26*mm, 16*mm, 20*mm, 30*mm, 15*mm, 12*mm, 19*mm, 20*mm, 20*mm, 52*mm), rowHeights=7*mm)
-        table = Table(data, colWidths=(8*mm, 46*mm, 16*mm, 20*mm, 34*mm, 15*mm, 12*mm, 19*mm, 20*mm, 20*mm, 32*mm), rowHeights=7*mm)
+        table = Table(data, colWidths=(10*mm, 50*mm, 20*mm, 22*mm, 42*mm, 20*mm, 15*mm, 25*mm, 23*mm, 23*mm, 38*mm), rowHeights=8*mm)
         table.setStyle(TableStyle([
-                ('FONT', (0, 0), (-1, -1), '游ゴシック 太字', 9),
+                ('FONT', (0, 0), (-1, -1), '游ゴシック 太字', 10),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                 ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
                 ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
-        table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 103.0*mm)
+        table.wrapOn(pdf_canvas, 5.0*mm, 10*mm)
+        table.drawOn(pdf_canvas, 5.0*mm, 123.0*mm)
 
         data =[]
         l=len(dt)
         Pname=''
         Ocnt=''
-        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_LEFT)
-        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
-        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_CENTER)
+        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
+        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_RIGHT)
+        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_CENTER)
 
         if i==0:
             k=0
@@ -257,9 +253,9 @@ def printstring(pdf_canvas,dt,dt_own):
                         [Number, '','','','','','','','','',''],
                 ]
 
-            table = Table(data, colWidths=(8*mm, 46*mm, 16*mm, 20*mm, 34*mm, 15*mm, 12*mm, 19*mm, 20*mm, 20*mm, 32*mm), rowHeights=7*mm)
+            table = Table(data, colWidths=(10*mm, 50*mm, 20*mm, 22*mm, 42*mm, 20*mm, 15*mm, 25*mm, 23*mm, 23*mm, 38*mm), rowHeights=8*mm)
             table.setStyle(TableStyle([
-                    ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 9),
+                    ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 10),
                     ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                     ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.dimgray),
                     # 背景色
@@ -272,8 +268,8 @@ def printstring(pdf_canvas,dt,dt_own):
                 ]))
             k += 1
 
-        table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 33.0*mm)
+        table.wrapOn(pdf_canvas, 5.0*mm, 10*mm)
+        table.drawOn(pdf_canvas, 5.0*mm, 43.0*mm)
 
         #摘要
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
@@ -287,17 +283,17 @@ def printstring(pdf_canvas,dt,dt_own):
             [''],
         ]
 
-        table = Table(data, colWidths=(242*mm), rowHeights=6*mm)
+        table = Table(data, colWidths=(288*mm), rowHeights=8*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 10),
                 ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
-                ('LINEABOVE', (0, 1), (0, 1), 0.50, colors.dimgray),
+                ('LINEABOVE', (0, 1), (0, 1), 0.25, colors.dimgray),
                 # 背景色 先頭
                 ('BACKGROUND', (0, 0), (0, 0), colors.HexColor("#87CAD7")),
                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
-        table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 5.0*mm)
+        table.wrapOn(pdf_canvas, 5.0*mm, 10*mm)
+        table.drawOn(pdf_canvas, 5.0*mm, 5.0*mm)
 
         pdf_canvas.showPage()

@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import B5, A4, portrait, landscape
+from reportlab.lib.pagesizes import A4, portrait, landscape
 from myapp.models import CustomerSupplier, OrderingTable
 from myapp.output import orderfunction,orderfunctionstain
 # 日時
@@ -46,7 +46,7 @@ def make(pk,response):
 
 #発注書
 def set_info(response):
-    pdf_canvas = canvas.Canvas(response,pagesize=landscape(B5))
+    pdf_canvas = canvas.Canvas(response,pagesize=landscape(A4))
     pdf_canvas.setAuthor("hpscript")
     pdf_canvas.setTitle("発注書")
     pdf_canvas.setSubject("発注書")
@@ -56,7 +56,6 @@ def set_info(response):
 #染色依頼書
 def set_info_stain(response):
     pdf_canvas = canvas.Canvas(response,pagesize=portrait(A4))
-    #pdf_canvas = canvas.Canvas(response,pagesize=portrait(B5))
     pdf_canvas.setAuthor("hpscript")
     pdf_canvas.setTitle("染色依頼書")
     pdf_canvas.setSubject("染色依頼書")

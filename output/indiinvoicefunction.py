@@ -73,8 +73,8 @@ def printstring(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(545, 390, contents)
 
         # 会社ロゴ
-        #img = './mysite/myapp/templates/image/image1.jpg'
-        img = './static/image/image1.jpg'
+        img = './mysite/myapp/templates/image/image1.jpg'
+        #img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 207*mm, 135*mm, 45.0*mm, 12.0*mm)
 
         # 自社住所
@@ -110,8 +110,8 @@ def printstring(pdf_canvas,dt,dt_own):
 
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 10),
-                ('BOX', (0, 0), (-1, -1), 0.50, colors.dimgray),
-                ('INNERGRID', (0, 0), (-1, -1), 0.50,  colors.dimgray),
+                ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
+                ('INNERGRID', (0, 0), (-1, -1), 0.25,  colors.dimgray),
                 # 背景色 先頭
                 ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#87CAD7")),
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
