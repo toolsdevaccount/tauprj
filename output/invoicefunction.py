@@ -93,7 +93,7 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
-        pdf_canvas.drawImage(img, 167*mm, 260*mm, 47.0*mm, 12.0*mm)
+        pdf_canvas.drawImage(img, 167*mm, 260*mm, 45.0*mm, 12.0*mm)
 
         # 自社住所
         font_size = 10

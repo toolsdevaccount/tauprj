@@ -4,7 +4,7 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle, ParagraphStyle
-from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_RIGHT, TA_CENTER, TA_LEFT
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.colors import dimgrey
 # 計算用
@@ -107,8 +107,8 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.setFillColor(colors.black) 
     pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(120,605, dt[0][10])
-    pdf_canvas.setFillColor(colors.HexColor("#87CAD7"))     # 塗りつぶしの色を設定
-    pdf_canvas.rect(180, 640, 70, 20, fill=True)               # 四角形を描画
+    pdf_canvas.setFillColor(colors.HexColor("#87CAD7"))         # 塗りつぶしの色を設定
+    pdf_canvas.rect(180, 640, 70, 20, fill=True)                # 四角形を描画
 
     # 本品番
     font_size = 9
@@ -131,13 +131,13 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.setFillColor(colors.black) 
     pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(450, 645, dt[0][7])
-    pdf_canvas.rect(440, 600, 125, 60)              # 四角形を描画
-    pdf_canvas.line(370, 640, 565, 640)             # 商品コードの下
+    pdf_canvas.rect(440, 600, 125, 60)                          # 四角形を描画
+    pdf_canvas.line(370, 640, 565, 640)                         # 商品コードの下
 
     # 線の太さ
     pdf_canvas.setLineWidth(0.1)
-    pdf_canvas.line(34, 620, 565, 620)              # アパレル - 納期の下
-    pdf_canvas.line(110, 600, 440, 600)             # ブランド下
+    pdf_canvas.line(34, 620, 565, 620)                          # アパレル - 納期の下
+    pdf_canvas.line(110, 600, 440, 600)                         # ブランド下
 
     # 納期
     font_size = 9
@@ -436,6 +436,14 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.drawString(40, 190,'仮品番')
     pdf_canvas.drawString(100 ,190, dt[0][35])
 
+    # 備考
+    pdf_canvas.setFont('游ゴシック 標準', font_size)
+    text = textwrap.wrap(dt[0][34], 20)
+    x = 190
+    for contents in text:
+        contents.encode('utf-8')
+        pdf_canvas.drawString(250, x, contents)
+        x=x-10
     # 
     font_size = 14
     pdf_canvas.setFont('游ゴシック 標準', font_size)

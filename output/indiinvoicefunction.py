@@ -65,33 +65,32 @@ def printstring(pdf_canvas,dt,dt_own):
         # 自社情報
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(600, 465, '株式会社')
+        pdf_canvas.drawString(620, 465, '株式会社')
 
-        font_size = 20
+        font_size = 18
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
-        pdf_canvas.drawString(655, 465, contents)
+        pdf_canvas.drawString(675, 465, contents)
 
         # 会社ロゴ
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
-        #pdf_canvas.drawImage(img, 207*mm, 135*mm, 45.0*mm, 12.0*mm)
-        pdf_canvas.drawImage(img, 245*mm, 161*mm, 60.0*mm, 15.0*mm)
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
+        pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
 
         # 自社住所
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(580, 430, '〒 ' + dt_own[0]['PostCode'])
-        pdf_canvas.drawString(580, 415, dt_own[0]['OwnAddress'])
-        pdf_canvas.drawString(604, 400, 'TEL: ' + dt_own[0]['PhoneNumber'] + '　FAX: ' + dt_own[0]['FaxNumber'])
+        pdf_canvas.drawString(580, 420, '〒 ' + dt_own[0]['PostCode'])
+        pdf_canvas.drawString(580, 405, dt_own[0]['OwnAddress'])
+        pdf_canvas.drawString(604, 390, 'TEL: ' + dt_own[0]['PhoneNumber'] + '　FAX: ' + dt_own[0]['FaxNumber'])
         #取引銀行名
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(637, 385, 'みずほ銀行青山支店　普通3258651')
+        pdf_canvas.drawString(637, 375, 'みずほ銀行青山支店　普通3258651')
         # 登録番号
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(672, 370, '登録番号：T9011201025256')
+        pdf_canvas.drawString(673, 360, '登録番号：T9011201025256')
         # 品名、番手、色番、色名、数量、単位、単価、希望納期、回答納期、備考(中央寄せ)
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=11, textColor='white', alignment=TA_CENTER)
         itemNo0 = Paragraph('出荷日',style)
@@ -118,7 +117,7 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
         table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 119.0*mm)
+        table.drawOn(pdf_canvas, 4.0*mm, 114.0*mm)
 
         data =[]
         l=len(dt)
@@ -227,7 +226,7 @@ def printstring(pdf_canvas,dt,dt_own):
             k += 1
 
         table.wrapOn(pdf_canvas, 4.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 4.0*mm, 23.0*mm)
+        table.drawOn(pdf_canvas, 4.0*mm, 18.0*mm)
 
         #合計
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=11, textColor='white', alignment=TA_RIGHT)
@@ -252,7 +251,7 @@ def printstring(pdf_canvas,dt,dt_own):
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
             ]))
         table.wrapOn(pdf_canvas, 10*mm, 10*mm)
-        table.drawOn(pdf_canvas, 209.0*mm, 15.0*mm)
+        table.drawOn(pdf_canvas, 209.0*mm, 10.0*mm)
         #オーダーNO
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=12, alignment=TA_LEFT)
         contents = Paragraph(OrderNumber,style)
@@ -273,6 +272,6 @@ def printstring(pdf_canvas,dt,dt_own):
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ]))
         table.wrapOn(pdf_canvas, 5.0*mm, 10*mm)
-        table.drawOn(pdf_canvas, 5.0*mm, 135.0*mm)
+        table.drawOn(pdf_canvas, 5.0*mm, 130.0*mm)
 
         pdf_canvas.showPage()

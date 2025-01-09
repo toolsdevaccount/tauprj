@@ -26,6 +26,9 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         YuGosicB = "YuGothB.ttc"
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
 
+        # 線の太さ
+        pdf_canvas.setLineWidth(0.25)
+
         # title
         font_size = 16
         pdf_canvas.setFont('游ゴシック 標準', font_size)
@@ -34,9 +37,6 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
             pdf_canvas.drawString(250, 810, '染 付 依 頼 書')
         if dt[0]['OutputDiv']==3:
             pdf_canvas.drawString(200, 810, 'ビ ー カ ー 染 付 依 頼 書')
-
-        # 線の太さ
-        pdf_canvas.setLineWidth(0.25)
 
         # 依頼日
         font_size = 11
@@ -53,9 +53,9 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
             Title='御中'
         else:
             Title=''
-        font_size = 12
+        font_size = 14
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(23, 770, dt[0]['DestinationCode__CustomerName'] + '　' + dt[0]['SupplierPerson'] + Title)
+        pdf_canvas.drawString(43, 760, dt[0]['DestinationCode__CustomerName'] + '　' + dt[0]['SupplierPerson'] + Title)
 
         # 自社情報
         font_size = 12
@@ -69,8 +69,8 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(410, 740, contents)
 
         # ロゴ追加
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 165*mm, 258*mm, 45.0*mm, 12.0*mm)
 
         pdfmetrics.registerFont(TTFont('游ゴシック 標準', YuGosic))
