@@ -146,7 +146,8 @@ def PrevBalance(search_date, Customer):
     SellPrvSum =  RequestResult.objects.annotate(
         monthly=TruncMonth('InvoiceIssueDate')
         ).values(
-            'monthly'
+            'monthly',
+            'id',
         ).filter(
             InvoiceIssueDate__lte=(str(search_date[3])),
             OrderingId__CustomeCode=(str(Customer[0]['id'])),
@@ -155,16 +156,30 @@ def PrevBalance(search_date, Customer):
             is_Deleted=0,
             ).annotate(
                     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
+                ).order_by(
+                    'monthly'
                 )
 
     #残高消費税計算
-    SellPrvTotal = 0
-    SellPrvtax = 0
+    tax=0
+    SellPrvTotal=0
+    Selltax=0
+    SellPrvtax=0
+    monthly=0
+    dcnt = len(SellPrvSum)
     if SellPrvSum:
-        for q in SellPrvSum:
+        for i,q in  enumerate(SellPrvSum):
+            if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
+                if i==dcnt-1:
+                    tax+= int(q['Abs_total'])
+                Selltax=int(tax*0.1)
+                SellPrvtax+=Selltax
+                tax=0
             SellPrvTotal+=int(q['Abs_total'])
-            tax = int(q['Abs_total'])
-            SellPrvtax+= int(tax*0.1)
+            tax+= int(q['Abs_total'])
+
+            monthly=q['monthly']
+
 
     # 前回請求額算出
     PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
@@ -186,13 +201,18 @@ def PrevBalance(search_date, Customer):
                 is_Deleted=0,
                 )
 
-    SellSum =  list(queryset.values('OrderingId__CustomeCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())))
+    SellSum =  list(queryset.values(
+        'OrderingId__CustomeCode',
+        'id',
+        ).annotate(
+            Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())
+            ))
     #0判定
     if SellSum:
         SellTotal = int(SellSum[0]['Abs_total'])
     else:
         SellTotal = 0
+
     # 当月月売上消費税額
     tax = int(SellTotal) * 0.1
     tax = int(tax)
@@ -211,23 +231,27 @@ def Detail(search_date, Customer):
                 is_Deleted=0,
                 OrderingDetailId__DetailSellPrice__gt=0,
                 )
-    queryset =  queryset.values('InvoiceNUmber','OrderingId__CustomeCode', 'OrderingDetailId__DetailSellPrice',
-                                ).annotate(
-                                    Abs_total=Sum(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice')),
-                                    Shipping_total=Sum('ShippingVolume'),
-                                    ResultDate_Max=Max('ResultDate'),
-                                    ProductName_Max=Max('OrderingId__ProductName'),
-                                    OrderingCount_Max=Max('OrderingId__OrderingCount'),
-                                    SlipDiv_Max=Max('OrderingId__SlipDiv'),
-                                    OrderNumber_Max=Max('OrderingId__OrderNumber'),
-                                    InvoiceNUmber_Max=Max('InvoiceNUmber'),
-                                    ShippingVolume_Max=Max('ShippingVolume'),
-                                    Detailsellprice_Max=Max('OrderingDetailId__DetailSellPrice'),
-                                    InvoiceIssueDate_Max=Max('InvoiceIssueDate'),
-                                    ).order_by(
-                                        'InvoiceIssueDate',
-                                        'InvoiceNUmber'
-                                    )
+    queryset =  queryset.values(
+        'InvoiceNUmber',
+        'OrderingId__CustomeCode', 
+        'OrderingDetailId__DetailSellPrice',
+        'id'
+        ).annotate(
+            Abs_total=Sum(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice')),
+            Shipping_total=Sum('ShippingVolume'),
+            ResultDate_Max=Max('ResultDate'),
+            ProductName_Max=Max('OrderingId__ProductName'),
+            OrderingCount_Max=Max('OrderingId__OrderingCount'),
+            SlipDiv_Max=Max('OrderingId__SlipDiv'),
+            OrderNumber_Max=Max('OrderingId__OrderNumber'),
+            InvoiceNUmber_Max=Max('InvoiceNUmber'),
+            ShippingVolume_Max=Max('ShippingVolume'),
+            Detailsellprice_Max=Max('OrderingDetailId__DetailSellPrice'),
+            InvoiceIssueDate_Max=Max('InvoiceIssueDate'),
+            ).order_by(
+                'InvoiceIssueDate',
+                'InvoiceNUmber'
+                )
     queryset = list(queryset)
     sales_list = []
 

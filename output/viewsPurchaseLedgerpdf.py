@@ -147,7 +147,8 @@ def PrevBalance(search_date, Customer):
     StockPrvSum =  RequestResult.objects.annotate(
         monthly=TruncMonth('InvoiceIssueDate')
         ).values(
-            'monthly'
+            'monthly',
+            'id',
         ).filter(
             InvoiceIssueDate__lte=(str(search_date[3])),
             OrderingId__SupplierCode=(str(Customer[0]['id'])),
@@ -156,16 +157,21 @@ def PrevBalance(search_date, Customer):
             is_Deleted=0,
             ).annotate(
                     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()),
+                ).order_by(
+                    'monthly'
                 )
-
+    
     #消費税調整抽出
-    Adjustment = Payment.objects.values('PaymentSupplierCode').annotate(
-                                        Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
-                                        ).filter(PaymentDate__lte=(str(search_date[3]))
-                                                ,PaymentSupplierCode=(str(Customer[0]['id']))
-                                                ,is_Deleted=0
-                                                ,PaymentDiv=11
-                                                )
+    Adjustment = Payment.objects.values(
+        'PaymentSupplierCode'
+        ).annotate(
+            Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
+            ).filter(
+                 PaymentDate__lte=(str(search_date[3]))
+                ,PaymentSupplierCode=(str(Customer[0]['id']))
+                ,is_Deleted=0
+                ,PaymentDiv=11
+                )
 
     #0判定
     if Adjustment:
@@ -174,13 +180,25 @@ def PrevBalance(search_date, Customer):
         AdjustmentTotal = 0
 
     #残高消費税計算
-    StockPrvTotal = 0
-    StockPrvtax = 0
+    tax=0
+    StockPrvTotal=0
+    Stocktax=0
+    StockPrvtax=0
+    monthly=0
+    dcnt = len(StockPrvSum)
     if StockPrvSum:
-        for q in StockPrvSum:
+        for i,q in  enumerate(StockPrvSum):
+            if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
+                if i==dcnt-1:
+                    tax+= int(q['Abs_total'])
+                Stocktax=int(tax*0.1)
+                StockPrvtax+=Stocktax
+                tax=0
             StockPrvTotal+=int(q['Abs_total'])
-            tax = int(q['Abs_total'])
-            StockPrvtax+= int(tax*0.1)
+            tax+= int(q['Abs_total'])
+
+            monthly=q['monthly']
+
         StockPrvtax+= int(AdjustmentTotal)
 
     #前回買掛額算出
@@ -222,13 +240,18 @@ def PrevBalance(search_date, Customer):
                 is_Deleted=0,
                 )
 
-    SrockSum =  list(queryset.values('OrderingId__SupplierCode').annotate(
-        Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField())))
-    #0判定
-    if SrockSum:
-        StockTotal = int(SrockSum[0]['Abs_total'])
-    else:
-        StockTotal = 0
+    StockSum =  list(queryset.values(
+        'OrderingId__SupplierCode',
+        'id',
+        'InvoiceNUmber'
+        ).annotate(
+            Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()))
+            )
+
+    StockTotal = 0
+    for d in StockSum:
+        StockTotal+=int(d['Abs_total'])
+
     #当月仕入消費税額
     tax = int(StockTotal) * 0.1 + int(AdjustmentTotal)
     tax = int(tax)
@@ -248,25 +271,29 @@ def Detail(search_date, Customer):
                 is_Deleted=0,
                 OrderingDetailId__DetailUnitPrice__gt=0,
                 )
-    queryset =  queryset.values('SlipNumber','OrderingId__SupplierCode', 'OrderingDetailId__DetailUnitPrice',
-                                ).annotate(
-                                    Abs_total=Sum(F('ShippingVolume') * F('OrderingDetailId__DetailUnitPrice')),
-                                    Shipping_total=Sum('ShippingVolume'),
-                                    ResultDate_Max=Max('ResultDate'),
-                                    ProductName_Max=Max('OrderingId__ProductName'),
-                                    OrderingCount_Max=Max('OrderingId__OrderingCount'),
-                                    SlipDiv_Max=Max('OrderingId__SlipDiv'),
-                                    OrderNumber_Max=Max('OrderingId__OrderNumber'),
-                                    SlipNumber_Max=Max('SlipNumber'),
-                                    ShippingVolume_Max=Max('ShippingVolume'),
-                                    DetailUnitPrice_Max=Max('OrderingDetailId__DetailUnitPrice'),
-                                    ShippingDate_Max=Max('ShippingDate'),
-                                    InvoiceIssueDate_Max=Max('InvoiceIssueDate'),
-                                    ).order_by(
-                                        'InvoiceIssueDate',
-                                        'ShippingDate',
-                                        'SlipNumber'
-                                    )
+    queryset =  queryset.values(
+        'SlipNumber',
+        'OrderingId__SupplierCode', 
+        'OrderingDetailId__DetailUnitPrice',
+        'id',
+        ).annotate(
+            Abs_total=Sum(F('ShippingVolume') * F('OrderingDetailId__DetailUnitPrice')),
+            Shipping_total=Sum('ShippingVolume'),
+            ResultDate_Max=Max('ResultDate'),
+            ProductName_Max=Max('OrderingId__ProductName'),
+            OrderingCount_Max=Max('OrderingId__OrderingCount'),
+            SlipDiv_Max=Max('OrderingId__SlipDiv'),
+            OrderNumber_Max=Max('OrderingId__OrderNumber'),
+            SlipNumber_Max=Max('SlipNumber'),
+            ShippingVolume_Max=Max('ShippingVolume'),
+            DetailUnitPrice_Max=Max('OrderingDetailId__DetailUnitPrice'),
+            ShippingDate_Max=Max('ShippingDate'),
+            InvoiceIssueDate_Max=Max('InvoiceIssueDate'),
+            ).order_by(
+                'InvoiceIssueDate',
+                'ShippingDate',
+                'SlipNumber'
+                )
 
     queryset = list(queryset)
     stock_list = []

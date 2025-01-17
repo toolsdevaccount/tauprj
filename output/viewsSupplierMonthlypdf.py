@@ -198,7 +198,8 @@ def PrevBalance(search_date, Customer):
     SellPrvSum =  RequestResult.objects.annotate(
         monthly=TruncMonth('InvoiceIssueDate')
         ).values(
-            'monthly'
+            'monthly',
+            'id',
         ).filter(
             InvoiceIssueDate__lte=(str(search_date[3])),
             OrderingId__SupplierCode=(str(Customer[0]['id'])),
@@ -207,6 +208,8 @@ def PrevBalance(search_date, Customer):
             is_Deleted=0,
             ).annotate(
                     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()),
+                ).order_by(
+                    'monthly'
                 )
 
     #消費税調整抽出
@@ -226,13 +229,25 @@ def PrevBalance(search_date, Customer):
         AdjustmentTotal = 0
 
     #残高消費税計算
-    SellPrvTotal = 0
-    SellPrvtax = 0
+    tax=0
+    SellPrvTotal=0
+    Stocktax=0
+    SellPrvtax=0
+    monthly=0
+    dcnt = len(SellPrvSum)
     if SellPrvSum:
-        for q in SellPrvSum:
+        for i,q in  enumerate(SellPrvSum):
+            if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
+                if i==dcnt-1:
+                    tax+= int(q['Abs_total'])
+                Stocktax=int(tax*0.1)
+                SellPrvtax+=Stocktax
+                tax=0
             SellPrvTotal+=int(q['Abs_total'])
-            tax = int(q['Abs_total'])
-            SellPrvtax+= int(tax*0.1)
+            tax+= int(q['Abs_total'])
+
+            monthly=q['monthly']
+
         SellPrvtax+= int(AdjustmentTotal)
    
     #前月買掛残算出
