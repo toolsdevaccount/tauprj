@@ -61,7 +61,7 @@ def printstring(pdf_canvas,dt,dt_own):
         #出荷先
         address = '〒 ' + dt[0]['ShippingCode__PostCode'] + '　' + dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + dt[0]['ShippingCode__Municipalities'] + dt[0]['ShippingCode__Address'] + dt[0]['ShippingCode__BuildingName']
         #住所文字数によってフォントを変更
-        if len(address) > 30:
+        if len(address) >= 30:
             style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
         else:
             style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
