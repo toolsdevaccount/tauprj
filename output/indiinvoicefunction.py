@@ -65,17 +65,18 @@ def printstring(pdf_canvas,dt,dt_own):
         # 自社情報
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(620, 465, '株式会社')
+        pdf_canvas.drawString(605, 465, '株式会社')
 
-        font_size = 18
+        font_size = 20
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
-        pdf_canvas.drawString(675, 465, contents)
+        pdf_canvas.drawString(660, 465, contents)
 
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
-        pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
+        #pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
+        pdf_canvas.drawImage(img, 246*mm, 161*mm, 60.0*mm, 15.0*mm)
 
         # 自社住所
         font_size = 12
@@ -122,10 +123,10 @@ def printstring(pdf_canvas,dt,dt_own):
         data =[]
         l=len(dt)
         #total=0
-        styleLeftmin = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
-        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
-        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_RIGHT)
-        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_CENTER)
+        styleLeftmin = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
+        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
+        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_RIGHT)
+        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_CENTER)
 
         if i==0:
             k=0

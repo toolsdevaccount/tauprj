@@ -56,7 +56,7 @@ def printstring(pdf_canvas,dt,dt_own):
 
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(15, 485, '下記のとおり、発注致します。')
+        pdf_canvas.drawString(15, 485, '下記の通り、発注致します。')
 
         #出荷先
         address = '〒 ' + dt[0]['ShippingCode__PostCode'] + '　' + dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + dt[0]['ShippingCode__Municipalities'] + dt[0]['ShippingCode__Address'] + dt[0]['ShippingCode__BuildingName']
@@ -93,7 +93,7 @@ def printstring(pdf_canvas,dt,dt_own):
 
         #オーダーNO
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=12, alignment=TA_LEFT)
-        itemNo0 = Paragraph(dt[0]['SlipDiv'] + dt[0]['OrderNumber'],style)
+        itemNo0 = Paragraph(dt[0]['SlipDiv'] + '-' + dt[0]['OrderNumber'],style)
 
         data = [
             ['オーダーNo', itemNo0],
@@ -116,17 +116,18 @@ def printstring(pdf_canvas,dt,dt_own):
         # 自社名
         font_size = 12
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(620, 465, '株式会社')
+        pdf_canvas.drawString(605, 465, '株式会社')
 
-        font_size = 18
+        font_size = 20
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
-        pdf_canvas.drawString(675, 465, contents)
+        pdf_canvas.drawString(660, 465, contents)
 
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
-        pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
+        #pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
+        pdf_canvas.drawImage(img, 246*mm, 161*mm, 60.0*mm, 15.0*mm)
 
         # 自社情報
         font_size = 12
@@ -255,7 +256,7 @@ def printstring(pdf_canvas,dt,dt_own):
 
             table = Table(data, colWidths=(10*mm, 50*mm, 20*mm, 22*mm, 42*mm, 20*mm, 15*mm, 25*mm, 23*mm, 23*mm, 38*mm), rowHeights=8*mm)
             table.setStyle(TableStyle([
-                    ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 10),
+                    ('FONT', (0, 0), (-1, -1), '游ゴシック 標準', 11),
                     ('BOX', (0, 0), (-1, -1), 0.25, colors.dimgray),
                     ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.dimgray),
                     # 背景色

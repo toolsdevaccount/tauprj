@@ -91,7 +91,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.line(300, 505, 300, 690) 
 
         # 原糸メーカー
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(25, 680,'原糸メーカー')
         pdf_canvas.drawString(80, 665, dt[0]['StainShippingCode__CustomerName'])
@@ -104,7 +104,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         else:
             ShippingDate = ''
 
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(25, 650,'原糸出荷')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
@@ -113,7 +113,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.line(20, 630, 570, 630) 
 
         # 品番
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(25, 620,'品番')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
@@ -122,7 +122,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.line(20, 600, 570, 600) 
 
         # 品名
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(25, 590,'品名')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
@@ -131,7 +131,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.line(20, 570, 570, 570) 
 
         # 番手
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(25, 560,'番手')
         pdf_canvas.drawString(80, 545, dt[0]['OrderingCount'])
@@ -139,7 +139,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.line(20, 540, 570, 540) 
 
         # 混率
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(25, 530,'混率')
         pdf_canvas.drawString(80, 515, dt[0]['StainMixRatio'])
@@ -148,33 +148,33 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.line(20, 505, 570, 505) 
 
         # オーダーNO
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(305, 680,'オーダーNO')
 
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(360, 665, dt[0]['SlipDiv'] + '-' + dt[0]['OrderNumber'])
 
         # アパレル
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(305, 620,'アパレル')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(360, 605, dt[0]['ApparelCode__CustomerName'])
 
         # 出荷先名
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(305, 590,'出荷先')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(360, 575, dt[0]['ShippingCode__CustomerName'])
 
         # 出荷先住所
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(305, 560, '〒 ' + dt[0]['ShippingCode__PostCode']) 
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(360, 560, dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + 
                               dt[0]['ShippingCode__Municipalities'] + dt[0]['ShippingCode__Address'] + 
@@ -182,7 +182,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
                               )
 
         # 出荷先TEL
-        font_size = 9
+        font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(360, 545, 'TEL:' + dt[0]['ShippingCode__PhoneNumber'])
 
@@ -226,9 +226,9 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         data =[]
         l=len(dt)
         total=0
-        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=8, alignment=TA_LEFT)
-        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=8, alignment=TA_RIGHT)
-        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=8, alignment=TA_CENTER)
+        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_LEFT)
+        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_RIGHT)
+        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=9, alignment=TA_CENTER)
 
         if i==0:
             k=0
@@ -284,8 +284,10 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
                         total = ''
                     
                     Detailtotal = Paragraph(str(total),styleRight)
+                    label1= Paragraph(str('合&nbsp;&nbsp;'),styleRight)
+                    label2= Paragraph(str('&nbsp;&nbsp;計'),styleLeft)
                     data += [
-                            ['', '　　合', '　　計', Detailtotal, '', '', ''],
+                            ['', label1, label2, Detailtotal, '', '', ''],
                     ]
                 else:            
                     data += [

@@ -86,7 +86,7 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.drawString(40, 645,'オーダーNO')
     pdf_canvas.setFillColor(colors.black) 
     pdf_canvas.setFont('游ゴシック 標準', font_size)
-    pdf_canvas.drawString(120,645, dt[0][3] + dt[0][4])
+    pdf_canvas.drawString(120,645, dt[0][3] + '-' + dt[0][4])
     pdf_canvas.rect(110, 640, 70, 20)               # 四角形を描画
     pdf_canvas.line(34, 640, 110, 640)              # オーダーNOの下
 
