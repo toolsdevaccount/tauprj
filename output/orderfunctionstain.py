@@ -284,8 +284,8 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
                         total = ''
                     
                     Detailtotal = Paragraph(str(total),styleRight)
-                    label1= Paragraph(str('合&nbsp;&nbsp;'),styleRight)
-                    label2= Paragraph(str('&nbsp;&nbsp;計'),styleLeft)
+                    label1= Paragraph(str('合&nbsp;&nbsp;&nbsp;&nbsp;'),styleRight)
+                    label2= Paragraph(str('&nbsp;&nbsp;&nbsp;&nbsp;計'),styleLeft)
                     data += [
                             ['', label1, label2, Detailtotal, '', '', ''],
                     ]

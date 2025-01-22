@@ -63,20 +63,21 @@ def printstring(pdf_canvas,dt,dt_own):
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(780, 530, dt[0]['InvoiceNUmber'])
         # 自社情報
-        font_size = 12
+        font_size = 13
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(605, 465, '株式会社')
 
-        font_size = 20
+        font_size = 22
         pdf_canvas.setFont('游ゴシック 太字', font_size)
         contents = 'タウ'
-        pdf_canvas.drawString(660, 465, contents)
+        pdf_canvas.drawString(665, 465, contents)
 
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
         #pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
-        pdf_canvas.drawImage(img, 246*mm, 161*mm, 60.0*mm, 15.0*mm)
+        #pdf_canvas.drawImage(img, 246*mm, 161*mm, 60.0*mm, 15.0*mm)
+        pdf_canvas.drawImage(img, 250*mm, 161*mm, 51.75*mm, 13.8*mm)
 
         # 自社住所
         font_size = 12
