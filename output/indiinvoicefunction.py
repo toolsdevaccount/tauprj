@@ -75,8 +75,6 @@ def printstring(pdf_canvas,dt,dt_own):
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
-        #pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
-        #pdf_canvas.drawImage(img, 246*mm, 161*mm, 60.0*mm, 15.0*mm)
         pdf_canvas.drawImage(img, 250*mm, 161*mm, 51.75*mm, 13.8*mm)
 
         # 自社住所

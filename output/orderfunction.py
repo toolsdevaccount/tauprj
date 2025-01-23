@@ -126,7 +126,6 @@ def printstring(pdf_canvas,dt,dt_own):
         # 会社ロゴ
         #img = './mysite/myapp/templates/image/image1.jpg'
         img = './static/image/image1.jpg'
-        #pdf_canvas.drawImage(img, 257*mm, 161*mm, 45.0*mm, 12.0*mm)
         pdf_canvas.drawImage(img, 250*mm, 161*mm, 51.75*mm, 13.8*mm)
 
         # 自社情報
@@ -172,9 +171,9 @@ def printstring(pdf_canvas,dt,dt_own):
         l=len(dt)
         Pname=''
         Ocnt=''
-        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_LEFT)
-        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_RIGHT)
-        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=10, alignment=TA_CENTER)
+        styleLeft = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_LEFT)
+        styleRight = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_RIGHT)
+        styleCenter = ParagraphStyle(name='Normal', fontName='游ゴシック 標準', fontSize=11, alignment=TA_CENTER)
 
         if i==0:
             k=0
