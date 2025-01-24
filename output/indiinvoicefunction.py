@@ -165,6 +165,10 @@ def printstring(pdf_canvas,dt,dt_own):
                     Unit='㎏'
                 elif str(row['OrderingDetailId__DetailUnitDiv'])=='2':
                     Unit='本'
+                elif str(row['OrderingDetailId__DetailUnitDiv'])=='3':
+                    Unit='枚'
+                elif str(row['OrderingDetailId__DetailUnitDiv'])=='4':
+                    Unit='件'
                 else:
                     Unit=''
                 DetailUnitDiv = Paragraph(Unit,styleCenter)
