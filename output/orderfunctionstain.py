@@ -154,21 +154,21 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
 
         font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(360, 665, dt[0]['SlipDiv'] + '-' + dt[0]['OrderNumber'])
+        pdf_canvas.drawString(365, 665, dt[0]['SlipDiv'] + '-' + dt[0]['OrderNumber'])
 
         # アパレル
         font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(305, 620,'アパレル')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(360, 605, dt[0]['ApparelCode__CustomerName'])
+        pdf_canvas.drawString(365, 605, dt[0]['ApparelCode__CustomerName'])
 
         # 出荷先名
         font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
         pdf_canvas.drawString(305, 590,'出荷先')
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(360, 575, dt[0]['ShippingCode__CustomerName'])
+        pdf_canvas.drawString(365, 575, dt[0]['ShippingCode__CustomerName'])
 
         # 出荷先住所
         font_size = 10
@@ -176,7 +176,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         pdf_canvas.drawString(305, 560, '〒 ' + dt[0]['ShippingCode__PostCode']) 
         font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(360, 560, dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + 
+        pdf_canvas.drawString(365, 560, dt[0]['ShippingCode__PrefecturesCode__prefecturename'] + 
                               dt[0]['ShippingCode__Municipalities'] + dt[0]['ShippingCode__Address'] + 
                               dt[0]['ShippingCode__BuildingName']
                               )
@@ -184,7 +184,7 @@ def printstringStainRequest(pdf_canvas,dt,dt_own):
         # 出荷先TEL
         font_size = 10
         pdf_canvas.setFont('游ゴシック 標準', font_size)
-        pdf_canvas.drawString(360, 545, 'TEL:' + dt[0]['ShippingCode__PhoneNumber'])
+        pdf_canvas.drawString(365, 545, 'TEL:' + dt[0]['ShippingCode__PhoneNumber'])
 
         # 項番、色番、カラー、仕立、数量、単価、希望納期、回答納期、摘要
         style = ParagraphStyle(name='Normal', fontName='游ゴシック 太字', fontSize=9, textColor='white', alignment=TA_CENTER)
