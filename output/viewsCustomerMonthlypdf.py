@@ -186,6 +186,7 @@ def PrevBalance(search_date, Customer):
     #前月までの入金額計
     queryset = Deposit.objects.filter(DepositDate__lte=(str(search_date[3])),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
     DepoPrvSum = list(queryset.values('DepositCustomerCode').annotate(Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())))
+
     #0判定
     if DepoPrvSum:
         DepoPrvTotal = int(DepoPrvSum[0]['Depo_total'])
@@ -205,6 +206,8 @@ def PrevBalance(search_date, Customer):
             is_Deleted=0,
             ).annotate(
                     Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
+                ).order_by(
+                    'monthly',
                 )
 
     tax=0
