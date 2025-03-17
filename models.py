@@ -253,6 +253,7 @@ class OrderingDetail(models.Model):
     Updated_at = models.DateTimeField(null=False, blank=False,default=timezone.now() + datetime.timedelta(hours=9),verbose_name="更新日時")
     is_Deleted = models.BooleanField(null=False,blank=False,default=False,verbose_name="削除区分")
     DetailUnitDiv = models.IntegerField(null=False,default=0,choices=Unit,verbose_name="単位")
+    is_Taxation = models.BooleanField(null=False,blank=False,default=True,verbose_name="課税区分")
 
     def __str__(self):
         return str(self.DetailItemNumber)

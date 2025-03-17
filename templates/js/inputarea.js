@@ -46,6 +46,7 @@ $(function(){
             tbl.querySelectorAll('.DetailSellPrice')[num -1].value = 0;
 
             tbl.querySelectorAll('.PrintDiv')[num -1].checked = true;
+            tbl.querySelectorAll('.is_Taxation')[num -1].checked = true;
 
             // flatpickr
             const config = {
@@ -72,5 +73,13 @@ $('.PrintDiv').click(function() {
         $(".PrintDiv").val(1);
     } else {
         $(".PrintDiv").val(0);
+    }           
+});
+
+$('.is_Taxation').click(function() {
+    if($(".is_Taxation").prop('checked')){
+        $(".is_Taxation").val(1);
+    } else {
+        $(".is_Taxation").val(0);
     }           
 });

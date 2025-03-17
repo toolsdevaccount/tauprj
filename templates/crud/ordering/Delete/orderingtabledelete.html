@@ -28,7 +28,7 @@
 							<th scope="col" class="text-center">摘&nbsp&nbsp&nbsp&nbsp要</th>
 							<th scope="col" class="text-center check">済</th>
 							<th scope="col" class="text-center check">印</th>
-							<!-- <th scope="col" class="text-center tailoring">&nbsp</th> -->
+							<th scope="col" class="text-center check">課税</th>
 						</tr>
 					</thead>
 					<tbody id="list">
@@ -118,6 +118,17 @@
 									{% else %}
 									<input type="checkbox" class="form-check-input PrintDiv" data-id-format="id_OrderingTableId-%d-PrintDiv" data-name-format="OrderingTableId-%d-PrintDiv" 
 									name="OrderingTableId-0-PrintDiv" id="id_OrderingTableId-0-PrintDiv">
+									{% endif %}
+								</div>
+							</td>
+							<td class="text-center">
+								<div class="form-check">
+									{% if form.is_Taxation.value == 1 %}
+									<input type="checkbox" class="form-check-input is_Taxation" data-id-format="id_OrderingTableId-%d-is_Taxation" data-name-format="OrderingTableId-%d-is_Taxation" 
+									name="OrderingTableId-0-is_Taxation" id="id_OrderingTableId-0-is_Taxation" checked>
+									{% else %}
+									<input type="checkbox" class="form-check-input is_Taxation" data-id-format="id_OrderingTableId-%d-is_Taxation" data-name-format="OrderingTableId-%d-is_Taxation" 
+									name="OrderingTableId-0-is_Taxation" id="id_OrderingTableId-0-is_Taxation">
 									{% endif %}
 								</div>
 							</td>
