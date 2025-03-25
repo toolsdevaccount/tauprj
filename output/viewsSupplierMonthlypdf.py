@@ -2,8 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
-from myapp.models import Payment, CustomerSupplier, RequestResult
-from myapp.output import suppliermonthlyfunction
+from myapp.models import CustomerSupplier
+from myapp.output import suppliermonthlyfunction, GetPurchasePrevfunction, GetPurchasefunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
@@ -11,10 +11,7 @@ from django.utils import timezone
 import datetime
 from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,IntegerField
-from django.db.models.functions import Coalesce
 from decimal import Decimal
-from django.db.models.functions import TruncMonth
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
@@ -138,7 +135,7 @@ def conversion(TargetMonth):
 
     return(startdate, lastdate, Prvstartdate, Prvlastdate, strstart, strlast)
 
-#得意先月次集計表
+#仕入先月次集計表
 def set_info(response):
     pdf_canvas = canvas.Canvas(response,pagesize=landscape(B4))
     pdf_canvas.setAuthor("hpscript")
@@ -182,59 +179,39 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(search_date, Customer):        
+def PrevBalance(search_date, Customer):
     #前月までの支払額計
-    queryset = Payment.objects.filter(PaymentDate__lte=(str(search_date[3])),PaymentSupplierCode=(str(Customer[0]['id'])),is_Deleted=0)
-    queryset = queryset.filter(~Q(PaymentDiv=11))
-
-    DepoPrvSum = list(queryset.values('PaymentSupplierCode').annotate(Depo_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())))
-    #0判定
+    DepoPrvSum = GetPurchasePrevfunction.GetPayPrvSum(search_date, Customer)
+    #前月までの課税仕入合計額を取得
+    SellPrvSum = GetPurchasePrevfunction.GetStockPrvSum(search_date, Customer)
+    #前月までの非課税仕入合計額を取得
+    PrvTaxExempt = GetPurchasePrevfunction.GetPrvTaxExempt(search_date, Customer)
+    #前月までの消費税調整額レコードを取得
+    PrvAdjustment = GetPurchasePrevfunction.GetPrevAdjustmentDetail(search_date, Customer)
+    #0前月までの支払合計額0判定
     if DepoPrvSum:
-        DepoPrvTotal = int(DepoPrvSum[0]['Depo_total'])
+        DepoPrvTotal = int(DepoPrvSum[0]['Pay_total'])
     else:
         DepoPrvTotal = 0
-
-    #前月までの仕入額計
-    SellPrvSum =  RequestResult.objects.annotate(
-        monthly=TruncMonth('InvoiceIssueDate')
-        ).values(
-            'monthly',
-            'id',
-        ).filter(
-            InvoiceIssueDate__lte=(str(search_date[3])),
-            OrderingId__SupplierCode=(str(Customer[0]['id'])),
-            InvoiceNUmber__gt=0,
-            InvoiceIssueDiv=1,
-            is_Deleted=0,
-            ).annotate(
-                    Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField()),
-                ).order_by(
-                    'monthly'
-                )
-
-    #消費税調整抽出
-    PrvAdjustment = Payment.objects.values('PaymentSupplierCode').annotate(
-                                            Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
-                                            ).filter(PaymentDate__lte=(str(search_date[3]))
-                                                    ,PaymentSupplierCode=(str(Customer[0]['id']))
-                                                    ,is_Deleted=0
-                                                    ,PaymentDiv=11
-                                                    )
-
-    PrvAdjustment = list(PrvAdjustment.values('Adjustment_total'))
-    #0判定
+    #前月までの非課税仕入額を合計する
+    PrvTaxExemptTotal = 0
+    if PrvTaxExempt:
+        for q in PrvTaxExempt:
+            PrvTaxExemptTotal+=int(q['Abs_total'])
+    #前月までの消費税調整額を合計する
+    PrvAdjust=0
     if PrvAdjustment:
-        AdjustmentTotal = int(PrvAdjustment[0]['Adjustment_total'])
-    else:
-        AdjustmentTotal = 0
+        for i,q in  enumerate(PrvAdjustment):
+            PrvAdjust+=int(q['Adjustment_total'])
 
-    #残高消費税計算
+    #前月までの課税仕入額の消費税計算
     tax=0
     SellPrvTotal=0
     Stocktax=0
     SellPrvtax=0
     monthly=0
     dcnt = len(SellPrvSum)
+
     if SellPrvSum:
         for i,q in  enumerate(SellPrvSum):
             if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
@@ -245,58 +222,35 @@ def PrevBalance(search_date, Customer):
                 tax=0
             SellPrvTotal+=int(q['Abs_total'])
             tax+= int(q['Abs_total'])
-
             monthly=q['monthly']
-
-        SellPrvtax+= int(AdjustmentTotal)
+        SellPrvtax+= int(PrvAdjust)
    
-    #前月買掛残算出
-    PrevBill = int(Customer[0]['LastPayable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
-
-    #当月支払合計額    
-    queryset = Payment.objects.filter(PaymentDate__range=(str(search_date[0]),str(search_date[1])),PaymentSupplierCode=(str(Customer[0]['id'])),is_Deleted=0)
-    queryset = queryset.filter(~Q(PaymentDiv=11))
-
-    DepoSum = list(queryset.values('PaymentSupplierCode').annotate(Depo_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())))
+    #前月繰越額計算
+    PrevBill = int(Customer[0]['LastPayable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax) + int(PrvTaxExemptTotal)
+    #当月支払合計額
+    DepoSum = GetPurchasefunction.GetPaySum(search_date, Customer)
     #0判定
     if DepoSum:
-        DepoTotal = int(DepoSum[0]['Depo_total'])
+        DepoTotal = int(DepoSum[0]['Pay_total'])
     else:
         DepoTotal = 0
-    #買掛金繰越額
+    #次月繰越額計算
     CarryForward = int(PrevBill) - int(DepoTotal)
-
-    #当月支払消費税調整額
-    Adjustment = Payment.objects.values('PaymentSupplierCode').annotate(
-                                        Adjustment_total=Coalesce(Sum('PaymentMoney'),0,output_field=IntegerField())
-                                        ).filter(
-                                             PaymentDate__range=(str(search_date[0]),str(search_date[1]))
-                                            ,PaymentSupplierCode=(str(Customer[0]['id']))
-                                            ,is_Deleted=0
-                                            ,PaymentDiv=11
-                                            )
-    Adjustment = list(Adjustment.values('Adjustment_total'))
-    #0判定
+    #当月支払消費税調整額を取得
+    Adjustment = GetPurchasefunction.GetAdjustment(search_date, Customer)
+    #当月支払消費税調整額0判定
     if Adjustment:
         AdjustmentTotal = int(Adjustment[0]['Adjustment_total'])
     else:
         AdjustmentTotal = 0
 
-    #当月仕入合計額
-    queryset =  RequestResult.objects.values(
-        'ShippingVolume',
-        'OrderingDetailId__DetailUnitPrice'
-        ).filter(InvoiceIssueDate__range=(str(search_date[0]),str(search_date[1])),
-                OrderingId__SupplierCode=(str(Customer[0]['id'])),
-                InvoiceNUmber__gt=0,
-                InvoiceIssueDiv=1,
-                is_Deleted=0,
-                )
-
+    #当月課税仕入額を取得
+    PurchaseTaxRow = GetPurchasefunction.GetPurchaseTaxRow(search_date, Customer)
+    #当月課税仕入額を集計
     i=0
     SellTotal=0
-    l = len(queryset)
-    queryset = list(queryset)
+    l = len(PurchaseTaxRow)
+    queryset = list(PurchaseTaxRow)
     if queryset:
         while i < l:
             row=queryset[i]
@@ -307,11 +261,29 @@ def PrevBalance(search_date, Customer):
         tax=0
         invoice=0
         SellTotal = 0
-         
-    # #当月仕入消費税額
+
+    #当月仕入消費税額を計算
     tax = int(SellTotal * 0.1) + int(AdjustmentTotal)
     tax = int(tax)
-    #当月税込仕入合計額
+
+    #当月非課税仕入額を取得
+    queryset = GetPurchasefunction.GetPurchaseRow(search_date, Customer)
+    i=0
+    TaxExempt=0
+    l = len(queryset)
+    queryset = list(queryset)
+    if queryset:
+        while i < l:
+            row=queryset[i]
+            #仕入金額加算
+            TaxExempt += int(Decimal(row['ShippingVolume']) * Decimal(row['OrderingDetailId__DetailUnitPrice']))
+            i+=1
+    else:
+        TaxExempt = 0
+
+    #当月仕入額を計算
+    SellTotal = int(SellTotal + TaxExempt)
+    #当月税込仕入合計額を計算
     invoice = int(CarryForward + SellTotal + tax)
 
     return(PrevBill, DepoTotal, CarryForward, SellTotal, tax, invoice)

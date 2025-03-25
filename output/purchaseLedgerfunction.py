@@ -33,10 +33,11 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
         pdf_canvas.setFont('游明朝 標準', font_size)
         pdf_canvas.drawString(420, 670, '仕　入　台　帳')
 
-        # 得意先名
+        # 仕入先名
+        Supplier_Name = dt[0]['CustomerCode'] + ' ' + dt[0]['CustomerName']
         font_size = 10
         pdf_canvas.setFont('游明朝 標準', font_size)
-        pdf_canvas.drawString(40, 640, dt[0]['CustomerCode'] + ' ' + dt[0]['CustomerName'])
+        pdf_canvas.drawString(40, 640, Supplier_Name[1:20])
         # 線の太さ
         pdf_canvas.setLineWidth(0.25)
         # 下線
@@ -128,6 +129,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
             item2=0
             item3=0
             item4=0
+            item5=0
             Adjustment=0
 
         while k < rowlg:
@@ -142,29 +144,31 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                 OrderingCount = Paragraph(row['OrderingCount'],styleLeft)
 
                 #出荷日
-                if row['Division']=='1':
+                if row['Division']=='1' or row['Division']=='1.5':
                     ShippDate = row['ShippingDate'].strftime('%Y/%m/%d')
                     ShippingDate = Paragraph(ShippDate,styleLeft)
                 elif row['Division']=='2':
+                    ShippingDate = Paragraph('',styleLeft)
+                else:
                     ShippingDate = Paragraph('',styleLeft)
 
                 #商品名
                 ProductName = Paragraph(row['ProductName'],styleLeft)
 
                 #オーダーNO(依頼NO)
-                if row['Division']=='1':
+                if row['Division']=='1' or row['Division']=='1.5':
                     OrderNumber = Paragraph(row['SlipDiv_Max']+'-'+row['OrderNumber'],styleLeft)
                 else:
                     OrderNumber = Paragraph('',styleLeft)
 
                 #数量
-                if row['Division']=='1':
+                if row['Division']=='1' or row['Division']=='1.5':
                     ShippingVol = Paragraph('{:,.2f}'.format(row['Shipping_total']),styleRight)
                 else:
                     ShippingVol = Paragraph('',styleRight)
 
                 #単価
-                if row['Division']=='1':
+                if row['Division']=='1' or row['Division']=='1.5':
                     if int(row['DetailUnitPrice'])!=0:
                         StockPrice = Paragraph(f"{int(row['DetailUnitPrice']):,}",styleRight)
                     else:
@@ -173,13 +177,14 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                     StockPrice = Paragraph('',styleRight)
 
                 #仕入金額
-                if row['Division']=='1':
+                if row['Division']=='1' or row['Division']=='1.5':
                     if int(row['Abs_total'])!=0:
                         StockTotal = Paragraph(f"{int(row['Abs_total']):,}",styleRight)
                     else:
                         StockTotal = Paragraph('',styleRight)
-                    #item1 += Decimal(row['Abs_total'])
                     item1 += int(row['Abs_total'])
+                    if row['Division']=='1.5':
+                        item5+=int(row['Abs_total'])
                 else:
                     StockTotal = Paragraph('',styleRight)
 
@@ -196,7 +201,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                     Pay = Paragraph('',styleRight)
 
                 #前回繰越額
-                if row['Division']=='1':
+                if row['Division']=='1' or row['Division']=='1.5':
                     item += int(row['Abs_total'])
                 elif row['Division']=='2':
                     item -= Decimal(row['SlipDiv'])
@@ -230,7 +235,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                     PayTotal = Paragraph(f"{int(item2):,}",styleRight)
 
                 #合計消費税額
-                item3 = int(item1 * 0.1) + int(Adjustment)
+                item3 = int((item1 - item5) * 0.1) + int(Adjustment)
                 if item3==0:
                     TaxTotal = Paragraph('',styleRight)
                 else:

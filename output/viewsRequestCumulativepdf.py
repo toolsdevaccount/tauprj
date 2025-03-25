@@ -7,12 +7,13 @@ from myapp.output import RequestCumulativefunction
 # 日時
 from django.utils import timezone
 import datetime
-from dateutil import relativedelta
 # 計算用
-from django.db.models import Sum,F,DecimalField
+from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
 # メッセージ
 from django.contrib import messages
+#pandas
+import pandas as pd
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
@@ -86,25 +87,33 @@ def set_info(response):
     return pdf_canvas
 
 def RequestCumulative(search_date):
-    queryset =  RequestResult.objects.filter(InvoiceIssueDate__range=(str(search_date[0]),str(search_date[1])),
-            InvoiceNUmber__gt=0,
-            InvoiceIssueDiv=1,
-            is_Deleted=0,
-            )
+    queryset =  RequestResult.objects.filter(
+        InvoiceIssueDate__range=(str(search_date[0]),str(search_date[1])),
+        InvoiceNUmber__gt=0,
+        InvoiceIssueDiv=1,
+        is_Deleted=0,
+        )
 
     SellSum =  list(queryset.values(
         'OrderingId__RequestCode',
         'OrderingId__RequestCode__CustomerCode',
         'OrderingId__RequestCode__CustomerName',
+        'id',
         ).annotate(
         Sell_total=Sum(
-            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=DecimalField()
-            ),
+            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
         Supplier_total=Sum(
-            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=DecimalField()            
-            )
-        ).order_by('Sell_total').reverse())
-    return SellSum
+            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField())
+        ).order_by('OrderingId__RequestCode'))
+
+    #--------------------------------------------------------------------#
+    df = pd.DataFrame(SellSum, columns=['OrderingId__RequestCode','OrderingId__RequestCode__CustomerCode','OrderingId__RequestCode__CustomerName','id','Sell_total','Supplier_total'])
+    sales_sum = df[['OrderingId__RequestCode','OrderingId__RequestCode__CustomerCode','OrderingId__RequestCode__CustomerName','Sell_total','Supplier_total']].groupby(['OrderingId__RequestCode','OrderingId__RequestCode__CustomerCode','OrderingId__RequestCode__CustomerName'], as_index=False).sum()
+    sales_sum = sales_sum.sort_values('Sell_total', ascending=False)
+    list_from_df = sales_sum.values.tolist()
+    #--------------------------------------------------------------------#
+
+    return list_from_df
 
 if __name__ == '__main__':
     make()   
