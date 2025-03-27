@@ -97,15 +97,15 @@ def printstring(pdf_canvas, dt, serch_date, managername):
 
         while k < rowlg:
             if k<rec:
-                RequestCode = Paragraph(dt[k]['CustomerCode'],styleLeft)
-                CustomerName = Paragraph(dt[k]['CustomerName'],styleLeft)
-                Sell_total = Paragraph(f"{int(dt[k]['Sell_total']):,}",styleRight)
-                Supplier_total = Paragraph(f"{int(dt[k]['Supplier_total']):,}",styleRight)
-                Profit_total = dt[k]['Sell_total'] - dt[k]['Supplier_total']
+                RequestCode = Paragraph(dt[k][2],styleLeft)
+                CustomerName = Paragraph(dt[k][3],styleLeft)
+                Sell_total = Paragraph(f"{int(dt[k][4]):,}",styleRight)
+                Supplier_total = Paragraph(f"{int(dt[k][5]):,}",styleRight)
+                Profit_total = dt[k][4] - dt[k][5]
                 Gross_Profit = Paragraph(f"{int(Profit_total):,}",styleRight)
                 # 合計計算
-                Sell += Decimal(dt[k]['Sell_total'])
-                Supplier += Decimal(dt[k]['Supplier_total'])
+                Sell += Decimal(dt[k][4])
+                Supplier += Decimal(dt[k][5])
                 Gross += Decimal(Profit_total)
                 data += [
                         [RequestCode, CustomerName, Sell_total, Supplier_total, Gross_Profit],

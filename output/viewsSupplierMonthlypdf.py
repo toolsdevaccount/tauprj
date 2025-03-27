@@ -56,6 +56,7 @@ def make(search_date, response):
     SellTaxTotal=0
     DepositTotal=0
     CarryoverTotal=0
+    TaxExemptTotal=0
     total=[]
 
     if counter==0:
@@ -72,7 +73,8 @@ def make(search_date, response):
             BillTotal += int(dt_Prev[0])
             SellTotal += int(dt_Prev[3])
             TaxTotal += int(dt_Prev[4])
-            SellTaxTotal += int(dt_Prev[3] + dt_Prev[4])
+            SellTaxTotal += int(dt_Prev[3] + dt_Prev[4] + dt_Prev[6])
+            TaxExemptTotal += int(dt_Prev[6])
             DepositTotal += int(dt_Prev[1])
             CarryoverTotal += int(dt_Prev[5])
 
@@ -97,6 +99,7 @@ def make(search_date, response):
     total.append(str(SellTaxTotal))
     total.append(str(DepositTotal))
     total.append(str(CarryoverTotal))
+    total.append(str(TaxExemptTotal))
 
     #合計行出力
     width-= 8
@@ -282,11 +285,11 @@ def PrevBalance(search_date, Customer):
         TaxExempt = 0
 
     #当月仕入額を計算
-    SellTotal = int(SellTotal + TaxExempt)
+    #SellTotal = int(SellTotal + TaxExempt)
     #当月税込仕入合計額を計算
-    invoice = int(CarryForward + SellTotal + tax)
+    invoice = int(CarryForward + SellTotal + tax + TaxExempt)
 
-    return(PrevBill, DepoTotal, CarryForward, SellTotal, tax, invoice)
+    return(PrevBill, DepoTotal, CarryForward, SellTotal, tax, invoice, TaxExempt)
 
 if __name__ == '__main__':
     make()   

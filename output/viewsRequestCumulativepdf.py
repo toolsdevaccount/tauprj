@@ -100,10 +100,8 @@ def RequestCumulative(search_date):
         'OrderingId__RequestCode__CustomerName',
         'id',
         ).annotate(
-        Sell_total=Sum(
-            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
-        Supplier_total=Sum(
-            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField())
+        Sell_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
+        Supplier_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField())
         ).order_by('OrderingId__RequestCode'))
 
     #--------------------------------------------------------------------#

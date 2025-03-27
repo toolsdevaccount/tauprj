@@ -57,17 +57,16 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
         itemNo5 = Paragraph('番手',style)
         itemNo6 = Paragraph('数量',style)
         itemNo7 = Paragraph('単価',style)
-        itemNo8 = Paragraph('仕入金額',style)
-        itemNo9 = Paragraph('一済',style)
+        itemNo8 = Paragraph('課税仕入額',style)
         itemNo10 = Paragraph('消費税額',style)
+        itemNo13 = Paragraph('非課税仕入額',style)
         itemNo11 = Paragraph('前月繰越額',style)
         itemNo12 = Paragraph('支払金額',style)
-        itemNo13 = Paragraph('摘要',style)
         itemNo14 = Paragraph('差引金額',style)
         data = [
-            [itemNo0, itemNo1, itemNo2, itemNo3, itemNo4, itemNo5, itemNo6, itemNo7, itemNo8, itemNo9, itemNo10, itemNo11, itemNo12, itemNo13, itemNo14],
+            [itemNo0, itemNo1, itemNo2, itemNo3, itemNo4, itemNo5, itemNo6, itemNo7, itemNo8, itemNo10, itemNo13, itemNo11, itemNo12, itemNo14],
         ]
-        table = Table(data, colWidths=(22*mm, 20*mm, 22*mm, 20*mm, 38*mm, 18*mm, 18*mm, 20*mm, 25*mm, 12*mm, 25*mm, 25*mm, 25*mm, 22*mm, 25*mm), rowHeights=8.0*mm)
+        table = Table(data, colWidths=(22*mm, 20*mm, 22*mm, 20*mm, 47*mm, 18*mm, 18*mm, 20*mm, 25*mm, 25*mm, 25*mm, 25*mm, 25*mm, 25*mm), rowHeights=8.0*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.black),
@@ -91,14 +90,14 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
             ProductName = '繰越'
             PrevBill = Paragraph(f"{int(dt_Prev[0]):,}",styleRight)
             data = [
-                    [CurryDate, '', '','', ProductName, '', '', '', '', '', '', PrevBill, '', '', PrevBill],
+                    [CurryDate, '', '', '', ProductName, '', '', '', '', '', '', PrevBill, '', PrevBill],
             ]
         else:
             data = [
-                    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', '', '', '', '', '', '', ''],
             ]
 
-        table = Table(data, colWidths=(22*mm, 20*mm, 22*mm, 20*mm, 38*mm, 18*mm, 18*mm, 20*mm, 25*mm, 12*mm, 25*mm, 25*mm, 25*mm, 22*mm, 25*mm), rowHeights=8.0*mm)
+        table = Table(data, colWidths=(22*mm, 20*mm, 22*mm, 20*mm, 47*mm, 18*mm, 18*mm, 20*mm, 25*mm, 25*mm, 25*mm, 25*mm, 25*mm, 25*mm), rowHeights=8.0*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
                 ('LINEBEFORE', (0, 0), (0, -1), 0.50, colors.black),
@@ -115,8 +114,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                 ('LINEBEFORE', (11, 0), (11, -1), 0.50, colors.black),
                 ('LINEBEFORE', (12, 0), (12, -1), 0.50, colors.black),
                 ('LINEBEFORE', (13, 0), (13, -1), 0.50, colors.black),
-                ('LINEBEFORE', (14, 0), (14, -1), 0.50, colors.black),
-                ('LINEAFTER', (14, 0), (14, -1), 0.50, colors.black),
+                ('LINEAFTER', (13, 0), (13, -1), 0.50, colors.black),
                 ('VALIGN', (0, 0), (-1, -1), 'BOTTOM'),
             ]))
         table.wrapOn(pdf_canvas, 10*mm, 10*mm)
@@ -176,17 +174,29 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                 else:
                     StockPrice = Paragraph('',styleRight)
 
-                #仕入金額
-                if row['Division']=='1' or row['Division']=='1.5':
-                    if int(row['Abs_total'])!=0:
-                        StockTotal = Paragraph(f"{int(row['Abs_total']):,}",styleRight)
-                    else:
-                        StockTotal = Paragraph('',styleRight)
-                    item1 += int(row['Abs_total'])
-                    if row['Division']=='1.5':
-                        item5+=int(row['Abs_total'])
+                #仕入金額,非課税仕入金額
+                # if row['Division']=='1' or row['Division']=='1.5':
+                #     if int(row['Abs_total'])!=0:
+                #         StockTotal = Paragraph(f"{int(row['Abs_total']):,}",styleRight)
+                #     else:
+                #         StockTotal = Paragraph('',styleRight)
+                #     item1 += int(row['Abs_total'])
+                #     if row['Division']=='1.5':
+                #         item5+=int(row['Abs_total'])
+                # else:
+                #     StockTotal = Paragraph('',styleRight)
+
+                if row['Division']=='1' and int(row['Abs_total'])!=0:
+                    StockTotal = Paragraph(f"{int(row['Abs_total']):,}",styleRight)
+                    item1+=int(row['Abs_total'])
                 else:
                     StockTotal = Paragraph('',styleRight)
+
+                if row['Division']=='1.5' and int(row['Abs_total'])!=0:
+                    TaxExempt = Paragraph(f"{int(row['Abs_total']):,}",styleRight)
+                    item5+=int(row['Abs_total'])
+                else:
+                    TaxExempt = Paragraph('',styleRight)
 
                 #支払額,摘要
                 if row['Division']=='1':
@@ -216,12 +226,11 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                 Deduction = Paragraph(f"{int(item):,}",styleRight)
                 data += [
                         [InvoiceIssueDate, SlipNo, ShippingDate, OrderNumber, ProductName, OrderingCount, ShippingVol, StockPrice, StockTotal,
-                         '', Adjust, '', Pay, Summary, Deduction],
+                         Adjust, TaxExempt, Pay, Summary, Deduction],
                 ]
-            #elif k==(param-1) and t==(req-1):
             elif k==(rowlg-1) and t==(req-1):
                 #最終行
-                #仕入金額合計
+                #課税仕入金額合計
                 if item1==0:
                     StockPriceTotal = Paragraph('',styleRight)
                 else:
@@ -235,25 +244,32 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                     PayTotal = Paragraph(f"{int(item2):,}",styleRight)
 
                 #合計消費税額
-                item3 = int((item1 - item5) * 0.1) + int(Adjustment)
+                #item3 = int((item1 - item5) * 0.1) + int(Adjustment)
+                item3 = int(item1 * 0.1) + int(Adjustment)
                 if item3==0:
                     TaxTotal = Paragraph('',styleRight)
                 else:
                     TaxTotal = Paragraph(f"{int(item3):,}",styleRight)
+
+                #非課税仕入金額合計
+                if item5==0:
+                    TaxexemptTotal = Paragraph('',styleRight)
+                else:
+                    TaxexemptTotal = Paragraph(f"{int(item5):,}",styleRight)
 
                 #次回繰越額
                 item4 = int(item + item3)
                 Total = Paragraph(f"{int(item4):,}",styleRight)
 
                 data += [
-                        ['', '', '', '', '', '', '', '', StockPriceTotal, '', TaxTotal, PrvBillTotal, PayTotal, '', Total],
+                        ['', '', '', '', '', '', '', '', StockPriceTotal, TaxTotal, TaxexemptTotal, PrvBillTotal, PayTotal, Total],
                 ]
             else:
                 data += [
-                        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                        ['', '', '', '', '', '', '', '', '', '', '', '', '', ''],
                 ]
 
-            table = Table(data, colWidths=(22*mm, 20*mm, 22*mm, 20*mm, 38*mm, 18*mm, 18*mm, 20*mm, 25*mm, 12*mm, 25*mm, 25*mm, 25*mm, 22*mm, 25*mm), rowHeights=8.0*mm)
+            table = Table(data, colWidths=(22*mm, 20*mm, 22*mm, 20*mm, 47*mm, 18*mm, 18*mm, 20*mm, 25*mm, 25*mm, 25*mm, 25*mm, 25*mm, 25*mm), rowHeights=8.0*mm)
             table.setStyle(TableStyle([
                     ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
                     ('LINEBEFORE', (0, 0), (0, -1), 0.50, colors.black),
@@ -270,9 +286,8 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                     ('LINEBEFORE', (11, 0), (11, -1), 0.50, colors.black),
                     ('LINEBEFORE', (12, 0), (12, -1), 0.50, colors.black),
                     ('LINEBEFORE', (13, 0), (13, -1), 0.50, colors.black),
-                    ('LINEBEFORE', (14, 0), (14, -1), 0.50, colors.black),
-                    ('LINEAFTER', (14, 0), (14, -1), 0.50, colors.black),
-                    ('LINEBELOW', (0, -1), (14, -1), 0.50, colors.black),
+                    ('LINEAFTER', (13, 0), (13, -1), 0.50, colors.black),
+                    ('LINEBELOW', (0, -1), (13, -1), 0.50, colors.black),
                     ('VALIGN', (0, 0), (-1, -1), 'BOTTOM'),
                 ]))
             # 変数加算

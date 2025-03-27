@@ -9,10 +9,12 @@ from myapp.output import salespersonfunction
 from django.utils import timezone
 import datetime
 # 計算用
-from django.db.models import Sum,F,DecimalField,Max
+from django.db.models import Sum,F,IntegerField,Max
 from django.db.models.functions import Coalesce
 # メッセージ
 from django.contrib import messages
+#pandas
+import pandas as pd
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
@@ -71,7 +73,6 @@ def conversion(TargetMonthFrom, TargetMonthTo):
     strlast = datetime.datetime.strptime(str(TargetMonthTo), '%Y%m%d')
 
     # 前月初日、末日を算出する
-
     # From
     startdate = startdate.strftime('%Y-%m-%d')
     # To
@@ -110,28 +111,33 @@ def SalesPerson(search_date, manager):
     queryset =  RequestResult.objects.filter(InvoiceIssueDate__range=(str(search_date[0]),str(search_date[1])),
             InvoiceNUmber__gt=0,
             InvoiceIssueDiv=1,
-            #OrderingId__ManagerCode__id=str(manager),
             OrderingId__RequestCode__ManagerCode__id=str(manager),
             is_Deleted=0,
             )
 
     SellSum =  list(queryset.values(
         'OrderingId__RequestCode__ManagerCode__id',
-        'OrderingId__RequestCode_id'
+        'OrderingId__RequestCode_id',
+        'id',
         ).annotate(
         ManagerCode=Max('OrderingId__RequestCode__ManagerCode__id'),
         RequestCode=Max('OrderingId__RequestCode_id'),
         CustomerCode=Max('OrderingId__RequestCode__CustomerCode'),
         CustomerName=Max('OrderingId__RequestCode__CustomerName'),
-        Sell_total=Sum(
-            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=DecimalField()
-            ),
-        Supplier_total=Sum(
-            Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=DecimalField()            
-            )
-        ).order_by('OrderingId__RequestCode__ManagerCode__id'))
+        Sell_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField()),
+        Supplier_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailUnitPrice'),0),output_field=IntegerField())
+        ).order_by(
+            'OrderingId__RequestCode__ManagerCode__id'
+            ))
 
-    return SellSum
+    #--------------------------------------------------------------------#
+    df = pd.DataFrame(SellSum, columns=['OrderingId__RequestCode__ManagerCode__id','OrderingId__RequestCode_id','id','ManagerCode','RequestCode','CustomerCode','CustomerName','Sell_total','Supplier_total'])
+    sales_sum = df[['OrderingId__RequestCode__ManagerCode__id','OrderingId__RequestCode_id','CustomerCode','CustomerName','Sell_total','Supplier_total']].groupby(['OrderingId__RequestCode__ManagerCode__id','OrderingId__RequestCode_id','CustomerCode','CustomerName',], as_index=False).sum()
+    sales_sum = sales_sum.sort_values(['OrderingId__RequestCode__ManagerCode__id','CustomerCode'], ascending=[True,True])
+    list_from_df = sales_sum.values.tolist()
+    #--------------------------------------------------------------------#
+
+    return list_from_df
 
 if __name__ == '__main__':
     make()   

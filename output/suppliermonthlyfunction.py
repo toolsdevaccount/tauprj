@@ -58,17 +58,17 @@ def printstring(pdf_canvas, dt, dt_Prev, i, width, serch_date):
         itemNo0 = Paragraph('仕入先コード',style)
         itemNo1 = Paragraph('仕入先名',style)
         itemNo2 = Paragraph('前月繰越額',style)
-        itemNo3 = Paragraph('仕入金額',style)
+        itemNo3 = Paragraph('課税仕入金額',style)
         itemNo4 = Paragraph('消費税額',style)
-        itemNo5 = Paragraph('税込仕入金額',style)
+        itemNo8 = Paragraph('非課税仕入金額',style)
+        itemNo5 = Paragraph('合計仕入金額',style)
         itemNo6 = Paragraph('支払金額',style)
         itemNo7 = Paragraph('次月繰越額',style)
-        itemNo8 = Paragraph('済',style)
         itemNo9 = Paragraph('備考',style)
         data = [
-            [itemNo0, itemNo1, itemNo2, itemNo3, itemNo4, itemNo5, itemNo6, itemNo7, itemNo8, itemNo9],
+            [itemNo0, itemNo1, itemNo2, itemNo3, itemNo4, itemNo8, itemNo5, itemNo6, itemNo7, itemNo9],
         ]
-        table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 10*mm, 50*mm), rowHeights=8.0*mm)
+        table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm), rowHeights=8.0*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
                 ('BOX', (0, 0), (-1, -1), 0.50, colors.black),
@@ -91,16 +91,17 @@ def printstring(pdf_canvas, dt, dt_Prev, i, width, serch_date):
         PrevBill = Paragraph(f"{int(row[0]):,}",styleRight)
         Sell = Paragraph(f"{int(row[3]):,}",styleRight)
         Tax = Paragraph(f"{int(row[4]):,}",styleRight)
-        Total = row[3] + row[4]
+        Total = row[3] + row[4] + row[6]
         SellTotal = Paragraph(f"{int(Total):,}",styleRight)
+        TaxExempt = Paragraph(f"{int(row[6]):,}",styleRight)
         Deposit = Paragraph(f"{int(row[1]):,}",styleRight)
         Carryover = Paragraph(f"{int(row[5]):,}",styleRight)
 
         data += [
-                [CustomerCode, CustomerName, PrevBill, Sell, Tax, SellTotal, Deposit, Carryover, '', ''],
+                [CustomerCode, CustomerName, PrevBill, Sell, Tax, TaxExempt, SellTotal, Deposit, Carryover, ''],
         ]
 
-        table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 10*mm, 50*mm), rowHeights=8.0*mm)
+        table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm), rowHeights=8.0*mm)
         table.setStyle(TableStyle([
                 ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
                 ('LINEBEFORE', (0, 0), (0, -1), 0.50, colors.black),
@@ -126,7 +127,7 @@ def blankprintstring(pdf_canvas, width):
             ['', '', '', '', '', '', '', '', '', ''],
     ]
 
-    table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 10*mm, 50*mm), rowHeights=8.0*mm)
+    table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm), rowHeights=8.0*mm)
     table.setStyle(TableStyle([
             ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
             ('LINEBEFORE', (0, 0), (0, -1), 0.50, colors.black),
@@ -154,13 +155,14 @@ def totalprintstring(pdf_canvas, width, total):
     SellTotal = Paragraph(f"{int(total[1]):,}",styleRight)
     TaxTotal = Paragraph(f"{int(total[2]):,}",styleRight)
     SellTaxTotal = Paragraph(f"{int(total[3]):,}",styleRight)
+    TaxExemptTotal = Paragraph(f"{int(total[6]):,}",styleRight)
     DepositTotal = Paragraph(f"{int(total[4]):,}",styleRight)
     CarryoverTotal = Paragraph(f"{int(total[5]):,}",styleRight)
     data = [
-            [strtotal, '', BillTotal, SellTotal, TaxTotal, SellTaxTotal, DepositTotal, CarryoverTotal, '', ''],
+            [strtotal, '', BillTotal, SellTotal, TaxTotal, TaxExemptTotal, SellTaxTotal, DepositTotal, CarryoverTotal, ''],
     ]
 
-    table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 10*mm, 50*mm), rowHeights=8.0*mm)
+    table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm), rowHeights=8.0*mm)
     table.setStyle(TableStyle([
             ('FONT', (0, 0), (-1, -1), '游明朝 標準', 9),
             ('BOX', (0, 0), (-1, -1), 0.50, colors.black),
@@ -173,7 +175,7 @@ def totalprintstring(pdf_canvas, width, total):
 def lineprintstring(pdf_canvas):
     data = [['', '', '', '', '', '', '', '', '', ''],]
 
-    table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 10*mm, 50*mm), rowHeights=0.1*mm)
+    table = Table(data, colWidths=(30*mm, 60*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm, 30*mm), rowHeights=0.1*mm)
     table.setStyle(TableStyle([
             ('LINEABOVE', (0, 0), (-1, -1), 0.50, colors.black),
         ]))
