@@ -241,20 +241,29 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
                 row = dt_Detail[k]            
 
                 InvoiceIssueDate = Paragraph(row[0].strftime('%y%m%d'),styleCenter)
-                InvoiceNumber = Paragraph(row[1],styleCenter)
+                if row[6]>0:
+                    InvoiceNumber = Paragraph('',styleCenter)
+                else:
+                    InvoiceNumber = Paragraph(row[1],styleCenter)
                 if row[6]>0:
                     #御入金の文言を追加
                     ProductName = Paragraph('御入金(' + row[2] + ')',styleLeft)
                 else:
                     ProductName = Paragraph(row[2],styleLeft)
                 
-                if row[4]=='':
-                    ShippingVolume = Paragraph(row[4],styleRight)
+                if row[6]>0:
+                    ShippingVolume = Paragraph('',styleRight)
                 else:
-                    ShippingVolume = Paragraph('{:,.2f}'.format(row[4]),styleRight)
+                    if row[4]=='':
+                        ShippingVolume = Paragraph(row[4],styleRight)
+                    else:
+                        ShippingVolume = Paragraph('{:,.2f}'.format(row[4]),styleRight)
                 
                 Prceeds = Paragraph(f"{int(row[5]):,}",styleRight)
-                OrderingCount = Paragraph(row[3],styleRight)
+                if row[6]>0:
+                    OrderingCount = Paragraph('',styleRight)
+                else:
+                    OrderingCount = Paragraph(row[3],styleRight)
                 data += [
                         [InvoiceIssueDate, InvoiceNumber, ProductName, OrderingCount, ShippingVolume, Prceeds, ''],
                 ]
