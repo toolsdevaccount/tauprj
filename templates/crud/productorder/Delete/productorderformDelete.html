@@ -72,11 +72,11 @@
                                 <label for="id_ProductOrderOrderingDate">発注日</label>
                                 {% if form.errors.ProductOrderOrderingDate %}
                                 {% for error in form.errors.ProductOrderOrderingDate %}
-                                <input type="tel" class="form-control is-invalid flatpickr" name="ProductOrderOrderingDate" id="id_ProductOrderOrderingDate" value="{{ object.ProductOrderOrderingDate }}" readonly>
+                                <input type="tel" class="form-control is-invalid flatpickr" name="ProductOrderOrderingDate" id="id_ProductOrderOrderingDate" value="{{ object.ProductOrderOrderingDate | default_if_none:'' }}" readonly>
                                 <div class="invalid-feedback">{{ error }}</div>
                                 {% endfor %}
                                 {% else %}
-                                <input type="tel" class="form-control flatpickr" name="ProductOrderOrderingDate" id="id_ProductOrderOrderingDate" value="{{ object.ProductOrderOrderingDate }}" readonly>
+                                <input type="tel" class="form-control flatpickr" name="ProductOrderOrderingDate" id="id_ProductOrderOrderingDate" value="{{ object.ProductOrderOrderingDate | default_if_none:'' }}" readonly>
                                 {% endif %}
                             </div>
                             <div class="form-group col-sm-2">
@@ -116,11 +116,11 @@
                                 <label for="id_ProductOrderDeliveryDate">納期</label>
                                 {% if form.errors.ProductOrderOrderingDate %}
                                 {% for error in form.errors.ProductOrderOrderingDate %}
-                                <input type="tel" class="form-control is-invalid flatpickr" name="ProductOrderDeliveryDate" id="id_ProductOrderDeliveryDate" value="{{ object.ProductOrderDeliveryDate }}" readonly>
+                                <input type="tel" class="form-control is-invalid flatpickr" name="ProductOrderDeliveryDate" id="id_ProductOrderDeliveryDate" value="{{ object.ProductOrderDeliveryDate | default_if_none:'' }}" readonly>
                                 <div class="invalid-feedback">{{ error }}</div>
                                 {% endfor %}
                                 {% else %}
-                                <input type="tel" class="form-control flatpickr" name="ProductOrderDeliveryDate" id="id_ProductOrderDeliveryDate" value="{{ object.ProductOrderDeliveryDate }}" readonly>
+                                <input type="tel" class="form-control flatpickr" name="ProductOrderDeliveryDate" id="id_ProductOrderDeliveryDate" value="{{ object.ProductOrderDeliveryDate | default_if_none:'' }}" readonly>
                                 {% endif %}
                             </div>
                         </div>
