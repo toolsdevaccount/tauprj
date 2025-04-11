@@ -13,7 +13,6 @@ from dateutil import relativedelta
 from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
 from itertools import chain
-from django.db.models.functions import TruncMonth
 # メッセージ
 from django.contrib import messages
 #LOG出力設定
@@ -58,7 +57,7 @@ def make(closing, invoiceDate_From, invoiceDate_To, element_From, element_To, la
     
     for i in range(counter):
         dt = customer(i, dt_company)
-        dt_Prev = PrevBalance(lastdate, dt, invoiceDate_From, invoiceDate_To)
+        dt_Prev = PrevBalance(lastdate, dt, invoiceDate_From, invoiceDate_To, closing)
         dt_Detail = Detail(dt, invoiceDate_From, invoiceDate_To)
 
         if dt_Prev[5]!=0 or dt_Prev[1]!=0:
@@ -156,7 +155,7 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(lastdate, Customer, FromDate, ToDate): 
+def PrevBalance(lastdate, Customer, FromDate, ToDate, closing): 
     #前月までの入金額計
     queryset = Deposit.objects.filter(
         DepositDate__lte=(str(lastdate)),
@@ -175,36 +174,42 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate):
         DepoPrvTotal = 0
 
     #前月までの売上額計
-    SellPrvSum =  RequestResult.objects.annotate(
-        monthly=TruncMonth('InvoiceIssueDate'),
-        ).values(
-            'monthly',
-        ).filter(
+    SellPrvSum =  RequestResult.objects.filter(
             InvoiceIssueDate__lte=(str(lastdate)),
             OrderingId__CustomeCode=(str(Customer[0]['id'])),
             InvoiceNUmber__gt=0,
             InvoiceIssueDiv=1,
             is_Deleted=0,
+            ).values(
+                'InvoiceIssueDate',
             ).annotate(
-                Abs_total=Coalesce(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice'),0,output_field=IntegerField()),
-            ).order_by(
-                'monthly',
-            )
+                 Abs_total=Coalesce(F('ShippingVolume') * F('OrderingDetailId__DetailSellPrice'),0,output_field=IntegerField()),
+                 ).order_by(
+                     'InvoiceIssueDate'
+                 )
 
     #月ごとに集計----------------------------------------------------------#
     SellPrvTotal = 0
     SellPrvtax = 0
     if SellPrvSum:
-        df = pd.DataFrame(SellPrvSum)
-        prvsalessum = df[['monthly','Abs_total']].groupby(['monthly'], as_index =False).sum()
+        #締日毎に売上金額集計-----------------------------------------------#
+        tbl_array = []
+        for tbl in SellPrvSum:
+            tbldate = tbl['InvoiceIssueDate']
+            tblday = tbl['InvoiceIssueDate'].day
+            if tblday > closing:
+                tbldate = datetime.date(tbldate.year , tbldate.month + 1 , 1)
+            else:
+                tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
+            tbl_array.append([tbldate,tbl['Abs_total']])
+        dtfrmae = pd.DataFrame(tbl_array)
+        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
         _tuple =  [tuple(x) for x in prvsalessum.values]
-        #残高&消費税計算-------------------------------------------------------#
+        #残高&消費税計算----------------------------------------------------#
         for q in _tuple:
             SellPrvTotal+=int(q[1])
             tax = int(q[1])
             SellPrvtax+= int(tax*0.1)
-        #--------------------------------------------------------------------#
-
     #前回請求額算出
     PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
 

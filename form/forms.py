@@ -87,7 +87,7 @@ class CustomerSupplierForm(forms.ModelForm):
     def clean_CustomerCode(self):
         CustomerCode = self.cleaned_data['CustomerCode']
         idcnt = CustomerSupplier.objects.filter(id__exact = self.instance.pk).count()
-        CustomerCodecnt = CustomerSupplier.objects.filter(CustomerCode__exact = CustomerCode).count()
+        CustomerCodecnt = CustomerSupplier.objects.filter(CustomerCode__exact = CustomerCode,is_Deleted=0).count()
         if CustomerCode:
             if idcnt == 0:
                 if CustomerCodecnt > 0:
