@@ -1,0 +1,69 @@
+{% extends 'crud/base.html' %}
+{% block content %}
+{% load humanize %}
+<div class="container-fluid">
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+			<li class="breadcrumb-item active" aria-current="page">消費税率情報一覧</li>
+			<div class="container">
+				<div class="text-right">
+					<button class="btn btn-info btn-sm" onclick="location.href='{% url 'myapp:consumetaxnew' %}'">新規登録</button>
+				</div>
+			</div>
+		</ol>
+	</nav>
+	<div class="form-group">
+		<form method="post" id="form">{% csrf_token %}
+			<div class="form-row align-items-center">
+				<div class="col-auto">
+					<label class="sr-only" for="text5a">キーワード</label>
+					<input type="search" name="query" class="form-control mb-2" autocomplete="new-password" value="{{ consearch.query.value }}" placeholder="キーワード"/>
+				</div>
+				<div class="col-auto">
+					<button class="btn btn-info mb-2" type="submit">
+						検索
+					</button>
+				</div>
+			</div>
+		</form>
+		<div class="table-responsive table-container">
+		<div class="table-sticky-container">
+			<table class="table table-sticky" id="tblrow">
+				<thead>
+					<tr class="bg-info">
+						<th scope="col" class="text-center fixed">ID</th>
+						<th scope="col" class="text-center">消費税率</th>
+						<th scope="col" class="text-center">税率表示名称</th>
+						<th scope="col" class="text-center">税率開始日</th>
+						<th scope="col" class="text-center">税率終了日</th>
+						<th scope="col" class="text-center">アクション</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for consumetax in object_list %}
+					<tr>
+						<td class="text-right" style="vertical-align:bottom;">{{ consumetax.id }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ consumetax.TaxRate }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ consumetax.TaxRateDisplay }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ consumetax.TaxStartDate | default_if_none:'' }}</td>
+						<td class="text-right" style="vertical-align:bottom;">{{ consumetax.TaxEndDate | default_if_none:'' }}</td>
+						<td style="vertical-align:bottom;">
+							<span><button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='{% url 'myapp:consumetaxedit' pk=consumetax.id %}'">詳細</button></span>
+							<span><button type="button" class="btn btn-outline-danger btn-sm" onclick="location.href='{% url 'myapp:consumetaxdelete' pk=consumetax.id %}'">削除</button></span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="col-6 offset-3 justify-content-center">
+	{% if is_paginated %}
+		{% include "crud/pagination.html" %}
+	{% endif %}
+</div>
+{% load static %}
+<script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+{% endblock %}
