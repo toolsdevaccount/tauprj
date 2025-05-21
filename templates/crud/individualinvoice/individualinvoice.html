@@ -111,11 +111,21 @@
 					var InvNumber_to = document.getElementById('id_InvoiceNumber_To').value;
 					var InvNumber_date = document.getElementById('id_date_issue').value;
 					var url = "/individualinvoice/pdf";
+
 					// 入力値チェック
 					if(InvNumber_from==''||InvNumber_to==''||InvNumber_date==''){
 						alert('入力が不正なため処理を中止します\n再度適正な値を入力してください');
 						return false;
 					}
+					// -----------------------------------------------------------------------------------------------------------------------------------------------//
+					// 最終確認 2025-05-20 追加
+					if(confirm('請求書番号：' + InvNumber_from + ' - ' + InvNumber_to + '\n' + '発行日：' + InvNumber_date + '\n' + 'この条件で印刷してよろしいですか')){
+
+					}else{
+						alert('中止しました');
+						return false;
+					}
+					// -----------------------------------------------------------------------------------------------------------------------------------------------//
 					InvNumber_date = InvNumber_date.replace(/-/g,'');
 					url = url + "?inv_from=" + InvNumber_from + "&inv_to=" + InvNumber_to + "&inv_date=" + InvNumber_date;
 

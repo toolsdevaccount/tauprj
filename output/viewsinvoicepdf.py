@@ -4,7 +4,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, portrait
 from myapp.models import Deposit, CustomerSupplier, RequestResult
 from django.db.models import Q
-from myapp.output import invoicefunction
+from myapp.output import invoicefunction, viewsGetTaxRateFunction
 # 日時
 from django.utils import timezone
 import datetime
@@ -47,9 +47,14 @@ def pdf(request, pkclosing, invoiceDate_From, invoiceDate_To, element_From, elem
 
 def make(closing, invoiceDate_From, invoiceDate_To, element_From, element_To, lastdate, billdate, response, request):
     pdf_canvas = set_info(response) # キャンバス名
+    # 自社情報
     dt_own = Own_Company()
+    # 画面選択の得意先取得
     dt_company = company(closing, element_From, element_To)
     counter = len(dt_company)
+    # 消費税率取得
+    dt_Taxrate = viewsGetTaxRateFunction.gettaxrate()
+
     PrCnt=0
     if counter==0:
         result=99
@@ -57,7 +62,7 @@ def make(closing, invoiceDate_From, invoiceDate_To, element_From, element_To, la
     
     for i in range(counter):
         dt = customer(i, dt_company)
-        dt_Prev = PrevBalance(lastdate, dt, invoiceDate_From, invoiceDate_To, closing)
+        dt_Prev = PrevBalance(lastdate, dt, invoiceDate_From, invoiceDate_To, closing, dt_Taxrate)
         dt_Detail = Detail(dt, invoiceDate_From, invoiceDate_To)
 
         if dt_Prev[5]!=0 or dt_Prev[1]!=0:
@@ -155,7 +160,7 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(lastdate, Customer, FromDate, ToDate, closing): 
+def PrevBalance(lastdate, Customer, FromDate, ToDate, closing, is_taxrate):
     #前月までの入金額計
     queryset = Deposit.objects.filter(
         DepositDate__lte=(str(lastdate)),
@@ -207,9 +212,13 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate, closing):
         _tuple =  [tuple(x) for x in prvsalessum.values]
         #残高&消費税計算----------------------------------------------------#
         for q in _tuple:
+            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
+            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
+            #-------------------------------------------------------------------------------------------------------------#
             SellPrvTotal+=int(q[1])
             tax = int(q[1])
-            SellPrvtax+= int(tax*0.1)
+            #SellPrvtax+= int(tax*0.1)
+            SellPrvtax+= int(tax * taxrate)
     #前回請求額算出
     PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
 
@@ -243,8 +252,12 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate, closing):
     for d in SellSum:
         SellTotal+=int(d['Abs_total'])
 
+    # 消費税率取得 2025-05-12追加 -----------------------------------------------#
+    taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, FromDate, ToDate)
+    #---------------------------------------------------------------------------#
     #請求月売上消費税額
-    tax = int(SellTotal) * 0.1
+    #tax = int(SellTotal) * 0.1
+    tax = int(SellTotal) * taxrate
     tax = int(tax)
     #今回請求額
     invoice = int(CarryForward) + int(SellTotal) + int(tax)

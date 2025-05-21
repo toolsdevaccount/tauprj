@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import CustomerSupplier
-from myapp.output import purchaseLedgerfunction, GetPurchasefunction, GetPurchasePrevfunction
+from myapp.output import purchaseLedgerfunction, GetPurchasefunction, GetPurchasePrevfunction, viewsGetTaxRateFunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
@@ -46,6 +46,8 @@ def make(search_date, element_From, element_To, response):
     dt_company = company(element_From, element_To)
     counter = len(dt_company)
     PrCnt=0
+    # 消費税率取得
+    dt_Taxrate = viewsGetTaxRateFunction.gettaxrate()
 
     if counter==0:
         result=99
@@ -53,7 +55,7 @@ def make(search_date, element_From, element_To, response):
     
     for i in range(counter):
         dt = customer(i, dt_company)
-        dt_Prev = PrevBalance(search_date, dt)
+        dt_Prev = PrevBalance(search_date, dt, dt_Taxrate)
         dt_Detail = Detail(search_date, dt)
 
         if dt_Prev[0]!=0 or dt_Prev[6]!=0:
@@ -124,7 +126,7 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(search_date, Customer): 
+def PrevBalance(search_date, Customer, is_taxrate): 
     #前月までの支払合計額を取得
     PayPrvSum = GetPurchasePrevfunction.GetPayPrvSum(search_date, Customer)  
     #前月までの課税仕入額を取得
@@ -158,10 +160,14 @@ def PrevBalance(search_date, Customer):
     dcnt = len(StockPrvSum)
     if StockPrvSum:
         for i,q in  enumerate(StockPrvSum):
+            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
+            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q['monthly'].strftime('%Y-%m-%d'), q['monthly'].strftime('%Y-%m-%d'))
+            #-------------------------------------------------------------------------------------------------------------#
             if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
                 if i==dcnt-1:
                     tax+= int(q['Abs_total'])
-                Stocktax=int(tax*0.1)
+                #Stocktax=int(tax*0.1)
+                Stocktax=int(tax * taxrate)
                 StockPrvtax+=Stocktax
                 tax=0
             StockPrvTotal+=int(q['Abs_total'])
@@ -194,8 +200,14 @@ def PrevBalance(search_date, Customer):
     StockTotal = 0
     for d in StockSum:
         StockTotal+=int(d['Abs_total'])
+
+    # 消費税率取得 2025-05-12追加 -----------------------------------------------#
+    taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
+    #---------------------------------------------------------------------------#
+
     #当月仕入消費税額を計算
-    tax = int(StockTotal) * 0.1 + int(AdjustmentTotal)
+    #tax = int(StockTotal) * 0.1 + int(AdjustmentTotal)
+    tax = int(StockTotal) * taxrate + int(AdjustmentTotal)
     tax = int(tax)
     #当月税込仕入合計額
     invoice = int(CarryForward) + int(StockTotal) + int(tax)

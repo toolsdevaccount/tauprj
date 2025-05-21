@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import Deposit, CustomerSupplier, RequestResult
-from myapp.output import customermonthlyfunction
+from myapp.output import customermonthlyfunction, viewsGetTaxRateFunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
@@ -20,8 +20,10 @@ from django.contrib import messages
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#pandas
+import pandas as pd
 
-def pdf(request, TargetMonth):
+def pdf(request, TargetMonth, element_From, element_To):
     try:
         strtime = timezone.now() + datetime.timedelta(hours=9)
         filename = "CustomerMonthly_" + strtime.strftime('%Y%m%d%H%M%S') + ".pdf"
@@ -32,7 +34,7 @@ def pdf(request, TargetMonth):
         response['Content-Disposition'] = 'filename="{}"'.format(filename)
         # 文字列を日付に変換する
         search_date = conversion(TargetMonth)
-        result = make(search_date,response)
+        result = make(search_date, response, element_From, element_To)
     except Exception as e:
         message = "PDF作成時にエラーが発生しました"
         logger.error(message)
@@ -44,10 +46,12 @@ def pdf(request, TargetMonth):
         return redirect("myapp:CustomerMonthlylist")
     return response
 
-def make(search_date, response):
+def make(search_date, response, element_From, element_To):
     pdf_canvas = set_info(response) # キャンバス名
-    dt_company = company()
+    dt_company = company(element_From, element_To)
     counter = len(dt_company)
+    # 消費税率取得
+    dt_Taxrate = viewsGetTaxRateFunction.gettaxrate()
 
     # 初期値
     leng=0
@@ -67,7 +71,7 @@ def make(search_date, response):
     
     for i in range(counter):
         dt = customer(i, dt_company)
-        dt_Prev = PrevBalance(search_date, dt)
+        dt_Prev = PrevBalance(search_date, dt, dt_Taxrate)
         if dt_Prev[0]!=0 or dt_Prev[1]!=0 or dt_Prev[2]!=0 or dt_Prev[3]!=0 or dt_Prev[4]!=0 or dt_Prev[5]!=0:
             width-= 8
             customermonthlyfunction.printstring(pdf_canvas, dt, dt_Prev, leng, width, search_date)
@@ -86,6 +90,11 @@ def make(search_date, response):
                 width=220
  
         result=0
+
+    #2025-05-21 0件対策
+    if leng==0:
+        result=99
+        return result
 
     # 空白行を出力
     number = (24-leng)
@@ -146,7 +155,7 @@ def set_info(response):
     pdf_canvas.setSubject("得意先月次集計表")
     return pdf_canvas
 
-def company():
+def company(element_From, element_To):
     queryset = CustomerSupplier.objects.filter(is_Deleted=0)
     Company = list(queryset.values(
                                     'id',
@@ -160,7 +169,7 @@ def company():
                                     'BuildingName',
                                     'ClosingDate',
                                     'LastReceivable',
-                            ).filter(Q(MasterDiv=2) | Q(MasterDiv=4),is_Deleted=0).order_by('CustomerCode'))
+                            ).filter(Q(MasterDiv=2) | Q(MasterDiv=4),is_Deleted=0,id__gte=element_From,id__lte=element_To).order_by('CustomerCode'))
 
     return Company
 
@@ -182,7 +191,7 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(search_date, Customer): 
+def PrevBalance(search_date, Customer, is_taxrate): 
     #前月までの入金額計
     queryset = Deposit.objects.filter(DepositDate__lte=(str(search_date[3])),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
     DepoPrvSum = list(queryset.values('DepositCustomerCode').annotate(Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())))
@@ -212,22 +221,29 @@ def PrevBalance(search_date, Customer):
 
     tax=0
     SellPrvTotal=0
-    Stocktax=0
     SellPrvtax=0
-    monthly=0
-    dcnt = len(SellPrvSum)
-    if SellPrvSum:
-        for i,q in  enumerate(SellPrvSum):
-            if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
-                if i==dcnt-1:
-                    tax+= int(q['Abs_total'])
-                Stocktax=int(tax*0.1)
-                SellPrvtax+=Stocktax
-                tax=0
-            SellPrvTotal+=int(q['Abs_total'])
-            tax+= int(q['Abs_total'])
 
-            monthly=q['monthly']
+    #2025-05-21 仕様変更
+    if SellPrvSum:
+        #月ごとに売上金額集計-----------------------------------------------#
+        tbl_array = []
+        for tbl in SellPrvSum:
+            tbldate = tbl['monthly']
+            tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
+            tbl_array.append([tbldate,tbl['Abs_total']])
+
+        dtfrmae = pd.DataFrame(tbl_array)
+        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
+        _tuple =  [tuple(x) for x in prvsalessum.values]
+
+        #残高&消費税計算----------------------------------------------------#
+        for q in _tuple:
+            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
+            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
+            #-------------------------------------------------------------------------------------------------------------#
+            SellPrvTotal+=int(q[1])
+            tax = int(q[1])
+            SellPrvtax+= int(tax * taxrate)
 
     #前回請求額算出
     PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
@@ -256,7 +272,7 @@ def PrevBalance(search_date, Customer):
     SellSum =  list(queryset.values(
         'OrderingId__CustomeCode',
         'InvoiceNUmber', 
-        'id',       
+        'id',
         ).annotate(
         Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())
         ))
@@ -265,8 +281,13 @@ def PrevBalance(search_date, Customer):
     for d in SellSum:
         SellTotal+=int(d['Abs_total'])
 
-    #当月月売上消費税額
-    tax = int(SellTotal) * 0.1
+    # 消費税率取得 2025-05-12追加 -----------------------------------------------#
+    taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
+    #---------------------------------------------------------------------------#
+
+    #当月売上消費税額
+    #tax = int(SellTotal) * 0.1
+    tax = int(SellTotal) * taxrate
     tax = int(tax)
     #当月税込売上合計額
     invoice = int(CarryForward + SellTotal + tax)

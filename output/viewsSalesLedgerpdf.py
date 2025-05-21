@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import Deposit, CustomerSupplier, RequestResult
-from myapp.output import salesledgerfunction
+from myapp.output import salesledgerfunction, viewsGetTaxRateFunction
 # 検索機能のために追加
 from django.db.models import Q, Max
 # 日時
@@ -50,6 +50,8 @@ def make(search_date, element_From, element_To, response):
     dt_company = company(element_From, element_To)
     counter = len(dt_company)
     PrCnt=0
+    # 消費税率取得
+    dt_Taxrate = viewsGetTaxRateFunction.gettaxrate()
 
     if counter==0:
         result=99
@@ -57,7 +59,7 @@ def make(search_date, element_From, element_To, response):
     
     for i in range(counter):
         dt = customer(i, dt_company)
-        dt_Prev = PrevBalance(search_date, dt)
+        dt_Prev = PrevBalance(search_date, dt, dt_Taxrate)
         dt_Detail = Detail(search_date, dt)
 
         if dt_Prev[0]!=0 or dt_Prev[6]!=0:
@@ -132,7 +134,7 @@ def customer(i, dt_company):
 
     return Customer
 
-def PrevBalance(search_date, Customer): 
+def PrevBalance(search_date, Customer, is_taxrate): 
     #前月までの入金額計
     queryset = Deposit.objects.filter(DepositDate__lte=(str(search_date[3])),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
     DepoPrvSum = list(queryset.values('DepositCustomerCode').annotate(Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())))
@@ -169,10 +171,14 @@ def PrevBalance(search_date, Customer):
     dcnt = len(SellPrvSum)
     if SellPrvSum:
         for i,q in  enumerate(SellPrvSum):
+            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
+            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q['monthly'].strftime('%Y-%m-%d'), q['monthly'].strftime('%Y-%m-%d'))
+            #-------------------------------------------------------------------------------------------------------------#
             if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
                 if i==dcnt-1:
                     tax+= int(q['Abs_total'])
-                Selltax=int(tax*0.1)
+                #Selltax=int(tax*0.1)
+                Selltax=int(tax * taxrate)
                 SellPrvtax+=Selltax
                 tax=0
             SellPrvTotal+=int(q['Abs_total'])
@@ -213,8 +219,13 @@ def PrevBalance(search_date, Customer):
     else:
         SellTotal = 0
 
+    # 消費税率取得 2025-05-12追加 -----------------------------------------------#
+    taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
+    #---------------------------------------------------------------------------#
+
     # 当月月売上消費税額
-    tax = int(SellTotal) * 0.1
+    #tax = int(SellTotal) * 0.1
+    tax = int(SellTotal) * taxrate
     tax = int(tax)
     # 当月税込売上合計額
     invoice = int(CarryForward) + int(SellTotal) + int(tax)

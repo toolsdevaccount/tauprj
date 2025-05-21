@@ -5,7 +5,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from myapp.models import RequestResult,CustomerSupplier 
 from django.db.models.functions import Concat,Abs
 from django.db.models import F,Value
-from myapp.output import indiinvoicefunction
+from myapp.output import indiinvoicefunction, viewsGetTaxRateFunction
 # 日時
 from django.utils import timezone
 import datetime

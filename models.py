@@ -534,3 +534,21 @@ class InvoiceNo(models.Model):
     def get_absolute_url(self):
         return reverse('crud/DailyUpdate/DailyUpdate.html')
 
+# 消費税率テーブル 2025-05-12追加
+class Consumetax(models.Model):
+    TaxRate = models.DecimalField(max_digits=4,decimal_places=2, null=False,blank=False,default=0.00,verbose_name="消費税率")
+    TaxRateDisplay = models.CharField(max_length=20,null=False,blank=True,verbose_name="税率表示")
+    TaxStartDate = models.DateField(null=True,blank=True,verbose_name="税率開始日")
+    TaxEndDate = models.DateField(null=True,blank=True,verbose_name="税率終了日")
+    Created_id = models.BigIntegerField(null=False,blank=True,default=0,verbose_name="登録者id")
+    Updated_id = models.BigIntegerField(null=False,blank=True,default=0,verbose_name="更新者id")
+    Created_at = models.DateTimeField(null=False, blank=False,default=timezone.now() + datetime.timedelta(hours=9),verbose_name="登録日時")
+    Updated_at = models.DateTimeField(null=False, blank=False,default=timezone.now() + datetime.timedelta(hours=9),verbose_name="更新日時")
+    is_Deleted = models.BooleanField(null=False,blank=False,default=False,verbose_name="削除区分")
+
+    def __str__(self):
+        return str(self.TaxRate)
+    # 新規登録・編集完了後のリダイレクト先
+    def get_absolute_url(self):
+        return reverse('crud/consumetax/list/consumetaxlist.html')
+

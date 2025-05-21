@@ -3,7 +3,7 @@ from django.urls import path
 from . views import viewscustomer, viewsinit,viewsordering, viewsmerchandise, viewsproductorder, viewsdeposit, viewspayment, viewsrequestresult
 from . views import viewsdailyupdate, viewsindividualinvoice, viewsinvoice, viewsCustomerMonthly, viewsSupplierMonthly
 from . views import viewsRequestCumulativelist, viewsSalesLedger, viewsPurchaseLedger, viewsunpaid, viewsUnPaidView, viewsUnPaidList
-from . views import viewsSalesPersonList, viewshistory, viewsstock, viewscontract
+from . views import viewsSalesPersonList, viewshistory, viewsstock, viewscontract, viewsconsumetax
 from . output import viewspopdf, viewsProductPdf, viewsindiinvoicepdf, viewsinvoicepdf, viewsCustomerMonthlypdf
 from . output import viewsSupplierMonthlypdf, viewsRequestCumulativepdf, viewsSalesLedgerpdf, viewsPurchaseLedgerpdf, viewsUnPaidListpdf
 from . output import viewsSalesPersonpdf
@@ -36,7 +36,15 @@ urlpatterns = [
     # 商品マスター編集
     path('merchandise/edit/<int:pk>/<int:row>/', viewsmerchandise.MerchandiseUpdateView.as_view(), name='merchandiseedit'),
     # 商品マスター削除
-    path('merchandise/delete/<int:pk>/<int:row>/',viewsmerchandise.MerchandiseDeleteView.as_view(),name='merchandisedelete'),   
+    path('merchandise/delete/<int:pk>/<int:row>/',viewsmerchandise.MerchandiseDeleteView.as_view(),name='merchandisedelete'),
+    # 消費税率情報一覧
+    path('consumetax/list/', viewsconsumetax.ConsumetaxListView.as_view(), name='consumetaxlist'),
+    # 消費税率情報登録
+    path('consumetax/new/', viewsconsumetax.ConsumetaxCreateView.as_view(), name='consumetaxnew'),
+    # 消費税率情報編集
+    path('consumetax/edit/<int:pk>/', viewsconsumetax.ConsumetaxUpdateView.as_view(), name='consumetaxedit'),
+    # 消費税率情報削除
+    path('consumetax/delete/<int:pk>/',viewsconsumetax.ConsumetaxDeleteView.as_view(),name='consumetaxdelete'),
     #################################################  受発注入力 #############################################################
     # 受発注一覧
     path('ordering/list/', viewsordering.OrderingListView.as_view(), name='orderinglist'),
@@ -79,7 +87,6 @@ urlpatterns = [
     path('deposit/edit/<int:pk>/', viewsdeposit.DepositUpdateView.as_view(), name='Depositedit'),
     # 入金情報削除
     path('deposit/delete/<int:pk>/',viewsdeposit.DepositDeleteView.as_view(),name='Depositdelete'),   
-
     # 支払情報一覧
     path('payment/list/', viewspayment.PaymentListView.as_view(), name='Paymentlist'),
     # 支払情報登録
@@ -87,7 +94,7 @@ urlpatterns = [
     # 支払情報編集
     path('payment/edit/<int:pk>/', viewspayment.PaymentUpdateView.as_view(), name='Paymentedit'),
     # 支払情報削除
-    path('payment/delete/<int:pk>/',viewspayment.PaymentDeleteView.as_view(),name='Paymentdelete'),   
+    path('payment/delete/<int:pk>/',viewspayment.PaymentDeleteView.as_view(),name='Paymentdelete'),
     ###################################################  更新処理 ###########################################################   
     #日次更新対象レコード抽出
     path('dailyupdate/list/', viewsdailyupdate.DailyUpdateListView.as_view(), name='DailyUpdatelist'),
@@ -105,11 +112,15 @@ urlpatterns = [
     # 得意先月次集計
     path('CustomerMonthly/list/', viewsCustomerMonthly.CustomerMonthlyListView.as_view(), name='CustomerMonthlylist'),
     # 得意先月次集計PDF出力
-    path('CustomerMonthly/pdf/<int:TargetMonth>/', viewsCustomerMonthlypdf.pdf, name='CustomerMonthlypdf'), 
+    #path('CustomerMonthly/pdf/<int:TargetMonth>/', viewsCustomerMonthlypdf.pdf, name='CustomerMonthlypdf'), 
+    # 2025-05-20 変更
+    path('CustomerMonthly/pdf/<int:TargetMonth>/<str:element_From>/<str:element_To>/', viewsCustomerMonthlypdf.pdf, name='CustomerMonthlypdf'), 
     # 仕入先月次集計
     path('SupplierMonthly/list/', viewsSupplierMonthly.SupplierMonthlyListView.as_view(), name='SupplierMonthlylist'),
     # 仕入先月次集計PDF出力
-    path('SupplierMonthly/pdf/<int:TargetMonth>/', viewsSupplierMonthlypdf.pdf, name='SupplierMonthlypdf'), 
+    #path('SupplierMonthly/pdf/<int:TargetMonth>/', viewsSupplierMonthlypdf.pdf, name='SupplierMonthlypdf'), 
+    # 2025-05-20 変更
+    path('SupplierMonthly/pdf/<int:TargetMonth>/<str:element_From>/<str:element_To>/', viewsSupplierMonthlypdf.pdf, name='SupplierMonthlypdf'), 
     # 売上台帳
     path('SalesLedger/list/', viewsSalesLedger.SalesLedgerListView.as_view(), name='SalesLedgerlist'),
     # 売上台帳PDF出力
