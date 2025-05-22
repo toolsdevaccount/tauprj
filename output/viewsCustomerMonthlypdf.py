@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import Deposit, CustomerSupplier, RequestResult
-from myapp.output import customermonthlyfunction, viewsGetTaxRateFunction
+from myapp.output import customermonthlyfunction, viewsGetTaxRateFunction, GetBalancefunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
@@ -219,34 +219,11 @@ def PrevBalance(search_date, Customer, is_taxrate):
                     'monthly',
                 )
 
-    tax=0
-    SellPrvTotal=0
-    SellPrvtax=0
-
     #2025-05-21 仕様変更
-    if SellPrvSum:
-        #月ごとに売上金額集計-----------------------------------------------#
-        tbl_array = []
-        for tbl in SellPrvSum:
-            tbldate = tbl['monthly']
-            tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
-            tbl_array.append([tbldate,tbl['Abs_total']])
-
-        dtfrmae = pd.DataFrame(tbl_array)
-        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
-        _tuple =  [tuple(x) for x in prvsalessum.values]
-
-        #残高&消費税計算----------------------------------------------------#
-        for q in _tuple:
-            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
-            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
-            #-------------------------------------------------------------------------------------------------------------#
-            SellPrvTotal+=int(q[1])
-            tax = int(q[1])
-            SellPrvtax+= int(tax * taxrate)
+    array=GetBalancefunction.GetSalesBalance(SellPrvSum,is_taxrate)
 
     #前回請求額算出
-    PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
+    PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(array[0]) + int(array[1])
     #当月入金合計額
     queryset = Deposit.objects.filter(DepositDate__range=(str(search_date[0]),str(search_date[1])),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
     DepoSum = list(queryset.values('DepositCustomerCode').annotate(Depo_total=Coalesce(Sum('DepositMoney'),0,output_field=IntegerField())))
