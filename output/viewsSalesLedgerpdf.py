@@ -20,6 +20,8 @@ from django.contrib import messages
 #LOG出力設定
 import logging
 logger = logging.getLogger(__name__)
+#pandas
+import pandas as pd
 
 def pdf(request, TargetMonth, element_From, element_To):
     try:
@@ -63,7 +65,7 @@ def make(search_date, element_From, element_To, response):
         dt_Detail = Detail(search_date, dt)
 
         if dt_Prev[0]!=0 or dt_Prev[6]!=0:
-            salesledgerfunction.printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date[4], search_date[5])
+            salesledgerfunction.printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date, dt_Taxrate)
             result=0
             PrCnt=1
 
@@ -165,27 +167,29 @@ def PrevBalance(search_date, Customer, is_taxrate):
     #残高消費税計算
     tax=0
     SellPrvTotal=0
-    Selltax=0
     SellPrvtax=0
-    monthly=0
-    dcnt = len(SellPrvSum)
+
+    #2025-05-21 仕様変更
     if SellPrvSum:
-        for i,q in  enumerate(SellPrvSum):
+        #月ごとに売上金額集計-----------------------------------------------#
+        tbl_array = []
+        for tbl in SellPrvSum:
+            tbldate = tbl['monthly']
+            tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
+            tbl_array.append([tbldate,tbl['Abs_total']])
+
+        dtfrmae = pd.DataFrame(tbl_array)
+        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
+        _tuple =  [tuple(x) for x in prvsalessum.values]
+
+        #残高&消費税計算----------------------------------------------------#
+        for q in _tuple:
             # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
-            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q['monthly'].strftime('%Y-%m-%d'), q['monthly'].strftime('%Y-%m-%d'))
+            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
             #-------------------------------------------------------------------------------------------------------------#
-            if (i!=0 and monthly!=q['monthly']) or i==dcnt-1:
-                if i==dcnt-1:
-                    tax+= int(q['Abs_total'])
-                #Selltax=int(tax*0.1)
-                Selltax=int(tax * taxrate)
-                SellPrvtax+=Selltax
-                tax=0
-            SellPrvTotal+=int(q['Abs_total'])
-            tax+= int(q['Abs_total'])
-
-            monthly=q['monthly']
-
+            SellPrvTotal+=int(q[1])
+            tax = int(q[1])
+            SellPrvtax+= int(tax * taxrate)
 
     # 前回請求額算出
     PrevBill = int(Customer[0]['LastReceivable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)

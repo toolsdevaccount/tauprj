@@ -8,10 +8,10 @@ from reportlab.lib.styles import ParagraphStyle, ParagraphStyle
 from reportlab.lib.enums import TA_RIGHT, TA_CENTER, TA_LEFT
 from reportlab.pdfbase.ttfonts import TTFont
 import math
-import re
 from decimal import Decimal
+from myapp.output import viewsGetTaxRateFunction
 
-def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
+def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date, is_taxrate):
     # フォント登録
     Yumin = "yumin.ttf"
     pdfmetrics.registerFont(TTFont('游明朝 標準', Yumin))
@@ -92,7 +92,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
             PrevBill = Paragraph(f"{int(dt_Prev[0]):,}",styleRight)
        
             data = [
-                    [CurryDate, '', '', ProductName, '', '', '', '',
+                    [search_date[5], '', '', ProductName, '', '', '', '',
                         '', '', '', PrevBill, '', '', PrevBill],
             ]
         else:
@@ -206,7 +206,11 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
                     DepoTotal = Paragraph(f"{int(item2):,}",styleRight)
 
                 #合計消費税額
-                item3 = int(item1 * 0.1)
+                # 消費税率取得 2025-05-12追加 -----------------------------------------------#
+                taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
+                #---------------------------------------------------------------------------#
+
+                item3 = int(item1 * taxrate)
                 if item3==0:
                     TaxTotal = Paragraph('',styleRight)
                 else:
@@ -256,6 +260,6 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, PrtDate, CurryDate):
         font_size = 10
         pdf_canvas.setFont('游明朝 標準', font_size)
         pdf_canvas.drawString(850, 105, '対象年月：')
-        pdf_canvas.drawString(905, 105, PrtDate)
+        pdf_canvas.drawString(905, 105, search_date[4])
 
         pdf_canvas.showPage()
