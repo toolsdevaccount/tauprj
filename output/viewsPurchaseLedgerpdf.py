@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import CustomerSupplier
-from myapp.output import purchaseLedgerfunction, GetPurchasefunction, GetPurchasePrevfunction, viewsGetTaxRateFunction
+from myapp.output import purchaseLedgerfunction, GetPurchasefunction, GetPurchasePrevfunction, viewsGetTaxRateFunction, GetBalancefunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
@@ -154,35 +154,11 @@ def PrevBalance(search_date, Customer, is_taxrate):
         AdjustmentTotal = 0
 
     #前月までの課税仕入額の消費税計算
-    tax=0
-    StockPrvTotal=0
-    StockPrvtax=0
-
-    #2025-05-21 仕様変更
-    if StockPrvSum:
-        #月ごとに課税仕入金額集計-----------------------------------------------#
-        tbl_array = []
-        for tbl in StockPrvSum:
-            tbldate = tbl['monthly']
-            tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
-            tbl_array.append([tbldate,tbl['Abs_total']])
-
-        dtfrmae = pd.DataFrame(tbl_array)
-        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
-        _tuple =  [tuple(x) for x in prvsalessum.values]
-
-        #残高&消費税計算----------------------------------------------------#
-        for q in _tuple:
-            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
-            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
-            #-------------------------------------------------------------------------------------------------------------#
-            StockPrvTotal+=int(q[1])
-            tax = int(q[1])
-            StockPrvtax+= int(tax * taxrate)
-        StockPrvtax+= int(AdjustmentTotal)
+    #2025-05-23 仕様変更
+    array=GetBalancefunction.GetSalesBalance(StockPrvSum, is_taxrate)
 
     #前回買掛額算出（買掛残高 - 前月までの支払合計額 + 前月までの課税仕入合計額 + 前月までの課税仕入消費税額 + 前月までの非課税仕入額
-    PrevBill = int(Customer[0]['LastPayable']) - int(PayPrvTotal) + int(StockPrvTotal) + int(StockPrvtax) + int(PrvTaxExemptTotal)
+    PrevBill = int(Customer[0]['LastPayable']) - int(PayPrvTotal) + int(array[0]) + int(array[1]) + int(AdjustmentTotal) + int(PrvTaxExemptTotal)
     #当月支払合計額
     PaySum = GetPurchasefunction.GetPaySum(search_date, Customer)
     #0判定
@@ -211,7 +187,6 @@ def PrevBalance(search_date, Customer, is_taxrate):
     #---------------------------------------------------------------------------#
 
     #当月仕入消費税額を計算
-    #tax = int(StockTotal) * 0.1 + int(AdjustmentTotal)
     tax = int(StockTotal) * taxrate + int(AdjustmentTotal)
     tax = int(tax)
     #当月税込仕入合計額

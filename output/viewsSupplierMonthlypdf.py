@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import CustomerSupplier
-from myapp.output import suppliermonthlyfunction, GetPurchasePrevfunction, GetPurchasefunction, viewsGetTaxRateFunction
+from myapp.output import suppliermonthlyfunction, GetPurchasePrevfunction, GetPurchasefunction, viewsGetTaxRateFunction, GetBalancefunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
@@ -216,36 +216,11 @@ def PrevBalance(search_date, Customer, is_taxrate):
         for i,q in  enumerate(PrvAdjustment):
             PrvAdjust+=int(q['Adjustment_total'])
 
-    #前月までの課税仕入額の消費税計算
-    tax=0
-    SellPrvTotal=0
-    SellPrvtax=0
-
     #2025-05-21 仕様変更
-    if SellPrvSum:
-        #月ごとに課税仕入金額集計-----------------------------------------------#
-        tbl_array = []
-        for tbl in SellPrvSum:
-            tbldate = tbl['monthly']
-            tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
-            tbl_array.append([tbldate,tbl['Abs_total']])
-
-        dtfrmae = pd.DataFrame(tbl_array)
-        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
-        _tuple =  [tuple(x) for x in prvsalessum.values]
-
-        #残高&消費税計算----------------------------------------------------#
-        for q in _tuple:
-            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
-            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
-            #-------------------------------------------------------------------------------------------------------------#
-            SellPrvTotal+=int(q[1])
-            tax = int(q[1])
-            SellPrvtax+= int(tax * taxrate)
-        SellPrvtax+= int(PrvAdjust)
-   
+    array=GetBalancefunction.GetSalesBalance(SellPrvSum,is_taxrate)
+  
     #前月繰越額計算
-    PrevBill = int(Customer[0]['LastPayable']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax) + int(PrvTaxExemptTotal)
+    PrevBill = int(Customer[0]['LastPayable']) - int(DepoPrvTotal) + int(array[0]) + int(array[1]) + int(PrvAdjust) + int(PrvTaxExemptTotal)
     #当月支払合計額
     DepoSum = GetPurchasefunction.GetPaySum(search_date, Customer)
     #0判定

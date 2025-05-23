@@ -53,7 +53,8 @@ def GetPrvTaxExempt(search_date, Customer):
     PrvTaxExempt =  RequestResult.objects.annotate(
         monthly=TruncMonth('InvoiceIssueDate')
         ).values(
-            'monthly'
+            'monthly',
+            'id'
         ).filter(
             InvoiceIssueDate__lte=(str(search_date[3])),
             OrderingId__SupplierCode=(str(Customer[0]['id'])),

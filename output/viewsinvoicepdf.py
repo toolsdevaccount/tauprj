@@ -4,7 +4,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, portrait
 from myapp.models import Deposit, CustomerSupplier, RequestResult
 from django.db.models import Q
-from myapp.output import invoicefunction, viewsGetTaxRateFunction
+from myapp.output import invoicefunction, viewsGetTaxRateFunction, GetBalancefunction
 # 日時
 from django.utils import timezone
 import datetime
@@ -192,35 +192,11 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate, closing, is_taxrate):
                  ).order_by(
                      'InvoiceIssueDate'
                  )
+    #2025-05-23 仕様変更
+    array=GetBalancefunction.GetBillingBalance(SellPrvSum, is_taxrate, closing)
 
-    #月ごとに集計----------------------------------------------------------#
-    SellPrvTotal = 0
-    SellPrvtax = 0
-    if SellPrvSum:
-        #締日毎に売上金額集計-----------------------------------------------#
-        tbl_array = []
-        for tbl in SellPrvSum:
-            tbldate = tbl['InvoiceIssueDate']
-            tblday = tbl['InvoiceIssueDate'].day
-            if tblday > closing:
-                tbldate = datetime.date(tbldate.year , tbldate.month + 1 , 1)
-            else:
-                tbldate = datetime.date(tbldate.year , tbldate.month, 1)              
-            tbl_array.append([tbldate,tbl['Abs_total']])
-        dtfrmae = pd.DataFrame(tbl_array)
-        prvsalessum = dtfrmae[[0,1]].groupby([0], as_index =False).sum()
-        _tuple =  [tuple(x) for x in prvsalessum.values]
-        #残高&消費税計算----------------------------------------------------#
-        for q in _tuple:
-            # 消費税率取得 2025-05-12追加-----------------------------------------------------------------------------------#
-            taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, q[0].strftime('%Y-%m-%d'), q[0].strftime('%Y-%m-%d'))
-            #-------------------------------------------------------------------------------------------------------------#
-            SellPrvTotal+=int(q[1])
-            tax = int(q[1])
-            #SellPrvtax+= int(tax*0.1)
-            SellPrvtax+= int(tax * taxrate)
     #前回請求額算出
-    PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(SellPrvTotal) + int(SellPrvtax)
+    PrevBill = int(Customer[0]['LastClaimBalance']) - int(DepoPrvTotal) + int(array[0]) + int(array[1])
 
     #請求月入金合計額
     queryset = Deposit.objects.filter(DepositDate__range=(str(FromDate),str(ToDate)),DepositCustomerCode=(str(Customer[0]['id'])),is_Deleted=0)
