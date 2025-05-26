@@ -3,13 +3,12 @@ from django.shortcuts import redirect
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import B4, landscape  
 from myapp.models import Deposit, CustomerSupplier, RequestResult
-from myapp.output import customermonthlyfunction, viewsGetTaxRateFunction, GetBalancefunction
+from myapp.output import customermonthlyfunction, viewsGetTaxRateFunction, GetBalancefunction, viewsGetDateFunction
 # 検索機能のために追加
 from django.db.models import Q
 # 日時
 from django.utils import timezone
 import datetime
-from dateutil import relativedelta
 # 計算用
 from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
@@ -33,7 +32,7 @@ def pdf(request, TargetMonth, element_From, element_To):
         #Webに表示
         response['Content-Disposition'] = 'filename="{}"'.format(filename)
         # 文字列を日付に変換する
-        search_date = conversion(TargetMonth)
+        search_date = viewsGetDateFunction.conversion(TargetMonth)
         result = make(search_date, response, element_From, element_To)
     except Exception as e:
         message = "PDF作成時にエラーが発生しました"
@@ -118,34 +117,6 @@ def make(search_date, response, element_From, element_To):
     pdf_canvas.save() # 保存
 
     return result
-
-def conversion(TargetMonth):
-    # 月初、月末を算出する
-    tdate = datetime.datetime.strptime(str(TargetMonth), '%Y%m%d')
-    startdate = tdate + relativedelta.relativedelta(day=1)
-    lastdate = tdate + relativedelta.relativedelta(months=+1,day=1,days=-1)
-    # 月初、月末を算出する(YYYY年mm月dd日用)
-    strstart = tdate + relativedelta.relativedelta(day=1)
-    strlast = tdate + relativedelta.relativedelta(months=+1,day=1,days=-1)
-
-    # 前月初日、末日を算出する
-    Prvstartdate = tdate + relativedelta.relativedelta(months=-1,day=1)
-    Prvlastdate = tdate + relativedelta.relativedelta(day=1,days=-1)
-
-    # 月初
-    startdate = startdate.strftime('%Y-%m-%d')
-    # 月末
-    lastdate = lastdate.strftime('%Y-%m-%d')
-    # 月初(YYYY年mm月dd日用)
-    strstart = strstart.strftime('%Y年%m月%d日')
-    # 月末(YYYY年mm月dd日用)
-    strlast = strlast.strftime('%Y年%m月%d日')
-    # 前月初日
-    Prvstartdate = Prvstartdate.strftime('%Y-%m-%d')
-    # 前月末日
-    Prvlastdate = Prvlastdate.strftime('%Y-%m-%d')
-
-    return(startdate, lastdate, Prvstartdate, Prvlastdate, strstart, strlast)
 
 #得意先月次集計表
 def set_info(response):

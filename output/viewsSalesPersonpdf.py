@@ -4,7 +4,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, portrait  
 from myapp.models import RequestResult
 from django.contrib.auth import get_user_model
-from myapp.output import salespersonfunction
+from myapp.output import salespersonfunction, viewsGetDateFunction
 # 日時
 from django.utils import timezone
 import datetime
@@ -29,7 +29,7 @@ def pdf(request, TargetMonthFrom, TargetMonthTo, TargetUserFrom, TargetUserTo):
         #Webに表示
         response['Content-Disposition'] = 'filename="{}"'.format(filename)
         # 文字列を日付に変換する
-        search_date = conversion(TargetMonthFrom, TargetMonthTo)
+        search_date = viewsGetDateFunction.convFromTo(TargetMonthFrom, TargetMonthTo)
         result = make(search_date, TargetUserFrom, TargetUserTo, response)
     except Exception as e:
         message = "PDF作成時にエラーが発生しました"
@@ -62,28 +62,6 @@ def make(search_date, TargetUserFrom, TargetUserTo, response):
     result=0
 
     return result
-
-def conversion(TargetMonthFrom, TargetMonthTo):
-    # 日付型に変換する
-    startdate = datetime.datetime.strptime(str(TargetMonthFrom), '%Y%m%d')
-    lastdate =  datetime.datetime.strptime(str(TargetMonthTo), '%Y%m%d')
-
-    # 日付型に変換する(YYYY年mm月dd日用)
-    strstart = datetime.datetime.strptime(str(TargetMonthFrom), '%Y%m%d')
-    strlast = datetime.datetime.strptime(str(TargetMonthTo), '%Y%m%d')
-
-    # 前月初日、末日を算出する
-    # From
-    startdate = startdate.strftime('%Y-%m-%d')
-    # To
-    lastdate = lastdate.strftime('%Y-%m-%d')
-    # From(YYYY年mm月dd日用)
-    strstart = strstart.strftime('%Y年%m月%d日')
-    # To(YYYY年mm月dd日用)
-    strlast = strlast.strftime('%Y年%m月%d日')
-
-    return(startdate, lastdate, strstart, strlast)
-
 #担当者別売上一覧表
 def set_info(response):
     pdf_canvas = canvas.Canvas(response,pagesize=portrait(A4))

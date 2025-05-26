@@ -4,11 +4,10 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, portrait
 from myapp.models import Deposit, CustomerSupplier, RequestResult
 from django.db.models import Q
-from myapp.output import invoicefunction, viewsGetTaxRateFunction, GetBalancefunction
+from myapp.output import invoicefunction, viewsGetTaxRateFunction, GetBalancefunction, viewsGetDateFunction
 # 日時
 from django.utils import timezone
 import datetime
-from dateutil import relativedelta
 # 計算用
 from django.db.models import Sum,F,IntegerField
 from django.db.models.functions import Coalesce
@@ -32,7 +31,7 @@ def pdf(request, pkclosing, invoiceDate_From, invoiceDate_To, element_From, elem
         response['Content-Disposition'] = 'filename="{}"'.format(filename)
 
         # 文字列を日付に変換する
-        search_date = conversion(invoiceDate_From, invoiceDate_To, pkclosing)
+        search_date = viewsGetDateFunction.converted(invoiceDate_From, invoiceDate_To, pkclosing)
         result = make(pkclosing, search_date[0], search_date[1], element_From, element_To, search_date[2], search_date[3],response, request)
     except Exception as e:
         message = "PDF作成時にエラーが発生しました"
@@ -75,31 +74,6 @@ def make(closing, invoiceDate_From, invoiceDate_To, element_From, element_To, la
         result=99
         
     return result
-
-def conversion(invoiceDate_From, invoiceDate_To, pkclosing):
-    # 前月同日を算出する
-    if pkclosing==31:
-        tdate = datetime.datetime.strptime(str(invoiceDate_From), '%Y%m%d')
-        lastdate = tdate - relativedelta.relativedelta(days=1)
-    else:
-        tdate = datetime.datetime.strptime(str(invoiceDate_To), '%Y%m%d')
-        lastdate = tdate - relativedelta.relativedelta(months=1)
-
-    # 文字列を日付に変換する
-    invoiceDate_From = datetime.datetime.strptime(str(invoiceDate_From), '%Y%m%d') 
-    invoiceDate_To = datetime.datetime.strptime(str(invoiceDate_To), '%Y%m%d')
-
-    # 日付型に変換する
-    # 前月同日
-    lastdate = lastdate.strftime('%Y-%m-%d')
-    # 日付範囲指定From
-    Date_From = invoiceDate_From.strftime('%Y-%m-%d') 
-    # 日付範囲指定To
-    Date_To = invoiceDate_To.strftime('%Y-%m-%d') 
-    # 請求日
-    billdate = invoiceDate_To.strftime('%Y年%m月%d日')
-    return(Date_From, Date_To, lastdate, billdate)
-
 #一括請求書
 def set_info(response):
     pdf_canvas = canvas.Canvas(response,pagesize=portrait(A4))
