@@ -38,7 +38,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date, is_taxrate):
         Supplier_Name = dt[0]['CustomerCode'] + ' ' + dt[0]['CustomerName']
         font_size = 10
         pdf_canvas.setFont('游明朝 標準', font_size)
-        pdf_canvas.drawString(40, 640, Supplier_Name[1:20])
+        pdf_canvas.drawString(40, 640, Supplier_Name[0:20])
         # 線の太さ
         pdf_canvas.setLineWidth(0.25)
         # 下線
@@ -227,7 +227,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date, is_taxrate):
                 Deduction = Paragraph(f"{int(item):,}",styleRight)
                 data += [
                         [InvoiceIssueDate, SlipNo, ShippingDate, OrderNumber, ProductName, OrderingCount, ShippingVol, StockPrice, StockTotal,
-                         Adjust, TaxExempt, Pay, Summary, Deduction],
+                         Adjust, TaxExempt, '', Pay, Deduction],
                 ]
             elif k==(rowlg-1) and t==(req-1):
                 #最終行
@@ -249,7 +249,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date, is_taxrate):
                 taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
                 #-----------------------------------------------------------------------------------------#
                 #item3 = int((item1 - item5) * 0.1) + int(Adjustment)
-                item3 = int(item1 * taxrate) + int(Adjustment)
+                item3 = int(item1 * taxrate[0]) + int(Adjustment)
                 if item3==0:
                     TaxTotal = Paragraph('',styleRight)
                 else:

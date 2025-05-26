@@ -187,7 +187,7 @@ def PrevBalance(search_date, Customer, is_taxrate):
     #---------------------------------------------------------------------------#
 
     #当月仕入消費税額を計算
-    tax = int(StockTotal) * taxrate + int(AdjustmentTotal)
+    tax = int(StockTotal) * taxrate[0] + int(AdjustmentTotal)
     tax = int(tax)
     #当月税込仕入合計額
     invoice = int(CarryForward) + int(StockTotal) + int(tax)

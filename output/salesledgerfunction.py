@@ -210,7 +210,7 @@ def printstring(pdf_canvas, dt, dt_Prev, dt_Detail, search_date, is_taxrate):
                 taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
                 #---------------------------------------------------------------------------#
 
-                item3 = int(item1 * taxrate)
+                item3 = int(item1 * taxrate[0])
                 if item3==0:
                     TaxTotal = Paragraph('',styleRight)
                 else:

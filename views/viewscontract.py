@@ -148,8 +148,8 @@ def treatment(TargetMonth, ManagerCode):
                     # 2025-05-20 追加
                     Q(OrderingTableId__SlipDiv="Z") ,
                     is_Deleted=0, OrderingTableId__is_Deleted=0,
-                    # 2025-05-20 追加
-                    DeliveryManageDiv=0,
+                    # 2025-05-20 追加 2025-05-26 保留のためコメントアウト
+                    #DeliveryManageDiv=0,
                     ).order_by(
                         'OrderingTableId__SlipDiv',
                         'OrderingTableId__OrderNumber'
@@ -169,8 +169,8 @@ def treatment(TargetMonth, ManagerCode):
                     # 2025-05-20 追加
                     Q(OrderingId__SlipDiv="Z") ,
                     is_Deleted=0, OrderingId__is_Deleted=0, OrderingDetailId__is_Deleted=0,
-                    # 2025-05-20 追加
-                    OrderingDetailId__DeliveryManageDiv=0,
+                    # 2025-05-20 追加 2025-05-26 保留のためコメントアウト
+                    #OrderingDetailId__DeliveryManageDiv=0,
                     ).order_by(
                     'OrderingId__SlipDiv',
                     'OrderingId__OrderNumber'                        

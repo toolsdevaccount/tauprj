@@ -19,7 +19,7 @@ def gettaxrate():
     return gettaxrate
 
 def settaxrate(is_taxrate, FromDate, ToDate):
-    taxrate=0
+    taxrate=[]
     for dt in is_taxrate:
         dt_startdate = dt['TaxStartDate'].strftime('%Y-%m-%d')
         if dt['TaxEndDate'] == None:
@@ -28,5 +28,6 @@ def settaxrate(is_taxrate, FromDate, ToDate):
             dt_enddate = dt['TaxEndDate'].strftime('%Y-%m-%d')
 
         if FromDate >= dt_startdate and ToDate <= dt_enddate:
-            taxrate = dt['TaxRate']
+            taxrate.append(dt['TaxRate'])
+            taxrate.append(dt['TaxRateDisplay'])
     return taxrate

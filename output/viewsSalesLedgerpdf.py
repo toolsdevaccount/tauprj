@@ -194,11 +194,10 @@ def PrevBalance(search_date, Customer, is_taxrate):
         ).annotate(
             Abs_total=Sum(Coalesce(F('ShippingVolume'),0) * Coalesce(F('OrderingDetailId__DetailSellPrice'),0),output_field=IntegerField())
             ))
-    #0判定
-    if SellSum:
-        SellTotal = int(SellSum[0]['Abs_total'])
-    else:
-        SellTotal = 0
+    #当月売上合計
+    SellTotal = 0
+    for d in SellSum:
+        SellTotal+=int(d['Abs_total'])
 
     # 消費税率取得 2025-05-12追加 -----------------------------------------------#
     taxrate = viewsGetTaxRateFunction.settaxrate(is_taxrate, search_date[0], search_date[1])
@@ -206,7 +205,7 @@ def PrevBalance(search_date, Customer, is_taxrate):
 
     # 当月月売上消費税額
     #tax = int(SellTotal) * 0.1
-    tax = int(SellTotal) * taxrate
+    tax = int(SellTotal) * taxrate[0]
     tax = int(tax)
     # 当月税込売上合計額
     invoice = int(CarryForward) + int(SellTotal) + int(tax)

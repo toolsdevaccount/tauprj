@@ -262,7 +262,7 @@ def PrevBalance(search_date, Customer, is_taxrate):
 
     #当月仕入消費税額を計算
     #tax = int(SellTotal * 0.1) + int(AdjustmentTotal)
-    tax = int(SellTotal * taxrate) + int(AdjustmentTotal)
+    tax = int(SellTotal * taxrate[0]) + int(AdjustmentTotal)
     tax = int(tax)
 
     #当月非課税仕入額を取得

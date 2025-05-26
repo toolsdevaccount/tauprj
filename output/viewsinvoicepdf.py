@@ -233,11 +233,11 @@ def PrevBalance(lastdate, Customer, FromDate, ToDate, closing, is_taxrate):
     #---------------------------------------------------------------------------#
     #請求月売上消費税額
     #tax = int(SellTotal) * 0.1
-    tax = int(SellTotal) * taxrate
+    tax = int(SellTotal) * taxrate[0]
     tax = int(tax)
     #今回請求額
     invoice = int(CarryForward) + int(SellTotal) + int(tax)
-    return(PrevBill, DepoTotal, CarryForward, SellTotal, tax, invoice)
+    return(PrevBill, DepoTotal, CarryForward, SellTotal, tax, invoice, taxrate[1])
 
 def Detail(Customer, FromDate, ToDate ): 
     #請求月売上レコード

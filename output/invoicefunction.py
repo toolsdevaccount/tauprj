@@ -91,8 +91,8 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
         contents = 'タウ'
         pdf_canvas.drawString(435, 745, contents)
         # 会社ロゴ
-        img = './mysite/myapp/templates/image/image1.jpg'
-        #img = './static/image/image1.jpg'
+        #img = './mysite/myapp/templates/image/image1.jpg'
+        img = './static/image/image1.jpg'
         pdf_canvas.drawImage(img, 167*mm, 260*mm, 45.0*mm, 12.0*mm)
 
         # 自社住所
@@ -128,7 +128,8 @@ def printstring(pdf_canvas, dt_own, dt, billdate, dt_Prev, dt_Detail, Date_From)
             itemNo13 = Paragraph('*',styleRight)
             itemNo14 = Paragraph('*',styleRight)
 
-        data =[['前回請求額','ご入金額','繰越額','当月税抜ご請求額','消費税額 10%'],
+        #2025-05-26 変更
+        data =[['前回請求額','ご入金額','繰越額','当月税抜ご請求額','消費税額 ' + str(dt_Prev[6])],
             [itemNo10, itemNo11, itemNo12, itemNo13, itemNo14],]
 
         table = Table(data, colWidths=(28*mm, 28*mm, 28*mm, 35*mm, 28*mm), rowHeights=(5*mm, 7*mm))

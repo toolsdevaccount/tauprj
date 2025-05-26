@@ -27,7 +27,7 @@ def GetSalesBalance(SellPrvSum, is_taxrate):
             #-------------------------------------------------------------------------------------------------------------#
             SellPrvTotal+=int(q[1])
             tax = int(q[1])
-            SellPrvtax+= int(tax * taxrate)
+            SellPrvtax+= int(tax * taxrate[0])
     return(SellPrvTotal, SellPrvtax)
 
 def GetBillingBalance(SellPrvSum, is_taxrate, closing):
@@ -54,5 +54,5 @@ def GetBillingBalance(SellPrvSum, is_taxrate, closing):
             #-------------------------------------------------------------------------------------------------------------#
             SellPrvTotal+=int(q[1])
             tax = int(q[1])
-            SellPrvtax+= int(tax * taxrate)
+            SellPrvtax+= int(tax * taxrate[0])
     return(SellPrvTotal, SellPrvtax)
