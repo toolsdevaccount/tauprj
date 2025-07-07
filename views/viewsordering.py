@@ -40,7 +40,8 @@ class OrderingListView(LoginRequiredMixin,ListView):
         ]
 
         if 'clear' in request.POST:
-            del request.session['search']
+            if 'search' in request.session:
+                del request.session['search']
         else:
             request.session['search'] = search
 

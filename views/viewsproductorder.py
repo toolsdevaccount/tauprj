@@ -43,7 +43,8 @@ class ProductOrderListView(LoginRequiredMixin,ListView):
         ]
 
         if 'clear' in request.POST:
-            del request.session['posearch']
+            if 'posearch' in request.session:
+                del request.session['posearch']
         else:
             request.session['posearch'] = search
 

@@ -2,101 +2,189 @@
 {% block content %}
 {% load humanize %}
 <div class="container-fluid">
-	<nav aria-label="breadcrumb">
-		<ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
-			<li class="breadcrumb-item active" aria-current="page">在庫情報一覧</li>
-		</ol>
-	</nav>
-	<div class="form-group">
-		<form method="post" id="form">{% csrf_token %}
-			<div class="form-row">
-				<div class="form-group col-sm-2">
-					<input type="search" name="query" id="query" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ stocksearch.query.value }}"/>
-				</div>
-				<div class="form-group col-sm-2">
-					<input type="search" name="key" id="key" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ stocksearch.key.value }}"/>
-				</div>
-				<div class="form-group col-sm-2">
-					<input type="search" name="word" id="word" class="form-control" autocomplete="new-password" placeholder="キーワード" value="{{ stocksearch.word.value }}"/>
-				</div>
-			</div>
-			<div class="form-row">
-				<div class="form-group col-sm-2">
-					<input type="search" class="form-control flatpickr" name="stockdateFrom" id="stockdateFrom" autocomplete="new-password" placeholder="依頼日(From)" value="{{ stocksearch.stockdateFrom.value }}"/>
-				</div>
-				<div class="form-group col-sm-2">
-					<input type="search" class="form-control flatpickr" name="stockdateTo" id="stockdateTo" autocomplete="new-password" placeholder="依頼日(To)" value="{{ stocksearch.stockdateTo.value }}"/>
-				</div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'myapp:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">在庫集計</li>
+			<div class="container">
 				<div class="text-right">
-					<label class="sr-only">検索</label>
-					<button class="btn btn-primary" type="submit">
-						検索
-					</button>
-					<label class="sr-only">クリア</label>
-					<button class="btn btn-primary" type="submit" name="clear">
-						クリア
-					</button>
+					<span><button type="button" id="modalOpen" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal">在庫集計条件</button></span>
 				</div>
-			</div>
-		</form>
-		{% block extrajs %}
-		<!-- flatpicr -->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-		<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-		{% load static %}
-		<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
-		<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
-		{% endblock %}  
+			</div>	
+        </ol>
+    </nav>
+    <div class="form-group">
+        <form method="post" id="form">
+        {% csrf_token %}
+            <div style="height: 80px;">
+                <div class="w-50 h-25 mx-auto">
+                    {% if messages %}
+                    <ul class="messages_ul">
+                        {% for message in messages %}
+                            <li class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} list-unstyled alert-dismissible fade show" role="alert">{{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="table-responsive table-container">
+                <div class="table-sticky-container-small" style="height: 240px;">
+                    <table class="table table-sticky" id="detailtblrow">
+                        <thead>
+                            <tr class="bg-info">
+                                <th scope="col" class="text-center items">オーダーNo</th>
+                                <th scope="col" class="text-center coloritem">商品名</th>
+                                <th scope="col" class="text-center items">番手</th>
+                                <th scope="col" class="text-center items">手配先コード</th>
+                                <th scope="col" class="text-center coloritem">手配先名</th>
+                                <th scope="col" class="text-center items">出荷先コード</th>
+                                <th scope="col" class="text-center coloritem">出荷先名</th>
+                                <th scope="col" class="text-center items">依頼先コード</th>
+                                <th scope="col" class="text-center coloritem">依頼先名</th>
+                                <th scope="col" class="text-center items">担当者名</th>
+                                <th scope="col" class="text-center items">仕入単価</th>
+                                <th scope="col" class="text-center items">加工単価</th>
+                                <th scope="col" class="text-center items">備考</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in form %}
+                            <tr class="list_formset">
+                                <input type="hidden" class="form-control OrderNumber" data-id-format="id_OrderingTableId-%d-OrderNumber" data-name-format="OrderingTableId-%d-OrderNumber" id="id_OrderingTableId-{{ forloop.counter0 }}-OrderNumber" name="OrderingTableId-{{ forloop.counter0 }}-OrderNumber" value="{{ data.OrderingId__OrderNumber }}">
+                                <input type="hidden" class="form-control StartDate" data-id-format="id_OrderingTableId-%d-StartDate" data-name-format="OrderingTableId-%d-StartDate" id="id_OrderingTableId-{{ forloop.counter0 }}-StartDate" name="OrderingTableId-{{ forloop.counter0 }}-StartDate" value="{{ StartDate }}">
+                                <input type="hidden" class="form-control EndDate" data-id-format="id_OrderingTableId-%d-EndDate" data-name-format="OrderingTableId-%d-EndDate" id="id_OrderingTableId-{{ forloop.counter0 }}-EndDate" name="OrderingTableId-{{ forloop.counter0 }}-EndDate" value="{{ EndDate }}">
+                                <input type="hidden" class="form-control DetailUnitPrice" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailUnitPrice" name="OrderingTableId-{{ forloop.counter0 }}-DetailUnitPrice" value="{{ data.DetailUnitPrice }}">
+                                <input type="hidden" class="form-control ProcessUnitprice" data-id-format="id_OrderingTableId-%d-ProcessUnitprice" data-name-format="OrderingTableId-%d-ProcessUnitprice" id="id_OrderingTableId-{{ forloop.counter0 }}-ProcessUnitprice" name="OrderingTableId-{{ forloop.counter0 }}-ProcessUnitprice" value="{{ data.ProcessingUnitprice }}">
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.OrderingId__OrderNumber }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.ProductName }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.OrderingCount }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.DestinationCustomerCode }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.DestinationCustomer }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.ShippingCustomerCode }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.ShippingCustomer }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.RequestCustomerCode }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.RequestCustomer }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.Manager_firstname }} {{ data.Manager_lastname }} </td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.DetailUnitPrice |floatformat:0 | intcomma }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.ProcessingUnitprice |floatformat:0 | intcomma }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.StockSummary }}</td>
+                                <input type="hidden" class="form-control" data-id-format="id_form-%d-id" data-name-format="form-%d-id" id="id_form-{{ forloop.counter0 }}-id" name="form-{{ forloop.counter0 }}-id" value="{{ data.id }}">
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br></br>
+            <br></br>
+            <div class="form-group">
+                <div class="table-responsive table-container">
+                    <div class="table-sticky-container-small" style="height: 240px;">
+                        <table class="table table-sticky" id="detailtblrow">
+                            <thead>
+                                <tr class="bg-info">
+                                    <th scope="col" class="text-center days">年月日</th>
+                                    <th scope="col" class="text-center days">伝票区分</th>
+                                    <th scope="col" class="text-center items">カラー</th>
+                                    <th scope="col" class="text-center items">繰越数量</th>
+                                    <th scope="col" class="text-center items">入荷数</th>
+                                    <th scope="col" class="text-center items">出荷数</th>
+                                    <th scope="col" class="text-center items">残数量</th>
+                                    <th scope="col" class="text-center items">仕入金額残</th>
+                                    <th scope="col" class="text-center items">繰越加工数量</th>
+                                    <th scope="col" class="text-center items">加工数</th>
+                                    <th scope="col" class="text-center items">加工金額残</th>
+                                    <th scope="col" class="text-center items">残金額</th>
+                                    <th scope="col" class="text-center items">摘要</th>
+                                </tr>
+                            </thead>
+                            <tbody id="list">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <br>
+            {% include "crud/stock/list/stockmodal.html" %}
+            <!-- flatpicr -->
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+			{% load static %}
+			<script src="{% static '\js\datepicker.js' %}" charset="UTF-8"></script>
+			<script src="{% static '\js\enter.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
+            <script src="{% static '\js\stocklist.js' %}" charset="UTF-8"></script>
+            <script>
+                $('.list_formset').on('click', function(){
+                    var idx=$(this).closest('tr').prop('rowIndex');
+                    var OrderNumber = document.querySelectorAll(".OrderNumber")[idx -1].value;
+                    var StartDate = document.querySelectorAll(".StartDate")[idx -1].value;
+                    var EndDate = document.querySelectorAll(".EndDate")[idx -1].value;
+                    var DuPrice = document.querySelectorAll(".DetailUnitPrice")[idx -1].value;
+                    var PrPrice = document.querySelectorAll(".ProcessUnitprice")[idx -1].value;
+                    var texthtml = '';
+                    
+                    $('#list').empty();
+                
+                    // Ajax通信を開始
+                    $.ajax({
+                        url: "{% url 'myapp:stcok_result' %}",
+                        method: "GET",
+                        // プレーンテキストを受信（他にはhtml、xml、script、json、jsonp等）
+                        dataType: 'json',
+                        // リクエストパラメータ「?param=明細id」
+                        data: {
+                            Order: OrderNumber,
+                            Stdt: StartDate,
+                            Eddt: EndDate,
+                            DuPrice: DuPrice,
+                            PrPrice: PrPrice,
+                        },
+                        timeout: 5000,
+                    })
+                    // 通信成功時の処理を記述
+                    .done(function(response) {
+                        $.each(response.list, function(index, list) {
+                            texthtml = '';
+                            texthtml = texthtml + '<tr class="list_var">';
+                            if(list.InvoiceIssueDate==='2000-01-01'){
+                                texthtml = texthtml + '<td class="text-right" style="vertical-align:bottom;"></td>';
+                            }else{
+                                texthtml = texthtml + ' <td class="text-right" style="vertical-align:bottom;">{{"' + list.ResultDate + '"}}</td>';
+                            }
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.OrderingId__SlipDiv + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-left" style="vertical-align:bottom;">{{"' + list.DetailColor + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.CarryForward_total + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.ReciveStock + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.Issue + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.Remaining + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + Number(list.DetailUnitPrice).toLocaleString(); + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.Process_total + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + list.Process + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + Number(list.ProcessingUnitprice).toLocaleString();  + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + Number(list.Balance).toLocaleString(); + '"}}</td>';
+                            texthtml = texthtml + '	<td class="text-right" style="vertical-align:bottom;">{{"' + ' ' + '"}}</td>';
+                            texthtml = texthtml + '</tr>';
+               
+                            $('#list').append(texthtml);
+                            // Formの値を書き換える
+                            //$('input:hidden[name="OrderingId-INITIAL_FORMS"]').val([index +1]);
+                        });
+                    })
+                    .fail(function() {
+                        // 通信失敗時の処理を記述
+                        //$('.messages_ul').text('GET処理失敗.');
+                        alert('GET処理失敗.');
+                    });
+                })
+            </script>               
+        </form>
 	</div>
-	<div class="table-responsive table-container">
-		<div class="table-sticky-container">
-			<table class="table table-sticky">
-				<thead class="thead-dark">
-					<tr>
-						<th scope="col" class="text-center">区分</th>
-						<th scope="col" class="text-center">区分</th>
-						<th scope="col" class="text-center">依頼日</th>
-						<th scope="col" class="text-center">担当者</th>
-						<th scope="col" class="text-center">オーダーNO</th>
-						<th scope="col" class="text-center">商品名</th>
-						<th scope="col" class="text-center">番手</th>
-						<th scope="col" class="text-center">手配先</th>
-						<th scope="col" class="text-center">仕入先</th>
-						<th scope="col" class="text-center">出荷先</th>
-						<th scope="col" class="text-center">得意先</th>
-						<th scope="col" class="text-center">依頼先</th>
-						<th scope="col" class="text-center">アクション</th>
-
-					</tr>
-				</thead>
-				<tbody>
-					{% for OrderTable in object_list %}
-					<tr>
-						<td>{{ OrderTable.SampleDiv.divname }}</td>
-						<td>{{ OrderTable.OutputDiv.outputdivname }}</td>
-						<td>{{ OrderTable.OrderingDate }}</td>
-						<td>{{ OrderTable.ManagerCode.first_name|add:OrderTable.ManagerCode.last_name }}</td>
-						<td><span>{{ OrderTable.SlipDiv }}</span><sapn>{{ '-' }}</sapn><span>{{ OrderTable.OrderNumber }}</span></td>
-						<td>{{ OrderTable.ProductName }}</td>
-						<td>{{ OrderTable.OrderingCount }}</td>
-						<td>{{ OrderTable.DestinationCode.CustomerOmitName }}</td>
-						<td>{{ OrderTable.SupplierCode.CustomerOmitName }}</td>
-						<td>{{ OrderTable.ShippingCode.CustomerOmitName }}</td>
-						<td>{{ OrderTable.CustomeCode.CustomerOmitName }}</td>
-						<td>{{ OrderTable.RequestCode.CustomerOmitName }}</td>
-						<td class="text-center">
-							<span><button type="button" id="modalOpen" class="btn btn-outline-primary btn-sm" onclick="location.href='{% url 'myapp:stockdetail' pk=OrderTable.id %}'">詳細</button></span>
-						</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-	{% if is_paginated %}
-		{% include "crud/pagination.html" %}
-	{% endif %}
 </div>
 {% endblock %}

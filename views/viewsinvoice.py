@@ -33,7 +33,8 @@ class invoiceListView(LoginRequiredMixin,ListView):
         ]
 
         if 'clear' in request.POST:
-            del request.session['invsearch']
+            if 'invsearch' in request.session:           
+                del request.session['invsearch']
         else:
             request.session['invsearch'] = search
 

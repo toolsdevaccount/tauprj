@@ -254,6 +254,7 @@ class OrderingDetail(models.Model):
     is_Deleted = models.BooleanField(null=False,blank=False,default=False,verbose_name="削除区分")
     DetailUnitDiv = models.IntegerField(null=False,default=0,choices=Unit,verbose_name="単位")
     is_Taxation = models.BooleanField(null=False,blank=False,default=True,verbose_name="課税区分")
+    is_Stock = models.BooleanField(null=False,blank=False,default=True,verbose_name="在庫区分")
 
     def __str__(self):
         return str(self.DetailItemNumber)

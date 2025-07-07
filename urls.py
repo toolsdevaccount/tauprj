@@ -158,9 +158,17 @@ urlpatterns = [
     path('contract/Excel/<int:TargetMonth>/<int:ManagerCode>', viewscontract.ContractManageView.excel_output, name='excel_output'),
 
     # 在庫一覧
-    path('stock/list/', viewsstock.StockListView.as_view(), name='stocklist'),
+    #path('stock/list/', viewsstock.StockListView.as_view(), name='stocklist'),
     # 在庫明細
-    path('stock/detail/<int:pk>/', viewsstock.StockDetailView.as_view(), name='stockdetail'),
+    #path('stock/detail/<int:pk>/', viewsstock.StockDetailView.as_view(), name='stockdetail'),
+    # 在庫集計
+    path('stock/', viewsstock.StockManageView.as_view(), name='stock'),
+    # 在庫一覧
+    path('stock/list', viewsstock.StockManageView.List, name='stocklist'),
+    # Ajax処理
+    path("stock/list/stock_result/", viewsstock.StockManageView.ajax_result, name='stcok_result'),
+    # Excel出力処理
+    path('stock/Excel', viewsstock.StockManageView.excel_output, name='stock_excel_output'),
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

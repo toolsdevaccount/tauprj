@@ -40,7 +40,7 @@ RequestResultFormset = forms.inlineformset_factory(
     OrderingTable, OrderingDetail,
     fields=('DetailItemNumber','DetailColorNumber','DetailColor','DetailTailoring','DetailVolume','DetailUnitPrice',
             'DetailSellPrice','DetailPrice','DetailOverPrice','DetailSummary','SpecifyDeliveryDate','StainAnswerDeadline',
-            'DeliveryManageDiv','PrintDiv','DetailUnitDiv','is_Taxation',
+            'DeliveryManageDiv','PrintDiv','DetailUnitDiv','is_Taxation','is_Stock',
             ),
     extra=0,min_num=1,validate_min=True,can_delete=True
 )

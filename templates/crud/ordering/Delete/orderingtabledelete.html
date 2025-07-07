@@ -29,6 +29,7 @@
 							<th scope="col" class="text-center check">済</th>
 							<th scope="col" class="text-center check">印</th>
 							<th scope="col" class="text-center check">課税</th>
+							<th scope="col" class="text-center check">在庫</th>
 						</tr>
 					</thead>
 					<tbody id="list">
@@ -129,6 +130,17 @@
 									{% else %}
 									<input type="checkbox" class="form-check-input is_Taxation" data-id-format="id_OrderingTableId-%d-is_Taxation" data-name-format="OrderingTableId-%d-is_Taxation" 
 									name="OrderingTableId-0-is_Taxation" id="id_OrderingTableId-0-is_Taxation">
+									{% endif %}
+								</div>
+							</td>
+							<td class="text-center">
+								<div class="form-check">
+									{% if form.is_Stock.value == 1 %}
+									<input type="checkbox" class="form-check-input is_Stock" data-id-format="id_OrderingTableId-%d-is_Stock" data-name-format="OrderingTableId-%d-is_Stock" 
+									name="OrderingTableId-0-is_Stock" id="id_OrderingTableId-0-is_Stock" checked data-empty-val="false">
+									{% else %}
+									<input type="checkbox" class="form-check-input is_Stock" data-id-format="id_OrderingTableId-%d-is_Stock" data-name-format="OrderingTableId-%d-is_Stock" 
+									name="OrderingTableId-0-is_Stock" id="id_OrderingTableId-0-is_Stock" data-empty-val="false">
 									{% endif %}
 								</div>
 							</td>
