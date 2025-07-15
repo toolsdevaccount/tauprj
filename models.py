@@ -553,3 +553,16 @@ class Consumetax(models.Model):
     def get_absolute_url(self):
         return reverse('crud/consumetax/list/consumetaxlist.html')
 
+# 在庫テーブル追加 2025-07-15追加
+class Inventory(models.Model):
+    OrderNumber = models.CharField(max_length=7,null=False,blank=False,default=0,verbose_name="オーダーNO")
+    InventoryVol = models.DecimalField(max_digits=8,decimal_places=2, null=False,blank=False,default=0.00,verbose_name="在庫数残")
+    InventoryPrice = models.DecimalField(max_digits=8,decimal_places=0, null=False,blank=False,default=0,verbose_name="在庫金額残")
+    ManufacturingVol = models.DecimalField(max_digits=8,decimal_places=2, null=False,blank=False,default=0.00,verbose_name="加工数残")
+    ManufacturingPrice = models.DecimalField(max_digits=8,decimal_places=0, null=False,blank=False,default=0,verbose_name="加工金額残")
+    Created_id = models.BigIntegerField(null=False,blank=True,default=0,verbose_name="登録者id")
+    Updated_id = models.BigIntegerField(null=False,blank=True,default=0,verbose_name="更新者id")
+    Created_at = models.DateTimeField(null=False, blank=False,default=timezone.now() + datetime.timedelta(hours=9),verbose_name="登録日時")
+    Updated_at = models.DateTimeField(null=False, blank=False,default=timezone.now() + datetime.timedelta(hours=9),verbose_name="更新日時")
+    is_Deleted = models.BooleanField(null=False,blank=False,default=False,verbose_name="削除区分")
+

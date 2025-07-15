@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from myapp.models import RequestResult
+from myapp.models import RequestResult, Inventory
 # 検索機能のために追加
 from django.db.models import Q, Max, Sum, F
 # 計算用
@@ -30,6 +30,11 @@ def treatment(search_date,OrderInput):
             Balance=Max(0),
             Manager_firstname=Max('OrderingId__RequestCode_id__ManagerCode__first_name'),
             Manager_lastname=Max('OrderingId__RequestCode_id__ManagerCode__last_name'),
+            #2025-07-15
+            InventoryVol_total=Max(0),
+            InventoryPrice_total=Max(0),
+            ManufacturingVol_total=Max(0),
+            ManufacturingPrice_total=Max(0)
         ).filter(
             Q(OrderingId__SlipDiv='K') | 
             Q(OrderingId__SlipDiv='S') | 
@@ -76,6 +81,11 @@ def treatment(search_date,OrderInput):
             Balance=Max(0),
             Manager_firstname=Max('OrderingId__RequestCode_id__ManagerCode__first_name'),
             Manager_lastname=Max('OrderingId__RequestCode_id__ManagerCode__last_name'),
+            #2025-07-15
+            InventoryVol_total=Max(0),
+            InventoryPrice_total=Max(0),
+            ManufacturingVol_total=Max(0),
+            ManufacturingPrice_total=Max(0)
         ).filter(
             Q(OrderingId__SlipDiv='G') | 
             Q(OrderingId__SlipDiv='O') | 
@@ -173,6 +183,20 @@ def treatment(search_date,OrderInput):
                 'OrderingId__OrderNumber'
                 )
 
+    #2025-07-15 追加 調整残高
+    CarryForward_Inventory = Inventory.objects.values(
+        'OrderNumber'
+        ).annotate(
+            InventoryVol_total=Sum('InventoryVol'),
+            InventoryPrice_total=Sum('InventoryPrice'),
+            ManufacturingVol_total=Sum('ManufacturingVol'),
+            ManufacturingPrice_total=Sum('ManufacturingPrice'),
+        ).filter(
+            is_Deleted=0, 
+            ).order_by(
+                'OrderNumber'
+                )
+
     #繰越残高計算
     CarryForward_Stock=[]   
     firstLoop = True
@@ -182,6 +206,11 @@ def treatment(search_date,OrderInput):
         Process_total=q['Process_total']
         DetailUnitPrice=0
         Process_total=0
+        #2025-07-15
+        InventoryVol_total=0
+        InventoryPrice_total=0
+        ManufacturingVol_total=0
+        ManufacturingPrice_total=0
         CarryForward_Stock.append(q)
 
         if firstLoop:
@@ -207,6 +236,25 @@ def treatment(search_date,OrderInput):
                 if(OrderNumber==OrderNumberProcess):
                     Process_total=Process_total+tbl['ProcessStock_total']
                     q['Process_total']=Process_total
+            #2025-07-15
+            for Invent in CarryForward_Inventory:
+                OrderNumberInventory=Invent['OrderNumber']
+                if(OrderNumber==OrderNumberInventory):
+                    # 在庫数量
+                    InventoryVol_total=InventoryVol_total+Invent['InventoryVol_total']
+                    q['CarryForward_total']=InventoryVol_total + total
+                    # 在庫金額
+                    InventoryPrice_total=InventoryPrice_total+Invent['InventoryPrice_total']
+                    InventoryPrice_total=InventoryPrice_total/InventoryVol_total
+                    q['DetailUnitPrice']=int(InventoryPrice_total)
+                    # 加工数量
+                    ManufacturingVol_total=ManufacturingVol_total+Invent['ManufacturingVol_total']
+                    q['Process_total']=ManufacturingVol_total + Process_total
+                    # 加工単価
+                    if Invent['ManufacturingPrice_total']!=0 and ManufacturingVol_total!=0:
+                        ManufacturingPrice_total=ManufacturingPrice_total+Invent['ManufacturingPrice_total']
+                        ManufacturingPrice_total=ManufacturingPrice_total/ManufacturingVol_total
+                        q['ProcessingUnitprice']=int(ManufacturingPrice_total)
 
             firstLoop = False
 
