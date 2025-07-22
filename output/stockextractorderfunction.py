@@ -36,7 +36,7 @@ def treatment(search_date,OrderInput):
             ManufacturingVol_total=Max(0),
             ManufacturingPrice_total=Max(0)
         ).filter(
-            Q(OrderingId__SlipDiv='K') | 
+            #Q(OrderingId__SlipDiv='K') | 
             Q(OrderingId__SlipDiv='S') | 
             Q(OrderingId__SlipDiv='T') | 
             Q(OrderingId__SlipDiv='M') | 
@@ -56,7 +56,6 @@ def treatment(search_date,OrderInput):
             ).order_by(
                 'OrderingId__OrderNumber'
                 )
-
     #加工在庫一覧
     CarryForward_Process = RequestResult.objects.values(
         'OrderingId__OrderNumber',
@@ -119,7 +118,7 @@ def treatment(search_date,OrderInput):
             ReciveStock_total=Sum('ShippingVolume'),
             DetailUnitPrice=F('OrderingDetailId__DetailUnitPrice') * F('ShippingVolume'),
         ).filter(
-            Q(OrderingId__SlipDiv='K') | 
+            #Q(OrderingId__SlipDiv='K') | 
             Q(OrderingId__SlipDiv='S') | 
             Q(OrderingId__SlipDiv='T') | 
             Q(OrderingId__SlipDiv='M') | 
@@ -141,7 +140,7 @@ def treatment(search_date,OrderInput):
         'id',
         'OrderingId__OrderNumber',
         ).annotate(
-            Issue_total=Sum('ShippingVolume')
+            Issue_total=Sum('ShippingVolume'),
         ).filter(
             Q(OrderingId__SlipDiv='P') | 
             Q(OrderingId__SlipDiv='I') | 
@@ -193,13 +192,14 @@ def treatment(search_date,OrderInput):
             ManufacturingPrice_total=Sum('ManufacturingPrice'),
         ).filter(
             is_Deleted=0, 
+            OrderNumber__in=OrderInput,
             ).order_by(
                 'OrderNumber'
                 )
 
     #繰越残高計算
     CarryForward_Stock=[]   
-    firstLoop = True
+    #firstLoop = True
     for q in CarryForward_Records:
         OrderNumber=q['OrderingId__OrderNumber']
         total=q['CarryForward_total']
@@ -213,51 +213,52 @@ def treatment(search_date,OrderInput):
         ManufacturingPrice_total=0
         CarryForward_Stock.append(q)
 
-        if firstLoop:
-            for t in CarryForward_ReciveStock:
-                OrderNumberReciveStock=t['OrderingId__OrderNumber']
-                if(OrderNumber==OrderNumberReciveStock):
-                    total=total+t['ReciveStock_total'] 
-                    q['CarryForward_total']=total
-                #仕入単価設定
-                DetailUnitPrice=DetailUnitPrice+t['DetailUnitPrice']
-                if DetailUnitPrice!=0:
-                    UnitPrice=DetailUnitPrice/total
-                    q['DetailUnitPrice']=int(UnitPrice)
-                else:
-                    q['DetailUnitPrice']=int(DetailUnitPrice)
-            for dt in CarryForward_Issue:
-                OrderNumberIssue=dt['OrderingId__OrderNumber']
-                if(OrderNumber==OrderNumberIssue):
-                    total=total-dt['Issue_total']
-                    q['CarryForward_total']=total
-            for tbl in CarryForward_ProcessStock:
-                OrderNumberProcess=tbl['OrderingId__OrderNumber']
-                if(OrderNumber==OrderNumberProcess):
-                    Process_total=Process_total+tbl['ProcessStock_total']
-                    q['Process_total']=Process_total
-            #2025-07-15
-            for Invent in CarryForward_Inventory:
-                OrderNumberInventory=Invent['OrderNumber']
-                if(OrderNumber==OrderNumberInventory):
-                    # 在庫数量
-                    InventoryVol_total=InventoryVol_total+Invent['InventoryVol_total']
-                    q['CarryForward_total']=InventoryVol_total + total
-                    # 在庫金額
-                    InventoryPrice_total=InventoryPrice_total+Invent['InventoryPrice_total']
-                    InventoryPrice_total=InventoryPrice_total/InventoryVol_total
-                    q['DetailUnitPrice']=int(InventoryPrice_total)
-                    # 加工数量
-                    ManufacturingVol_total=ManufacturingVol_total+Invent['ManufacturingVol_total']
-                    q['Process_total']=ManufacturingVol_total + Process_total
-                    # 加工単価
-                    if Invent['ManufacturingPrice_total']!=0 and ManufacturingVol_total!=0:
-                        ManufacturingPrice_total=ManufacturingPrice_total+Invent['ManufacturingPrice_total']
-                        ManufacturingPrice_total=ManufacturingPrice_total/ManufacturingVol_total
-                        q['ProcessingUnitprice']=int(ManufacturingPrice_total)
+        #if firstLoop:
+        for t in CarryForward_ReciveStock:
+            OrderNumberReciveStock=t['OrderingId__OrderNumber']
+            if(OrderNumber==OrderNumberReciveStock):
+                total=total+t['ReciveStock_total'] 
+                q['CarryForward_total']=total
+            #仕入単価設定
+            DetailUnitPrice=DetailUnitPrice+t['DetailUnitPrice']
+            if DetailUnitPrice!=0 and total!=0:
+                UnitPrice=DetailUnitPrice/total
+                q['DetailUnitPrice']=int(UnitPrice)
+            else:
+                q['DetailUnitPrice']=0
+                #2025-07-22 変更
+                #q['DetailUnitPrice']=int(DetailUnitPrice)
+        for dt in CarryForward_Issue:
+            OrderNumberIssue=dt['OrderingId__OrderNumber']
+            if(OrderNumber==OrderNumberIssue):
+                total=total-dt['Issue_total']
+                q['CarryForward_total']=total
+        for tbl in CarryForward_ProcessStock:
+            OrderNumberProcess=tbl['OrderingId__OrderNumber']
+            if(OrderNumber==OrderNumberProcess):
+                Process_total=Process_total+tbl['ProcessStock_total']
+                q['Process_total']=Process_total
+        #2025-07-15
+        for Invent in CarryForward_Inventory:
+            OrderNumberInventory=Invent['OrderNumber']
+            if(OrderNumber==OrderNumberInventory):
+                # 在庫数量
+                InventoryVol_total=InventoryVol_total+Invent['InventoryVol_total']
+                q['CarryForward_total']=InventoryVol_total + total
+                # 在庫金額
+                InventoryPrice_total=InventoryPrice_total+Invent['InventoryPrice_total']
+                InventoryPrice_total=InventoryPrice_total/InventoryVol_total
+                q['DetailUnitPrice']=int(InventoryPrice_total)
+                # 加工数量
+                ManufacturingVol_total=ManufacturingVol_total+Invent['ManufacturingVol_total']
+                q['Process_total']=ManufacturingVol_total + Process_total
+                # 加工単価
+                if Invent['ManufacturingPrice_total']!=0 and ManufacturingVol_total!=0:
+                    ManufacturingPrice_total=ManufacturingPrice_total+Invent['ManufacturingPrice_total']
+                    ManufacturingPrice_total=ManufacturingPrice_total/ManufacturingVol_total
+                    q['ProcessingUnitprice']=int(ManufacturingPrice_total)
 
-            firstLoop = False
-
+            #firstLoop = False
     #入庫
     ReciveStock = RequestResult.objects.values(
         'OrderingId__OrderNumber',
@@ -266,7 +267,7 @@ def treatment(search_date,OrderInput):
             Recive_total=Sum('ShippingVolume'),
             UnitPrice=F('OrderingDetailId__DetailUnitPrice') * F('ShippingVolume'),
         ).filter(
-            Q(OrderingId__SlipDiv='K') | 
+            #Q(OrderingId__SlipDiv='K') | 
             Q(OrderingId__SlipDiv='S') | 
             Q(OrderingId__SlipDiv='T') | 
             Q(OrderingId__SlipDiv='M') | 
@@ -373,7 +374,7 @@ def treatment(search_date,OrderInput):
     Remaining=0
     for rec in Stock_temp:
         Remaining = rec['CarryForward_total'] + rec['ReciveStock'] - rec['Issue']
-        result = int(rec['CarryForward_total']) + int(rec['ReciveStock']) + int(rec['Issue'])
+        result = rec['CarryForward_total'] + rec['ReciveStock'] + rec['Issue']
         rec['Remaining'] = Remaining
         if result!=0:
             rec['StockSummary'] = ''           

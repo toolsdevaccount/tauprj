@@ -566,3 +566,8 @@ class Inventory(models.Model):
     Updated_at = models.DateTimeField(null=False, blank=False,default=timezone.now() + datetime.timedelta(hours=9),verbose_name="更新日時")
     is_Deleted = models.BooleanField(null=False,blank=False,default=False,verbose_name="削除区分")
 
+    def __str__(self):
+        return str(self.OrderNumber)
+    # 新規登録・編集完了後のリダイレクト先
+    def get_absolute_url(self):
+        return reverse('crud/stock/list/stocklist.html')
