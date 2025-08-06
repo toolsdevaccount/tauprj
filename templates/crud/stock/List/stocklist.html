@@ -38,7 +38,9 @@
                             <tr class="bg-info">
                                 <th scope="col" class="text-center items">オーダーNo</th>
                                 <th scope="col" class="text-center coloritem">商品名</th>
+                                <th scope="col" class="text-center items">項番</th>
                                 <th scope="col" class="text-center items">番手</th>
+                                <th scope="col" class="text-center coloritem">カラー</th>
                                 <th scope="col" class="text-center items">手配先コード</th>
                                 <th scope="col" class="text-center coloritem">手配先名</th>
                                 <th scope="col" class="text-center items">出荷先コード</th>
@@ -55,13 +57,16 @@
                             {% for data in form %}
                             <tr class="list_formset">
                                 <input type="hidden" class="form-control OrderNumber" data-id-format="id_OrderingTableId-%d-OrderNumber" data-name-format="OrderingTableId-%d-OrderNumber" id="id_OrderingTableId-{{ forloop.counter0 }}-OrderNumber" name="OrderingTableId-{{ forloop.counter0 }}-OrderNumber" value="{{ data.OrderingId__OrderNumber }}">
+                                <input type="hidden" class="form-control ResultItemNumber" data-id-format="id_OrderingTableId-%d-ResultItemNumber" data-name-format="OrderingTableId-%d-ResultItemNumber" id="id_OrderingTableId-{{ forloop.counter0 }}-ResultItemNumber" name="OrderingTableId-{{ forloop.counter0 }}-ResultItemNumber" value="{{ data.ResultItemNumber }}">
                                 <input type="hidden" class="form-control StartDate" data-id-format="id_OrderingTableId-%d-StartDate" data-name-format="OrderingTableId-%d-StartDate" id="id_OrderingTableId-{{ forloop.counter0 }}-StartDate" name="OrderingTableId-{{ forloop.counter0 }}-StartDate" value="{{ StartDate }}">
                                 <input type="hidden" class="form-control EndDate" data-id-format="id_OrderingTableId-%d-EndDate" data-name-format="OrderingTableId-%d-EndDate" id="id_OrderingTableId-{{ forloop.counter0 }}-EndDate" name="OrderingTableId-{{ forloop.counter0 }}-EndDate" value="{{ EndDate }}">
                                 <input type="hidden" class="form-control DetailUnitPrice" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" id="id_OrderingTableId-{{ forloop.counter0 }}-DetailUnitPrice" name="OrderingTableId-{{ forloop.counter0 }}-DetailUnitPrice" value="{{ data.DetailUnitPrice }}">
                                 <input type="hidden" class="form-control ProcessUnitprice" data-id-format="id_OrderingTableId-%d-ProcessUnitprice" data-name-format="OrderingTableId-%d-ProcessUnitprice" id="id_OrderingTableId-{{ forloop.counter0 }}-ProcessUnitprice" name="OrderingTableId-{{ forloop.counter0 }}-ProcessUnitprice" value="{{ data.ProcessingUnitprice }}">
                                 <td class="text-right" style="vertical-align:bottom;">{{ data.OrderingId__OrderNumber }}</td>
                                 <td class="text-left" style="vertical-align:bottom;">{{ data.ProductName }}</td>
+                                <td class="text-right" style="vertical-align:bottom;">{{ data.ResultItemNumber }}</td>
                                 <td class="text-left" style="vertical-align:bottom;">{{ data.OrderingCount }}</td>
+                                <td class="text-left" style="vertical-align:bottom;">{{ data.DetailColor }}</td>
                                 <td class="text-right" style="vertical-align:bottom;">{{ data.DestinationCustomerCode }}</td>
                                 <td class="text-left" style="vertical-align:bottom;">{{ data.DestinationCustomer }}</td>
                                 <td class="text-right" style="vertical-align:bottom;">{{ data.ShippingCustomerCode }}</td>
@@ -128,6 +133,8 @@
                     var EndDate = document.querySelectorAll(".EndDate")[idx -1].value;
                     var DuPrice = document.querySelectorAll(".DetailUnitPrice")[idx -1].value;
                     var PrPrice = document.querySelectorAll(".ProcessUnitprice")[idx -1].value;
+                    // 2025-08-04 追加
+                    var ItemNumber = document.querySelectorAll(".ResultItemNumber")[idx -1].value;            
                     var texthtml = '';
                     
                     $('#list').empty();
@@ -145,6 +152,7 @@
                             Eddt: EndDate,
                             DuPrice: DuPrice,
                             PrPrice: PrPrice,
+                            Item: ItemNumber,
                         },
                         timeout: 5000,
                     })

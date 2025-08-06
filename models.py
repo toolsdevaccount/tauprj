@@ -556,6 +556,7 @@ class Consumetax(models.Model):
 # 在庫テーブル追加 2025-07-15追加
 class Inventory(models.Model):
     OrderNumber = models.CharField(max_length=7,null=False,blank=False,default=0,verbose_name="オーダーNO")
+    ResultItemNumber = models.CharField(max_length=4,null=False,blank=False,default=0,verbose_name="項番")
     InventoryVol = models.DecimalField(max_digits=8,decimal_places=2, null=False,blank=False,default=0.00,verbose_name="在庫数残")
     InventoryPrice = models.DecimalField(max_digits=8,decimal_places=0, null=False,blank=False,default=0,verbose_name="在庫金額残")
     ManufacturingVol = models.DecimalField(max_digits=8,decimal_places=2, null=False,blank=False,default=0.00,verbose_name="加工数残")

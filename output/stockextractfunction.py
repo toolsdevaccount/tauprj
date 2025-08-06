@@ -9,6 +9,7 @@ def treatment(search_date):
     #在庫一覧
     CarryForward_Record = RequestResult.objects.values(
         'OrderingId__OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             ProductName=Max('OrderingId__ProductName'),
             OrderingCount=Max('OrderingId__OrderingCount'),
@@ -18,7 +19,7 @@ def treatment(search_date):
             RequestCustomer=Max('OrderingId__RequestCode_id__CustomerOmitName'),       
             ShippingCustomerCode=Max('OrderingId__ShippingCode_id__CustomerCode'),
             ShippingCustomer=Max('OrderingId__ShippingCode_id__CustomerOmitName'),
-            DetailUnitPrice=Max(0),
+            DetailUnitPrice=Max('OrderingDetailId__DetailUnitPrice'),
             ProcessingUnitprice=Max(0),
             StockSummary=Max(0),
             CarryForward_total=Max(0),
@@ -30,7 +31,7 @@ def treatment(search_date):
             Balance=Max(0),
             Manager_firstname=Max('OrderingId__RequestCode_id__ManagerCode__first_name'),
             Manager_lastname=Max('OrderingId__RequestCode_id__ManagerCode__last_name'),
-            #2025-07-15
+            DetailColor=Max('OrderingDetailId__DetailColor'),
             InventoryVol_total=Max(0),
             InventoryPrice_total=Max(0),
             ManufacturingVol_total=Max(0),
@@ -59,6 +60,7 @@ def treatment(search_date):
     #加工在庫一覧
     CarryForward_Process = RequestResult.objects.values(
         'OrderingId__OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             ProductName=Max('OrderingId__ProductName'),
             OrderingCount=Max('OrderingId__OrderingCount'),
@@ -80,12 +82,13 @@ def treatment(search_date):
             Balance=Max(0),
             Manager_firstname=Max('OrderingId__RequestCode_id__ManagerCode__first_name'),
             Manager_lastname=Max('OrderingId__RequestCode_id__ManagerCode__last_name'),
-            #2025-07-15
+            DetailColor=Max('OrderingDetailId__DetailColor'),
             InventoryVol_total=Max(0),
             InventoryPrice_total=Max(0),
             ManufacturingVol_total=Max(0),
             ManufacturingPrice_total=Max(0)
         ).filter(
+            Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
             Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
@@ -104,18 +107,20 @@ def treatment(search_date):
     CarryForward_Records=[]
     for d in CarryForward_Record:
         OrderNumber=d['OrderingId__OrderNumber']
+        ResultItemNumber=d['ResultItemNumber']
         CarryForward_Records.append(d)
         for dt in CarryForward_Process:
-            if dt['OrderingId__OrderNumber']==OrderNumber:
-                d['ProcessingUnitprice'] = dt['ProcessingUnitprice']
+            if dt['OrderingId__OrderNumber']==OrderNumber and d['ResultItemNumber']==ResultItemNumber:
+                d['ProcessingUnitprice'] = int(dt['ProcessingUnitprice'])
 
    #繰越入庫
     CarryForward_ReciveStock = RequestResult.objects.values(
         'id',
         'OrderingId__OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             ReciveStock_total=Sum('ShippingVolume'),
-            DetailUnitPrice=F('OrderingDetailId__DetailUnitPrice') * F('ShippingVolume'),
+            DetailUnitPrice=F('OrderingDetailId__DetailUnitPrice'),
         ).filter(
             #Q(OrderingId__SlipDiv='K') | 
             Q(OrderingId__SlipDiv='S') | 
@@ -137,6 +142,7 @@ def treatment(search_date):
     CarryForward_Issue = RequestResult.objects.values(
         'id',
         'OrderingId__OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             Issue_total=Sum('ShippingVolume')
         ).filter(
@@ -158,6 +164,7 @@ def treatment(search_date):
     #繰越加工
     CarryForward_ProcessStock = RequestResult.objects.values(
         'OrderingId__OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             ProcessStock_total=Sum('ShippingVolume')
         ).filter(
@@ -178,9 +185,10 @@ def treatment(search_date):
                 'OrderingId__OrderNumber'
                 )
 
-    #2025-07-15 追加 調整残高
+    #調整残高
     CarryForward_Inventory = Inventory.objects.values(
-        'OrderNumber'
+        'OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             InventoryVol_total=Sum('InventoryVol'),
             InventoryPrice_total=Sum('InventoryPrice'),
@@ -198,9 +206,9 @@ def treatment(search_date):
         OrderNumber=q['OrderingId__OrderNumber']
         total=q['CarryForward_total']
         Process_total=q['Process_total']
+        ResultItemNumber=q['ResultItemNumber']
         DetailUnitPrice=0
         Process_total=0
-        #2025-07-15
         InventoryVol_total=0
         InventoryPrice_total=0
         ManufacturingVol_total=0
@@ -209,55 +217,55 @@ def treatment(search_date):
 
         for t in CarryForward_ReciveStock:
             OrderNumberReciveStock=t['OrderingId__OrderNumber']
-            if(OrderNumber==OrderNumberReciveStock):
+            ResultItemNumberReciveStock=t['ResultItemNumber']
+            if(OrderNumber==OrderNumberReciveStock and ResultItemNumber==ResultItemNumberReciveStock):
                 total=total+t['ReciveStock_total'] 
                 q['CarryForward_total']=total
                 #仕入単価設定
-                DetailUnitPrice=DetailUnitPrice+t['DetailUnitPrice']
+                DetailUnitPrice=t['DetailUnitPrice']
                 if DetailUnitPrice!=0 and total!=0:
-                    UnitPrice=DetailUnitPrice/total
-                    q['DetailUnitPrice']=int(UnitPrice)
+                    q['DetailUnitPrice']=int(DetailUnitPrice)
                 else:
                     q['DetailUnitPrice']=int(DetailUnitPrice)
         for dt in CarryForward_Issue:
             OrderNumberIssue=dt['OrderingId__OrderNumber']
-            if(OrderNumber==OrderNumberIssue):
+            ResultItemNumberIssue=dt['ResultItemNumber']
+            if(OrderNumber==OrderNumberIssue and ResultItemNumber==ResultItemNumberIssue):
                 total=total-dt['Issue_total']
                 q['CarryForward_total']=total
         for tbl in CarryForward_ProcessStock:
             OrderNumberProcess=tbl['OrderingId__OrderNumber']
-            if(OrderNumber==OrderNumberProcess):
+            ResultItemNumberProcess=tbl['ResultItemNumber']
+            if(OrderNumber==OrderNumberProcess and ResultItemNumber==ResultItemNumberProcess):
                 Process_total=Process_total+tbl['ProcessStock_total']
                 q['Process_total']=Process_total
-        #2025-07-15
+        #繰越残高
         for Invent in CarryForward_Inventory:
             OrderNumberInventory=Invent['OrderNumber']
-            if(OrderNumber==OrderNumberInventory):
+            ResultItemNumberInventory=Invent['ResultItemNumber']
+            if(OrderNumber==OrderNumberInventory) and (ResultItemNumber==ResultItemNumberInventory):
                 # 在庫数量
                 InventoryVol_total=InventoryVol_total+Invent['InventoryVol_total']
-                #q['CarryForward_total']=InventoryVol_total + total
                 # 在庫金額
-                InventoryPrice_total=InventoryPrice_total+Invent['InventoryPrice_total']
-                InventoryPrice_total=InventoryPrice_total/InventoryVol_total
-                q['DetailUnitPrice']=int(InventoryPrice_total)
+                InventoryPrice_total=Invent['InventoryPrice_total']
+                q['InventoryPrice_total']=int(InventoryPrice_total)
+                # 2025-08-06
+                if q['DetailUnitPrice']==0:
+                    q['DetailUnitPrice']=int(InventoryPrice_total)
                 # 加工数量
                 ManufacturingVol_total=ManufacturingVol_total+Invent['ManufacturingVol_total']
-                #q['Process_total']=ManufacturingVol_total + Process_total
                 # 加工単価
                 if Invent['ManufacturingPrice_total']!=0 and ManufacturingVol_total!=0:
-                    ManufacturingPrice_total=ManufacturingPrice_total+Invent['ManufacturingPrice_total']
-                    ManufacturingPrice_total=ManufacturingPrice_total/ManufacturingVol_total
+                    ManufacturingPrice_total=Invent['ManufacturingPrice_total']
                     q['ProcessingUnitprice']=int(ManufacturingPrice_total)
-
-
-
     #入庫
     ReciveStock = RequestResult.objects.values(
         'OrderingId__OrderNumber',
         'id',
+        'ResultItemNumber',
         ).annotate(
             Recive_total=Sum('ShippingVolume'),
-            UnitPrice=F('OrderingDetailId__DetailUnitPrice') * F('ShippingVolume'),
+            UnitPrice=F('OrderingDetailId__DetailUnitPrice'),
         ).filter(
             #Q(OrderingId__SlipDiv='K') | 
             Q(OrderingId__SlipDiv='S') | 
@@ -279,6 +287,7 @@ def treatment(search_date):
     IssueStock = RequestResult.objects.values(
         'OrderingId__OrderNumber',
         'id',
+        'ResultItemNumber',
         ).annotate(
             Issue_total=Sum('ShippingVolume')
         ).filter(
@@ -302,6 +311,7 @@ def treatment(search_date):
         'id',
         'OrderingId__SlipDiv',
         'OrderingId__OrderNumber',
+        'ResultItemNumber',
         ).annotate(
             Process=Sum('ShippingVolume')
         ).filter(
@@ -328,6 +338,7 @@ def treatment(search_date):
         OrderNumber=q['OrderingId__OrderNumber']
         RecieveStock=q['ReciveStock']
         Issue_total=q['Issue']
+        ResultItemNumber=q['ResultItemNumber']
         DetailUnitPrice=0
         Process=0
 
@@ -335,26 +346,30 @@ def treatment(search_date):
         #入庫
         for t in ReciveStock:
             OrderNumberRecive=t['OrderingId__OrderNumber']
-            if(OrderNumber==OrderNumberRecive):
+            ResultItemNumberRecive=t['ResultItemNumber']
+            if(OrderNumber==OrderNumberRecive and ResultItemNumber==ResultItemNumberRecive):
                 RecieveStock=RecieveStock+t['Recive_total'] 
                 q['ReciveStock']=RecieveStock
                 #仕入単価設定
-                DetailUnitPrice=DetailUnitPrice+t['UnitPrice']
+                DetailUnitPrice=t['UnitPrice']
                 if DetailUnitPrice!=0:
-                    UnitPrice=DetailUnitPrice/RecieveStock
-                    q['DetailUnitPrice']=int(UnitPrice)
+                    q['DetailUnitPrice']=int(DetailUnitPrice)
                 else:
                     q['DetailUnitPrice']=int(DetailUnitPrice)
+                if q['InventoryPrice_total']!=0:
+                    q['DetailUnitPrice']=int(q['InventoryPrice_total'])
         #出庫
         for dt in IssueStock:
             OrderNumberIssue=dt['OrderingId__OrderNumber']
-            if(OrderNumber==OrderNumberIssue):
+            ResultItemNumberIssue=dt['ResultItemNumber']
+            if(OrderNumber==OrderNumberIssue and ResultItemNumber==ResultItemNumberIssue):
                 Issue_total=Issue_total+dt['Issue_total']
                 q['Issue']=Issue_total
         #加工数
         for dat in StockProcess:
             OrderNumberProcess=dat['OrderingId__OrderNumber']
-            if(OrderNumber==OrderNumberProcess):
+            ResultItemNumberProcess=dat['ResultItemNumber']
+            if(OrderNumber==OrderNumberProcess and ResultItemNumber==ResultItemNumberProcess):
                 Process=Process+dat['Process']
                 q['Process'] = Process
 
@@ -375,7 +390,7 @@ def treatment(search_date):
 
     return Stock
 
-def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
+def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
     CarryForward_Record = RequestResult.objects.values(
         'OrderingId__SlipDiv',
         'OrderingId__OrderNumber',
@@ -413,6 +428,8 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingDetailId__is_Deleted=0,
             OrderingDetailId__is_Stock=1,
             OrderingId__StockDiv=0,
+            #2025-08-04 追加
+            ResultItemNumber=Item,
             ).order_by(
                 'ResultDate'
                 )
@@ -450,6 +467,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingDetailId__is_Deleted=0,
             OrderingDetailId__is_Stock=1,
             OrderingId__StockDiv=0,
+            ResultItemNumber=Item,
             ).order_by(
                 'ResultDate'
                 )
@@ -480,6 +498,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingId__StockDiv=0,
             OrderingDetailId__is_Stock=1,
             ResultDate__lt=str(Start_date),
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderingId__OrderNumber'
                 )
@@ -502,6 +521,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingId__StockDiv=0,
             OrderingDetailId__is_Stock=1,
             ResultDate__lt=str(Start_date),
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderingId__OrderNumber'
                 )
@@ -526,6 +546,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingId__StockDiv=0,
             OrderingDetailId__is_Stock=1,
             ResultDate__lt=str(Start_date),
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderingId__OrderNumber'
                 )
@@ -539,7 +560,9 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             ManufacturingVol_total=Sum('ManufacturingVol'),
             ManufacturingPrice_total=Sum('ManufacturingPrice'),
         ).filter(
-            is_Deleted=0, 
+            is_Deleted=0,
+            OrderNumber=table_param,
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderNumber'
                 )
@@ -572,17 +595,25 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
                 if(OrderNumber==OrderNumberProcess):
                     Process_total=Process_total+tbl['ProcessStock_total']
                     q['Process_total']=Process_total
-            #2025-07-15
             for Invent in CarryForward_Inventory:
                 OrderNumberInventory=Invent['OrderNumber']
                 if(OrderNumber==OrderNumberInventory):
                     # 在庫数量
                     InventoryVol_total=InventoryVol_total+Invent['InventoryVol_total']
-                    #q['CarryForward_total']=InventoryVol_total + total
+                    q['InventoryVol_total']=InventoryVol_total
+                    # 在庫金額
+                    InventoryPrice_total=Invent['InventoryPrice_total']
+                    q['InventoryPrice_total']=int(InventoryPrice_total)
                     # 加工数量
                     ManufacturingVol_total=ManufacturingVol_total+Invent['ManufacturingVol_total']
-                    #q['Process_total']=ManufacturingVol_total + Process_total
+                    q['Process_total']=ManufacturingVol_total
+                    q['ManufacturingVol_total']=ManufacturingVol_total
                     # 加工単価
+                    if Invent['ManufacturingPrice_total']!=0 and ManufacturingVol_total!=0:
+                        ManufacturingPrice_total=Invent['ManufacturingPrice_total']
+                        q['ManufacturingPrice_total']=int(ManufacturingPrice_total)
+                        q['ProcessingUnitprice']=int(ManufacturingPrice_total)
+
 
             if total!=0:
                 q['ResultDate'] = Start_date
@@ -610,6 +641,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingId__StockDiv=0,
             OrderingDetailId__is_Stock=1,
             ResultDate__range=(str(Start_date),str(End_date)),
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderingId__OrderNumber'
                 )
@@ -633,6 +665,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingId__StockDiv=0,
             OrderingDetailId__is_Stock=1,
             ResultDate__range=(str(Start_date),str(End_date)),
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderingId__OrderNumber'
                 )
@@ -659,6 +692,7 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice):
             OrderingId__StockDiv=0,
             OrderingDetailId__is_Stock=1,
             ResultDate__range=(str(Start_date),str(End_date)),
+            ResultItemNumber=Item,
             ).order_by(
                 'OrderingId__OrderNumber'
                 )

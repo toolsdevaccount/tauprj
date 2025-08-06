@@ -71,9 +71,10 @@ class StockManageView(LoginRequiredMixin,ListView):
             End_date = request.GET.get("Eddt")              # GETパラメータ(終了日)
             DuPrice = request.GET.get("DuPrice")            # GETパラメータ(仕入単価)
             PrPrice = request.GET.get("PrPrice")            # GETパラメータ(加工単価)
+            Item = request.GET.get("Item")                  # GETパラメータ(項番)
 
             try:
-                CarryForward_Record = stockextractfunction.carryforward(table_param, Start_date, End_date, DuPrice, PrPrice)
+                CarryForward_Record = stockextractfunction.carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item)
             except Exception as e:
                 return redirect("myapp:stocklist")
 
