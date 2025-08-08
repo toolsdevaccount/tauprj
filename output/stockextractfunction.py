@@ -1,109 +1,46 @@
-from django.shortcuts import redirect
-from myapp.models import RequestResult, Inventory
-# 検索機能のために追加
-from django.db.models import Q, Max, Sum, F
-# 計算用
-from django.db.models import Sum
+from myapp.output import Getstockextractfunction, Getstockextractorderfunction, Getstockextractrowsfunction
 
-def treatment(search_date):
-    #在庫一覧
-    CarryForward_Record = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            ProductName=Max('OrderingId__ProductName'),
-            OrderingCount=Max('OrderingId__OrderingCount'),
-            DestinationCustomerCode=Max('OrderingId__DestinationCode_id__CustomerCode'),
-            DestinationCustomer=Max('OrderingId__DestinationCode_id__CustomerOmitName'),
-            RequestCustomerCode=Max('OrderingId__RequestCode_id__CustomerCode'),
-            RequestCustomer=Max('OrderingId__RequestCode_id__CustomerOmitName'),       
-            ShippingCustomerCode=Max('OrderingId__ShippingCode_id__CustomerCode'),
-            ShippingCustomer=Max('OrderingId__ShippingCode_id__CustomerOmitName'),
-            DetailUnitPrice=Max('OrderingDetailId__DetailUnitPrice'),
-            ProcessingUnitprice=Max(0),
-            StockSummary=Max(0),
-            CarryForward_total=Max(0),
-            ReciveStock=Max(0),
-            Issue=Max(0),
-            Remaining=Max(0),
-            Process_total=Max(0),
-            Process=Max(0),
-            Balance=Max(0),
-            Manager_firstname=Max('OrderingId__RequestCode_id__ManagerCode__first_name'),
-            Manager_lastname=Max('OrderingId__RequestCode_id__ManagerCode__last_name'),
-            DetailColor=Max('OrderingDetailId__DetailColor'),
-            InventoryVol_total=Max(0),
-            InventoryPrice_total=Max(0),
-            ManufacturingVol_total=Max(0),
-            ManufacturingPrice_total=Max(0)
-        ).filter(
-            #Q(OrderingId__SlipDiv='K') | 
-            Q(OrderingId__SlipDiv='S') | 
-            Q(OrderingId__SlipDiv='T') | 
-            Q(OrderingId__SlipDiv='M') | 
-            Q(OrderingId__SlipDiv='N') | 
-            Q(OrderingId__SlipDiv='W') |
-            Q(OrderingId__SlipDiv='P') | 
-            Q(OrderingId__SlipDiv='I') | 
-            Q(OrderingId__SlipDiv='E') | 
-            Q(OrderingId__SlipDiv='D') | 
-            Q(OrderingId__SlipDiv='B') ,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #加工在庫一覧
-    CarryForward_Process = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            ProductName=Max('OrderingId__ProductName'),
-            OrderingCount=Max('OrderingId__OrderingCount'),
-            DestinationCustomerCode=Max('OrderingId__DestinationCode_id__CustomerCode'),
-            DestinationCustomer=Max('OrderingId__DestinationCode_id__CustomerOmitName'),
-            RequestCustomerCode=Max('OrderingId__RequestCode_id__CustomerCode'),
-            RequestCustomer=Max('OrderingId__RequestCode_id__CustomerOmitName'),
-            ShippingCustomerCode=Max('OrderingId__ShippingCode_id__CustomerCode'),
-            ShippingCustomer=Max('OrderingId__ShippingCode_id__CustomerOmitName'),
-            DetailUnitPrice=Max(0),
-            ProcessingUnitprice=Max('OrderingDetailId__DetailUnitPrice'),
-            StockSummary=Sum('ShippingVolume'),
-            CarryForward_total=Max(0),
-            ReciveStock=Max(0),
-            Issue=Max(0),
-            Remaining=Max(0),
-            Process_total=Max(0),
-            Process=Max(0),
-            Balance=Max(0),
-            Manager_firstname=Max('OrderingId__RequestCode_id__ManagerCode__first_name'),
-            Manager_lastname=Max('OrderingId__RequestCode_id__ManagerCode__last_name'),
-            DetailColor=Max('OrderingDetailId__DetailColor'),
-            InventoryVol_total=Max(0),
-            InventoryPrice_total=Max(0),
-            ManufacturingVol_total=Max(0),
-            ManufacturingPrice_total=Max(0)
-        ).filter(
-            Q(OrderingId__SlipDiv='F') | 
-            Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
-            Q(OrderingId__SlipDiv='H') | 
-            Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') | 
-            Q(OrderingId__SlipDiv='X'),
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingDetailId__is_Stock=1,
-            BacklogOrderDiv=0,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
+def treatment(search_date, OrderNumber):
+    if len(OrderNumber)==0:
+        #在庫
+        CarryForward_Record=Getstockextractfunction.GetCarryFowardRecord()
+        #加工在庫
+        CarryForward_Process=Getstockextractfunction.GetCarryForwardProcess()
+        #入庫繰越分
+        CarryForward_ReciveStock=Getstockextractfunction.GetCarryForwardReciveStock(search_date)
+        #出庫繰越分
+        CarryForward_Issue=Getstockextractfunction.GetCarryForwardIssue(search_date)
+        #加工繰越分
+        CarryForward_ProcessStock=Getstockextractfunction.GetCarryForwardProcessStock(search_date)
+        #残高調整分
+        CarryForward_Inventory=Getstockextractfunction.GetCarryForwardInventory()
+        #入庫分
+        ReciveStock=Getstockextractfunction.GetReciveStock(search_date)
+        #出庫分
+        IssueStock=Getstockextractfunction.GetIssueStock(search_date)
+        #加工分
+        StockProcess=Getstockextractfunction.GetStockProcess(search_date)
+    else:
+        #在庫
+        CarryForward_Record=Getstockextractorderfunction.GetCarryFowardRecord(OrderNumber)
+        #加工在庫
+        CarryForward_Process=Getstockextractorderfunction.GetCarryForwardProcess(OrderNumber)
+        #入庫繰越分
+        CarryForward_ReciveStock=Getstockextractorderfunction.GetCarryForwardReciveStock(search_date,OrderNumber)
+        #出庫繰越分
+        CarryForward_Issue=Getstockextractorderfunction.GetCarryForwardIssue(search_date,OrderNumber)
+        #加工繰越分
+        CarryForward_ProcessStock=Getstockextractorderfunction.GetCarryForwardProcessStock(search_date,OrderNumber)
+        #残高調整分
+        CarryForward_Inventory=Getstockextractorderfunction.GetCarryForwardInventory(OrderNumber)
+        #入庫分
+        ReciveStock=Getstockextractorderfunction.GetReciveStock(search_date,OrderNumber)
+        #出庫分
+        IssueStock=Getstockextractorderfunction.GetIssueStock(search_date,OrderNumber)
+        #加工分
+        StockProcess=Getstockextractorderfunction.GetStockProcess(search_date,OrderNumber)
+    #-----------------------------------------------------------------------------------------------------#
+    #加工在庫仕入単価計算
     CarryForward_Records=[]
     for d in CarryForward_Record:
         OrderNumber=d['OrderingId__OrderNumber']
@@ -112,94 +49,7 @@ def treatment(search_date):
         for dt in CarryForward_Process:
             if dt['OrderingId__OrderNumber']==OrderNumber and d['ResultItemNumber']==ResultItemNumber:
                 d['ProcessingUnitprice'] = int(dt['ProcessingUnitprice'])
-
-   #繰越入庫
-    CarryForward_ReciveStock = RequestResult.objects.values(
-        'id',
-        'OrderingId__OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            ReciveStock_total=Sum('ShippingVolume'),
-            DetailUnitPrice=F('OrderingDetailId__DetailUnitPrice'),
-        ).filter(
-            #Q(OrderingId__SlipDiv='K') | 
-            Q(OrderingId__SlipDiv='S') | 
-            Q(OrderingId__SlipDiv='T') | 
-            Q(OrderingId__SlipDiv='M') | 
-            Q(OrderingId__SlipDiv='N') | 
-            Q(OrderingId__SlipDiv='W') ,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__lt=str(search_date[0]),
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #繰越出庫
-    CarryForward_Issue = RequestResult.objects.values(
-        'id',
-        'OrderingId__OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            Issue_total=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='P') | 
-            Q(OrderingId__SlipDiv='I') | 
-            Q(OrderingId__SlipDiv='E') | 
-            Q(OrderingId__SlipDiv='D') | 
-            Q(OrderingId__SlipDiv='B') ,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__lt=str(search_date[0]),
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #繰越加工
-    CarryForward_ProcessStock = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            ProcessStock_total=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='F') | 
-            Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
-            Q(OrderingId__SlipDiv='H') | 
-            Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
-            Q(OrderingId__SlipDiv='X'),
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__lt=str(search_date[0]),
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #調整残高
-    CarryForward_Inventory = Inventory.objects.values(
-        'OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            InventoryVol_total=Sum('InventoryVol'),
-            InventoryPrice_total=Sum('InventoryPrice'),
-            ManufacturingVol_total=Sum('ManufacturingVol'),
-            ManufacturingPrice_total=Sum('ManufacturingPrice'),
-        ).filter(
-            is_Deleted=0, 
-            ).order_by(
-                'OrderNumber'
-                )
-
+    #-----------------------------------------------------------------------------------------------------#
     #繰越残高計算
     CarryForward_Stock=[]   
     for q in CarryForward_Records:
@@ -258,81 +108,8 @@ def treatment(search_date):
                 if Invent['ManufacturingPrice_total']!=0 and ManufacturingVol_total!=0:
                     ManufacturingPrice_total=Invent['ManufacturingPrice_total']
                     q['ProcessingUnitprice']=int(ManufacturingPrice_total)
-    #入庫
-    ReciveStock = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        'id',
-        'ResultItemNumber',
-        ).annotate(
-            Recive_total=Sum('ShippingVolume'),
-            UnitPrice=F('OrderingDetailId__DetailUnitPrice'),
-        ).filter(
-            #Q(OrderingId__SlipDiv='K') | 
-            Q(OrderingId__SlipDiv='S') | 
-            Q(OrderingId__SlipDiv='T') | 
-            Q(OrderingId__SlipDiv='M') | 
-            Q(OrderingId__SlipDiv='N') | 
-            Q(OrderingId__SlipDiv='W') ,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__range=(str(search_date[0]),str(search_date[1])),
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #出庫
-    IssueStock = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        'id',
-        'ResultItemNumber',
-        ).annotate(
-            Issue_total=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='P') | 
-            Q(OrderingId__SlipDiv='I') | 
-            Q(OrderingId__SlipDiv='E') | 
-            Q(OrderingId__SlipDiv='D') | 
-            Q(OrderingId__SlipDiv='B') ,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__range=(str(search_date[0]),str(search_date[1])),
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #加工数
-    StockProcess = RequestResult.objects.values(
-        'id',
-        'OrderingId__SlipDiv',
-        'OrderingId__OrderNumber',
-        'ResultItemNumber',
-        ).annotate(
-            Process=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='F') | 
-            Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
-            Q(OrderingId__SlipDiv='H') | 
-            Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
-            Q(OrderingId__SlipDiv='X'),
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingDetailId__is_Stock=1,
-            OrderingId__StockDiv=0,
-            ResultDate__range=(str(search_date[0]),str(search_date[1])),
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #当月入出庫
+    #-----------------------------------------------------------------------------------------------------#
+    #当月入出庫分計算
     Stock_temp=[]
     for q in CarryForward_Stock:
         OrderNumber=q['OrderingId__OrderNumber']
@@ -372,7 +149,8 @@ def treatment(search_date):
             if(OrderNumber==OrderNumberProcess and ResultItemNumber==ResultItemNumberProcess):
                 Process=Process+dat['Process']
                 q['Process'] = Process
-
+    #-----------------------------------------------------------------------------------------------------#
+    #最終整理
     Stock=[]
     result=0
     Remaining=0
@@ -391,182 +169,33 @@ def treatment(search_date):
     return Stock
 
 def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
-    CarryForward_Record = RequestResult.objects.values(
-        'OrderingId__SlipDiv',
-        'OrderingId__OrderNumber',
-        'ResultDate',
-        'id',
-        ).annotate(
-            ProductName=Max('OrderingId__ProductName'),
-            OrderingCount=Max('OrderingId__OrderingCount'),
-            RequestCustomer=Max('OrderingId__RequestCode_id__CustomerName'),       
-            ShippingCustomer=Max('OrderingId__ShippingCode_id__CustomerName'),
-            DetailColor=Max('OrderingDetailId__DetailColor'),
-            DetailUnitPrice=Max(0),
-            CarryForward_total=Max(0),
-            ReciveStock=Max(0),
-            Issue=Max(0),
-            Remaining=Max(0),
-            Process_total=Max(0),
-            Process=Max(0),
-            Balance=Max(0),
-        ).filter(
-            #Q(OrderingId__SlipDiv='K') | 
-            Q(OrderingId__SlipDiv='S') | 
-            Q(OrderingId__SlipDiv='T') | 
-            Q(OrderingId__SlipDiv='M') | 
-            Q(OrderingId__SlipDiv='N') | 
-            Q(OrderingId__SlipDiv='W') |
-            Q(OrderingId__SlipDiv='P') | 
-            Q(OrderingId__SlipDiv='I') | 
-            Q(OrderingId__SlipDiv='E') | 
-            Q(OrderingId__SlipDiv='D') | 
-            Q(OrderingId__SlipDiv='B') ,
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingDetailId__is_Stock=1,
-            OrderingId__StockDiv=0,
-            #2025-08-04 追加
-            ResultItemNumber=Item,
-            ).order_by(
-                'ResultDate'
-                )
-
-    CarryForward_Process = RequestResult.objects.values(
-        'OrderingId__SlipDiv',
-        'OrderingId__OrderNumber',
-        'ResultDate',
-        'id',
-        ).annotate(
-            ProductName=Max('OrderingId__ProductName'),
-            OrderingCount=Max('OrderingId__OrderingCount'),
-            RequestCustomer=Max('OrderingId__RequestCode_id__CustomerName'),       
-            ShippingCustomer=Max('OrderingId__ShippingCode_id__CustomerName'),
-            DetailColor=Max('OrderingDetailId__DetailColor'),
-            DetailUnitPrice=Max(0),
-            CarryForward_total=Max(0),
-            ReciveStock=Max(0),
-            Issue=Max(0),
-            Remaining=Max(0),
-            Process_total=Max(0),
-            Process=Max(0),
-            Balance=Max(0),
-        ).filter(
-            Q(OrderingId__SlipDiv='F') | 
-            Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
-            Q(OrderingId__SlipDiv='H') | 
-            Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
-            Q(OrderingId__SlipDiv='X'),
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingDetailId__is_Stock=1,
-            OrderingId__StockDiv=0,
-            ResultItemNumber=Item,
-            ).order_by(
-                'ResultDate'
-                )
-
+    #在庫
+    CarryForward_Record=Getstockextractrowsfunction.GetCarryforwardRecord(table_param, Item)
+    #加工在庫
+    CarryForward_Process=Getstockextractrowsfunction.GetCarryforwardProcess(table_param, Item)
+    #入庫繰越分
+    CarryForward_ReciveStock=Getstockextractrowsfunction.GetCarryforwardReciveStock(table_param, Start_date, Item)
+    #出庫繰越分
+    CarryForward_Issue=Getstockextractrowsfunction.GetCarryforwardIssue(table_param, Start_date, Item)
+    #加工繰越分
+    CarryForward_ProcessStock=Getstockextractrowsfunction.GetCarryforwardProcessStock(table_param, Start_date, Item)
+    #残高調整分
+    CarryForward_Inventory=Getstockextractrowsfunction.GetCarryforwardInventory(table_param, Item)
+    #入庫分
+    ReciveStock=Getstockextractrowsfunction.GetReciveStock(table_param, Start_date, End_date, Item)
+    #出庫分
+    StockIssue=Getstockextractrowsfunction.GetStockIssue(table_param, Start_date, End_date, Item)
+    #加工分
+    StockProcess=Getstockextractrowsfunction.GetStockProcess(table_param, Start_date, End_date, Item)
+    #-----------------------------------------------------------------------------------------------------#
+    #加工在庫仕入単価計算
     CarryForward_Records=[]
     for d in CarryForward_Record:
         CarryForward_Records.append(d)
 
     for d in CarryForward_Process:
         CarryForward_Records.append(d)
-
-    #繰越入庫
-    CarryForward_ReciveStock = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        ).annotate(
-            ReciveStock_total=Sum('ShippingVolume')
-        ).filter(
-            #Q(OrderingId__SlipDiv='K') | 
-            Q(OrderingId__SlipDiv='S') | 
-            Q(OrderingId__SlipDiv='T') | 
-            Q(OrderingId__SlipDiv='M') | 
-            Q(OrderingId__SlipDiv='N') | 
-            Q(OrderingId__SlipDiv='W') ,
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__lt=str(Start_date),
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #繰越出庫
-    CarryForward_Issue = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        ).annotate(
-            Issue_total=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='P') | 
-            Q(OrderingId__SlipDiv='I') | 
-            Q(OrderingId__SlipDiv='E') | 
-            Q(OrderingId__SlipDiv='D') | 
-            Q(OrderingId__SlipDiv='B') ,
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__lt=str(Start_date),
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #繰越加工
-    CarryForward_ProcessStock = RequestResult.objects.values(
-        'OrderingId__OrderNumber',
-        ).annotate(
-            ProcessStock_total=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='F') | 
-            Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
-            Q(OrderingId__SlipDiv='H') | 
-            Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
-            Q(OrderingId__SlipDiv='X'),
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__lt=str(Start_date),
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #2025-07-15 追加 調整残高
-    CarryForward_Inventory = Inventory.objects.values(
-        'OrderNumber'
-        ).annotate(
-            InventoryVol_total=Sum('InventoryVol'),
-            InventoryPrice_total=Sum('InventoryPrice'),
-            ManufacturingVol_total=Sum('ManufacturingVol'),
-            ManufacturingPrice_total=Sum('ManufacturingPrice'),
-        ).filter(
-            is_Deleted=0,
-            OrderNumber=table_param,
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderNumber'
-                )
-
+    #-----------------------------------------------------------------------------------------------------#
     #繰越残高計算
     CarryForward_Stock=[]   
     firstLoop = True
@@ -574,7 +203,6 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
         OrderNumber=q['OrderingId__OrderNumber']
         total=q['CarryForward_total']
         Process_total=q['Process_total']
-        #2025-07-15
         InventoryVol_total=0
         ManufacturingVol_total=0
         CarryForward_Stock.append(q)
@@ -619,85 +247,8 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
                 q['ResultDate'] = Start_date
                 
             firstLoop = False
-
-    #入庫
-    ReciveStock = RequestResult.objects.values(
-        'id',
-        'OrderingId__SlipDiv',
-        'OrderingId__OrderNumber',
-        ).annotate(
-            Recive=Sum('ShippingVolume')
-        ).filter(
-            #Q(OrderingId__SlipDiv='K') | 
-            Q(OrderingId__SlipDiv='S') | 
-            Q(OrderingId__SlipDiv='T') | 
-            Q(OrderingId__SlipDiv='M') | 
-            Q(OrderingId__SlipDiv='N') | 
-            Q(OrderingId__SlipDiv='W') ,
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__range=(str(Start_date),str(End_date)),
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-    #出庫数
-    StockIssue = RequestResult.objects.values(
-        'id',
-        'OrderingId__SlipDiv',
-        'OrderingId__OrderNumber',
-        ).annotate(
-            Issue=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='P') | 
-            Q(OrderingId__SlipDiv='I') | 
-            Q(OrderingId__SlipDiv='E') | 
-            Q(OrderingId__SlipDiv='D') | 
-            Q(OrderingId__SlipDiv='B') ,
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__range=(str(Start_date),str(End_date)),
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #加工数
-    StockProcess = RequestResult.objects.values(
-        'id',
-        'OrderingId__SlipDiv',
-        'OrderingId__OrderNumber',
-        ).annotate(
-            Process=Sum('ShippingVolume')
-        ).filter(
-            Q(OrderingId__SlipDiv='F') | 
-            Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
-            Q(OrderingId__SlipDiv='H') | 
-            Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
-            Q(OrderingId__SlipDiv='X'),
-            OrderingId__OrderNumber=table_param,
-            is_Deleted=0, 
-            OrderingId__is_Deleted=0, 
-            OrderingDetailId__is_Deleted=0,
-            OrderingId__StockDiv=0,
-            OrderingDetailId__is_Stock=1,
-            ResultDate__range=(str(Start_date),str(End_date)),
-            ResultItemNumber=Item,
-            ).order_by(
-                'OrderingId__OrderNumber'
-                )
-
-    #入出庫
+    #-----------------------------------------------------------------------------------------------------#
+    #当月入出庫分計算
     RecieveIssue_Stock=[]
     for q in CarryForward_Stock:
         id=q['id']
@@ -725,8 +276,8 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
             OrderNumberProcess=dat['OrderingId__OrderNumber']
             if(OrderNumber==OrderNumberProcess) and (SlipDiv==SlipDivProcess) and (id==idProcess):
                 q['Process'] = dat['Process']        
-
-    #残数量の計算
+    #-----------------------------------------------------------------------------------------------------#
+    #最終整理 残数量の計算
     Remaining_Stock=[]
     firstLoop = True
     for q in RecieveIssue_Stock:

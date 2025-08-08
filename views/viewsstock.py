@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from myapp.models import CustomerSupplier
 from django.contrib.auth.mixins import LoginRequiredMixin
 from myapp.form.formsstock import StockForm
-from myapp.output import stockextractfunction, stockextractorderfunction, stockexceloutputfunction, viewsGetDateFunction
+from myapp.output import stockextractfunction, stockexceloutputfunction, viewsGetDateFunction
 from django.contrib.auth import get_user_model
 # 日時
 from django.utils import timezone
@@ -41,10 +41,7 @@ class StockManageView(LoginRequiredMixin,ListView):
             search_date = viewsGetDateFunction.conversion(TargetMonth)
             OrderNumber = request.GET.getlist('row', None)       
             # データ抽出
-            if len(OrderNumber)==0:
-                Datatable = stockextractfunction.treatment(search_date)
-            else:
-                Datatable = stockextractorderfunction.treatment(search_date,OrderNumber)
+            Datatable = stockextractfunction.treatment(search_date, OrderNumber)
         except Exception as e:
             message = "在庫データ抽出時にエラーが発生しました"
             logger.error(message)
@@ -89,8 +86,9 @@ class StockManageView(LoginRequiredMixin,ListView):
     def excel_output(request):
         TargetMonth = request.GET.get('Target', None)
         search_date = viewsGetDateFunction.conversion(TargetMonth)
+        OrderNumber = ""
         # データ抽出
-        table=stockextractfunction.treatment(search_date)
+        table=stockextractfunction.treatment(search_date, OrderNumber)
 
         # listに変換
         table=list(table)
