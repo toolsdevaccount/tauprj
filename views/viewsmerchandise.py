@@ -31,7 +31,7 @@ class MerchandiseListView(LoginRequiredMixin,ListView):
     context_object_name = 'object_list'
     queryset = Merchandise.objects.order_by('id').reverse()
     template_name = "crud/merchandise/list/merchandiselist.html"
-    paginate_by = 20
+    paginate_by = 999999
 
     def post(self, request, *args, **kwargs):
         search = [

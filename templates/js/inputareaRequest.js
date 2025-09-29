@@ -36,8 +36,13 @@ $(function(){
             html = html + '</li>';
 
             $('#answer').html(html);
-
+            // フェイドアウトさせる
             window.setTimeout("$('#fadeout').fadeOut()", 2000);
+            // 選択行の特定
+            var idx = $('input:hidden[name="rows"]').val();
+            // 選択行を強制的にクリック
+            var target = document.querySelectorAll(".OrderingId")[idx -1];
+            target.click();          
         })
 
         .fail(function(xhr) {

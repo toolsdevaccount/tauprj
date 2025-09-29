@@ -76,14 +76,14 @@
 						<th scope="col" class="text-center" style="width: 5%">発行済</th>
 						<th scope="col" class="text-center" style="width: 5%">区分</th>
 						<th scope="col" class="text-center" style="width: 7%">区分</th>
-						<th scope="col" class="text-center" style="width: 10%">依頼日</th>
-						<th scope="col" class="text-center" style="width: 10%">担当者</th>
-						<th scope="col" class="text-center" style="width: 10%">オーダーNO</th>
-						<th scope="col" class="text-center" style="width: 15%">手配先</th>
-						<th scope="col" class="text-center" style="width: 15%">商品名</th>
-						<th scope="col" class="text-center" style="width: 5%">番手</th>
-						<th scope="col" class="text-center" style="width: 12.5%">出荷先</th>
-						<th scope="col" class="text-center" style="width: 12.5%">依頼先</th>
+						<th data-sort="date" scope="col" class="text-center" style="width: 10%">依頼日</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 10%">担当者</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 10%">オーダーNO</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 15%">手配先</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 15%">商品名</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">番手</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 12.5%">出荷先</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 12.5%">依頼先</th>
 						<th scope="col" class="text-center product">アクション</th>
 					</tr>
 				</thead>
@@ -130,4 +130,5 @@
 {% load static %}
 <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
 <script src="{% static '\js\listordering.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\sortable.js' %}" charset="UTF-8"></script>
 {% endblock %}

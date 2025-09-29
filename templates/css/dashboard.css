@@ -131,19 +131,28 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
 .table-sticky-container {
-    /* height: 580px; */
-    height: 500px;
+    /* height: 500px; */
+    height: 460px;
     overflow: auto;
 }
 
+.table-sticky-container-master {
+  height: 350px;
+  font-size:0.875rem;
+  overflow: auto;
+}
+
 .table-sticky-container-small {
-  height: 200px;
+  /* height: 200px; */
+  height: 250px;
   overflow: auto;
 }
 
 .table-sticky-container-small-small {
-  height: 90px;
-  overflow: hidden;
+  /* height: 90px;
+  overflow: hidden; */
+  height: 200px;
+  overflow: auto;
 }
 
 .table-sticky-merchandise {
@@ -225,7 +234,8 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 
 /* tblrow */
 #tblrow {
-  font-size: 0.875rem;
+  /* font-size: 0.875rem; */
+  font-size: 0.775rem;
   table-layout: fixed;
 }
 
@@ -240,7 +250,8 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 
 /* tblrowcolor */
 #tblrowcolor {
-  width: 1000px;
+  /* width: 1000px; */
+  width: 60%;
   table-layout: fixed;
 }
 
@@ -253,7 +264,8 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 
 /* tblrowsize */
 #tblrowsize {
-  width: 650px;
+  /* width: 650px; */
+  width: 60%;
   table-layout: fixed;
 }
 
@@ -266,7 +278,8 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 
 /* tblrowfile */
 #tblrowfile {
-  width: 1000px;
+  /* width: 1000px; */
+  width: 50%;
   table-layout: fixed;
 }
 
@@ -279,7 +292,8 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 
 /* tblrowclsz */
 #tblrowclsz {
-  width: 1000px;
+  /* width: 1000px; */
+  width: 70%;
   table-layout: fixed;
 }
 
@@ -306,6 +320,14 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 /* フォントサイズ */
 .font-small {
   font-size: 0.875rem;
+}
+
+.font-smsm {
+  font-size: 0.825rem;
+}
+
+.font-large {
+  font-size: .90rem;
 }
 
 /* チェックボックス */
@@ -343,6 +365,11 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
   width: 10%;
 }
 
+/* コードカラム */
+.codeitem {
+  width: 3%;
+}
+
 /* フォントサイズ */
 .breadcrumb{
   font-size: .875rem;
@@ -353,6 +380,31 @@ box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 .tab-content{
   font-size: .875rem;
 }
+
+/* 20250925 ソート用追加 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      cursor: pointer;
+    }
+    th:hover {
+      background-color: #4169E1;
+    }
+    th[data-sort-direction="asc"]::after {
+      content: " ▲";
+      font-size: 0.8em;
+    }
+    th[data-sort-direction="desc"]::after {
+      content: " ▼";
+      font-size: 0.8em;
+    }
 
 @media screen and (max-width:1600px) { 
   .table-sticky-container {

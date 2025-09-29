@@ -73,18 +73,18 @@
 					<thead>
 						<tr class="bg-info">
 							<th scope="col" class="text-center" style="width: 5%">発行済</th>
-							<th scope="col" class="text-center" style="width: 5%">発注番号</th>
-							<th scope="col" class="text-center" style="width: 10%">発注日</th>
+							<th data-sort="number" scope="col" class="text-center" style="width: 5%">発注番号</th>
+							<th data-sort="date" scope="col" class="text-center" style="width: 10%">発注日</th>
 							<th scope="col" class="text-center" style="width: 10%">納期</th>
-							<th scope="col" class="text-center" style="width: 7.5%">オーダーNO</th>
-							<th scope="col" class="text-center" style="width: 7.5%">商品コード</th>
-							<th scope="col" class="text-center" style="width: 15%">本品番</th>
-							<th scope="col" class="text-center" style="width: 10%">担当者</th>
-							<th scope="col" class="text-center" style="width: 12.5%">仕入先名</th>
-							<th scope="col" class="text-center" style="width: 12.5%">アパレル名</th>
-							<th scope="col" class="text-center" style="width: 10%">マーク名</th>
-							<th scope="col" class="text-center" style="width: 10%">ブランド名</th>
-							<th scope="col" class="text-center" style="width: 15%">アクション</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 7.5%">オーダーNO</th>
+							<th data-sort="number" scope="col" class="text-center" style="width: 7.5%">商品コード</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 15%">本品番</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 10%">担当者</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 12.5%">仕入先名</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 12.5%">アパレル名</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 10%">マーク名</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 10%">ブランド名</th>
+							<th data-sort="string" scope="col" class="text-center" style="width: 15%">アクション</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -103,8 +103,8 @@
 							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderOrderingDate | default_if_none:'' }}</td>
 							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderDeliveryDate | default_if_none:'' }}</td>
 							<td class="text-left" style="vertical-align:bottom;"><span>{{ ProductOrder.ProductOrderSlipDiv }}</span><span>{{ '-' }}</span><span>{{ ProductOrder.ProductOrderOrderNumber }}</span></td>
-							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderMerchandiseCode }}</td>
-							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderPartNumber }}</td>
+							<td class="text-right" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderMerchandiseCode.id }}</td>
+							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderMerchandiseCode.McdPartNumber }}</td>
 							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderManagerCode.first_name|add:ProductOrder.ProductOrderManagerCode.last_name }}</td>
 							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderSupplierCode.CustomerOmitName }}</td>
 							<td class="text-left" style="vertical-align:bottom;">{{ ProductOrder.ProductOrderApparelCode.CustomerOmitName }}</td>
@@ -131,4 +131,5 @@
 {% load static %}
 <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
 <script src="{% static '\js\listproductorder.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\sortable.js' %}" charset="UTF-8"></script>
 {% endblock %}

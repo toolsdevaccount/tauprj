@@ -13,23 +13,23 @@
 					<thead>
 						<tr class="bg-info">
 							<!-- <th scope="col" class="text-center del">削除</th> -->
-							<th scope="col" class="text-center items">項番</th>
-							<th scope="col" class="text-center coloritem">色番</th>
-							<th scope="col" class="text-center coloritem">カラー</th>
-							<th scope="col" class="text-center four">仕立</th>
-							<th scope="col" class="text-center volumes">数量</th>
-							<th scope="col" class="text-center items">単位</th>
-							<th scope="col" class="text-center items">仕入単価</th>
-							<th scope="col" class="text-center items">通常単価</th>
-							<th scope="col" class="text-center items">UP分単価</th>
-							<th scope="col" class="text-center items">販売単価</th>
-							<th scope="col" class="text-center days">希望納期</th>
-							<th scope="col" class="text-center days">回答納期</th>
-							<th scope="col" class="text-center">摘&nbsp&nbsp&nbsp&nbsp要</th>
-							<th scope="col" class="text-center check">済</th>
-							<th scope="col" class="text-center check">印</th>
-							<th scope="col" class="text-center check">課税</th>
-							<th scope="col" class="text-center check">在庫</th>
+							<th scope="col" class="text-center font-smsm" style="width: 4%">項番</th>
+							<th scope="col" class="text-center font-smsm" style="width: 8%">色番</th>
+							<th scope="col" class="text-center font-smsm" style="width: 8%">カラー</th>
+							<th scope="col" class="text-center font-smsm" style="width: 3%">仕立</th>
+							<th scope="col" class="text-center font-smsm" style="width: 4%">数量</th>
+							<th scope="col" class="text-center font-smsm" style="width: 4%">単位</th>
+							<th scope="col" class="text-center font-smsm" style="width: 5%">仕入単価</th>
+							<th scope="col" class="text-center font-smsm" style="width: 5%">通常単価</th>
+							<th scope="col" class="text-center font-smsm" style="width: 5%">UP分単価</th>
+							<th scope="col" class="text-center font-smsm" style="width: 5%">販売単価</th>
+							<th scope="col" class="text-center font-smsm" style="width: 6%">希望納期</th>
+							<th scope="col" class="text-center font-smsm" style="width: 6%">回答納期</th>
+							<th scope="col" class="text-center font-smsm" style="width: 14%">摘&nbsp&nbsp&nbsp&nbsp要</th>
+							<th scope="col" class="text-center font-smsm" style="width: 3%">済</th>
+							<th scope="col" class="text-center font-smsm" style="width: 3%">印</th>
+							<th scope="col" class="text-center font-smsm" style="width: 3%">課税</th>
+							<th scope="col" class="text-center font-smsm" style="width: 3%">在庫</th>
 						</tr>
 					</thead>
 					<tbody id="list">
@@ -44,28 +44,28 @@
 							</td> -->
 							<td>
 								<div id="div" class="">
-									<input type="tel" class="form-control DetailItemNumber" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailItemNumber" data-name-format="OrderingTableId-%d-DetailItemNumber"
+									<input type="tel" class="form-control DetailItemNumber font-smsm" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailItemNumber" data-name-format="OrderingTableId-%d-DetailItemNumber"
 									name="OrderingTableId-0-DetailItemNumber" id="id_OrderingTableId-0-DetailItemNumber" value="{{ form.DetailItemNumber.value }}" readonly>
 								</div>
 							</td>
 							<td>
-								<input type="text" class="form-control" data-id-format="id_OrderingTableId-%d-DetailColorNumber" data-name-format="OrderingTableId-%d-DetailColorNumber"
+								<input type="text" class="form-control font-smsm" data-id-format="id_OrderingTableId-%d-DetailColorNumber" data-name-format="OrderingTableId-%d-DetailColorNumber"
 								name="OrderingTableId-0-DetailColorNumber" id="id_OrderingTableId-0-DetailColorNumber" value="{{ form.DetailColorNumber.value }}" readonly>                                          
 							</td>
 							<td>
-								<input type="text" class="form-control" data-id-format="id_OrderingTableId-%d-DetailColor" data-name-format="OrderingTableId-%d-DetailColor" 
+								<input type="text" class="form-control font-smsm" data-id-format="id_OrderingTableId-%d-DetailColor" data-name-format="OrderingTableId-%d-DetailColor" 
 								name="OrderingTableId-0-DetailColor" id="id_OrderingTableId-0-DetailColor" value="{{ form.DetailColor.value }}" readonly>                                   
 							</td>
 							<td>
-								<input type="text" class="form-control" data-id-format="id_OrderingTableId-%d-DetailTailoring" data-name-format="OrderingTableId-%d-DetailTailoring" 
+								<input type="text" class="form-control font-smsm" data-id-format="id_OrderingTableId-%d-DetailTailoring" data-name-format="OrderingTableId-%d-DetailTailoring" 
 								name="OrderingTableId-0-DetailTailoring" id="id_OrderingTableId-0-DetailTailoring" value="{{ form.DetailTailoring.value }}" readonly>                                   
 							</td>
 							<td>
-								<input type="tel" step="0.1" class="form-control DetailVolume" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailVolume" data-name-format="OrderingTableId-%d-DetailVolume" 
+								<input type="tel" step="0.1" class="form-control DetailVolume font-smsm" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailVolume" data-name-format="OrderingTableId-%d-DetailVolume" 
 								name="OrderingTableId-0-DetailVolume" id="id_OrderingTableId-0-DetailVolume" value="{{ form.DetailVolume.value| intcomma }}" data-empty-val="false" readonly>                                   
 							</td>
 							<td>
-								<select class="custom-select" data-id-format="id_OrderingTableId-%d-DetailUnitDiv" data-name-format="OrderingTableId-%d-DetailUnitDiv" name="OrderingTableId-0-DetailUnitDiv" id="id_OrderingTableId-0-DetailUnitDiv" readonly>
+								<select class="custom-select font-smsm" data-id-format="id_OrderingTableId-%d-DetailUnitDiv" data-name-format="OrderingTableId-%d-DetailUnitDiv" name="OrderingTableId-0-DetailUnitDiv" id="id_OrderingTableId-0-DetailUnitDiv" readonly>
 									{% for data in form.DetailUnitDiv %}
 									{{ data }}
 									{% endfor %}
@@ -73,31 +73,31 @@
 								<!-- <input type="hidden"  data-id-format="id_OrderingTableId-%d-DetailUnitDiv" data-name-format="OrderingTableId-%d-DetailUnitDiv" name="OrderingTableId-0-DetailUnitDiv" id="id_OrderingTableId-0-DetailUnitDiv" value="{{ form.DetailUnitDiv.value }}"> -->
 							</td>
 							<td>
-								<input type="tel" class="form-control DetailUnitPrice" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" 
+								<input type="tel" class="form-control DetailUnitPrice font-smsm" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailUnitPrice" data-name-format="OrderingTableId-%d-DetailUnitPrice" 
 								name="OrderingTableId-0-DetailUnitPrice" id="id_OrderingTableId-0-DetailUnitPrice" onchange="comma(this);" value="{{ form.DetailUnitPrice.value| intcomma }}" data-empty-val="false" readonly>                                   
 							</td>
 							<td>
-								<input type="tel" class="form-control DetailPrice" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailPrice" data-name-format="OrderingTableId-%d-DetailPrice" 
+								<input type="tel" class="form-control DetailPrice font-smsm" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailPrice" data-name-format="OrderingTableId-%d-DetailPrice" 
 								name="OrderingTableId-0-DetailPrice" id="id_OrderingTableId-0-DetailPrice" onchange="calc(this);" value="{{ form.DetailPrice.value| intcomma }}" data-empty-val="false" readonly>      
 							</td>
 							<td>
-								<input type="tel" class="form-control DetailOverPrice" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailOverPrice" data-name-format="OrderingTableId-%d-DetailOverPrice" 
+								<input type="tel" class="form-control DetailOverPrice font-smsm" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailOverPrice" data-name-format="OrderingTableId-%d-DetailOverPrice" 
 								name="OrderingTableId-0-DetailOverPrice" id="id_OrderingTableId-0-DetailOverPrice" onchange="calc(this);" value="{{ form.DetailOverPrice.value| intcomma }}" data-empty-val="false" readonly>                                                                            
 							</td>
 							<td>
-								<input type="tel" class="form-control DetailSellPrice" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailSellPrice" data-name-format="OrderingTableId-%d-DetailSellPrice" 
+								<input type="tel" class="form-control DetailSellPrice font-smsm" style="text-align: right;" data-id-format="id_OrderingTableId-%d-DetailSellPrice" data-name-format="OrderingTableId-%d-DetailSellPrice" 
 								name="OrderingTableId-0-DetailSellPrice" id="id_OrderingTableId-0-DetailSellPrice" value="{{ form.DetailSellPrice.value| intcomma }}" data-empty-val="false" readonly>                                   
 							</td>
 							<td>
-								<input type="tel" class="form-control SpecifyDeliveryDate flatpickr" data-id-format="id_OrderingTableId-%d-SpecifyDeliveryDate" data-name-format="OrderingTableId-%d-SpecifyDeliveryDate" 
+								<input type="tel" class="form-control SpecifyDeliveryDate flatpickr font-smsm" data-id-format="id_OrderingTableId-%d-SpecifyDeliveryDate" data-name-format="OrderingTableId-%d-SpecifyDeliveryDate" 
 								name="OrderingTableId-0-SpecifyDeliveryDate" id="id_OrderingTableId-0-SpecifyDeliveryDate" value="{{ form.SpecifyDeliveryDate.value | default_if_none:"" }}" readonly>                                   
 							</td>
 							<td>
-								<input type="tel" class="form-control StainAnswerDeadline flatpickr" data-id-format="id_OrderingTableId-%d-StainAnswerDeadline" data-name-format="OrderingTableId-%d-StainAnswerDeadline" 
+								<input type="tel" class="form-control StainAnswerDeadline flatpickr font-smsm" data-id-format="id_OrderingTableId-%d-StainAnswerDeadline" data-name-format="OrderingTableId-%d-StainAnswerDeadline" 
 								name="OrderingTableId-0-StainAnswerDeadline" id="id_OrderingTableId-0-StainAnswerDeadline" value="{{ form.StainAnswerDeadline.value | default_if_none:"" }}" readonly>                                   
 							</td>
 							<td>
-								<input type="text" class="form-control" data-id-format="id_OrderingTableId-%d-DetailSummary" data-name-format="OrderingTableId-%d-DetailSummary"
+								<input type="text" class="form-control font-smsm" data-id-format="id_OrderingTableId-%d-DetailSummary" data-name-format="OrderingTableId-%d-DetailSummary"
 								name="OrderingTableId-0-DetailSummary" id="id_OrderingTableId-0-DetailSummary" value="{{ form.DetailSummary.value | default_if_none:"" }}" readonly>                                   
 							</td>
 							<td>

@@ -31,22 +31,26 @@
 			<table class="table table-sticky" id="tblrow">
 				<thead>
 					<tr class="bg-info">
-						<th scope="col" class="text-center" style="width: 5%">コード</th>
-						<th scope="col" class="text-center" style="width: 20%">名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称</th>
-						<th scope="col" class="text-center" style="width: 5%">郵便番号</th>
-						<th scope="col" class="text-center" style="width: 5%">都道府県</th>
-						<th scope="col" class="text-center" style="width: 5%">市区町村</th>
-						<th scope="col" class="text-center" style="width: 5%">番地</th>
-						<th scope="col" class="text-center" style="width: 5%">電話番号</th>
-						<th scope="col" class="text-center" style="width: 5%">担当者名</th>
+						<th data-sort="number" scope="col" class="text-center" style="width: 5%">ID</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">コード</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 15%">名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 10%">カ&nbsp;&nbsp;&nbsp;&nbsp;ナ&nbsp;&nbsp;&nbsp;&nbsp;名</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">郵便番号</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">都道府県</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 8%">市区町村</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">番地</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">電話番号</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">担当者名</th>
 						<th scope="col" class="text-center" style="width: 5%">アクション</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for customersupplier in object_list %}
 					<tr>
+						<td class="text-right" style="vertical-align:bottom;">{{ customersupplier.id }}</td>
 						<td class="text-right" style="vertical-align:bottom;">{{ customersupplier.CustomerCode }}</td>
 						<td class="text-left" style="vertical-align:bottom;">{{ customersupplier.CustomerName }}</td>
+						<td class="text-left" style="vertical-align:bottom;">{{ customersupplier.CustomerNameKana }}</td>
 						<td class="text-left" style="vertical-align:bottom;">{{ customersupplier.PostCode }}</td>
 						<td class="text-left" style="vertical-align:bottom;">{{ customersupplier.PrefecturesCode.prefecturename }}</td>
 						<td class="text-left" style="vertical-align:bottom;">{{ customersupplier.Municipalities }}</td>
@@ -72,4 +76,5 @@
 {% load static %}
 <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
 <script src="{% static '\js\listcustomersupplier.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\sortable.js' %}" charset="UTF-8"></script>
 {% endblock %}

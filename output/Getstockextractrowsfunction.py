@@ -33,6 +33,8 @@ def GetCarryforwardRecord(table_param, Item):
             Q(OrderingId__SlipDiv='I') | 
             Q(OrderingId__SlipDiv='E') | 
             Q(OrderingId__SlipDiv='D') | 
+            # 20250919
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='B') ,
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -71,10 +73,12 @@ def GetCarryforwardProcess(table_param, Item):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922　コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250919 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -100,6 +104,8 @@ def GetCarryforwardReciveStock(table_param, Start_date, Item):
             Q(OrderingId__SlipDiv='T') | 
             Q(OrderingId__SlipDiv='M') | 
             Q(OrderingId__SlipDiv='N') | 
+            #20250919 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='W') ,
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -150,10 +156,12 @@ def GetCarryforwardProcessStock(table_param, Start_date, Item):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250919 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -200,6 +208,8 @@ def GetReciveStock(table_param, Start_date, End_date, Item):
             Q(OrderingId__SlipDiv='T') | 
             Q(OrderingId__SlipDiv='M') | 
             Q(OrderingId__SlipDiv='N') | 
+            #20250919 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='W') ,
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -254,10 +264,12 @@ def GetStockProcess(table_param, Start_date, End_date, Item):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250919 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 

@@ -31,11 +31,11 @@
 			<table class="table table-sticky" id="tblrow">
 				<thead>
 					<tr class="bg-info">
-						<th scope="col" class="text-center" style="width: 5%">商品コード</th>
-						<th scope="col" class="text-center" style="width: 5%">扱区分</th>
-						<th scope="col" class="text-center" style="width: 5%">仮品番</th>
-						<th scope="col" class="text-center" style="width: 5%">本品番</th>
-						<th scope="col" class="text-center" style="width: 5%">担当者</th>
+						<th data-sort="number" scope="col" class="text-center" style="width: 5%">商品コード</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">扱区分</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">仮品番</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">本品番</th>
+						<th data-sort="string" scope="col" class="text-center" style="width: 5%">担当者</th>
 						<th scope="col" class="text-center" style="width: 5%">アクション</th>
 					</tr>
 				</thead>
@@ -66,4 +66,5 @@
 {% load static %}
 <script src="{% static '\js\tableborder.js' %}" charset="UTF-8"></script>
 <script src="{% static '\js\listmerchandise.js' %}" charset="UTF-8"></script>
+<script src="{% static '\js\sortable.js' %}" charset="UTF-8"></script>
 {% endblock %}

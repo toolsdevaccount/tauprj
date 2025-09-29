@@ -320,6 +320,8 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
             Remaining.append(tbl)
         result = 0
 
+    #Remaining = sorted(Remaining, key=lambda x: x['ResultDate'])
+
     return Remaining
 
 if __name__ == '__main__':

@@ -1,10 +1,9 @@
 from django import forms
 from django.contrib.auth import get_user_model
 #from django.contrib.auth.forms import UserCreationForm
-from myapp.models import ProductOrder, ProductOrderDetail, CustomerSupplier, Merchandise
+from myapp.models import ProductOrder, ProductOrderDetail, Merchandise
 
 from django.forms import ModelChoiceField
-from datetime import datetime
 
 # バリデーション
 import re
@@ -25,18 +24,19 @@ class ProductOrderForm(forms.ModelForm):
     class Meta:
         model = ProductOrder
         fields = ('ProductOrderMerchandiseCode', 'ProductOrderOrderingDate', 'ProductOrderManagerCode','ProductOrderSlipDiv', 'ProductOrderOrderNumber',
-                  'ProductOrderPartNumber','ProductOrderApparelCode','ProductOrderDestinationCode','ProductOrderSupplierCode','ProductOrderShippingCode',
+                  'ProductOrderApparelCode','ProductOrderDestinationCode','ProductOrderSupplierCode','ProductOrderShippingCode',
                   'ProductOrderCustomeCode','ProductOrderRequestCode','ProductOrderDeliveryDate','ProductOrderBrandName','ProductOrderSupplierPerson',
                   'ProductOrderTitleDiv','ProductOrderMarkName','ProductOrderSummary','is_Ordered'
                   )   
 
     # 商品コード存在チェック
     def clean_ProductOrderMerchandiseCode(self):
-        McdPartNumber = self.cleaned_data['ProductOrderMerchandiseCode']
-        idcnt = Merchandise.objects.filter(id = McdPartNumber).count()
+        ProductOrderMerchandiseCode = self.cleaned_data['ProductOrderMerchandiseCode']
+        MerchandiseCode = int(self.data.get('ProductOrderMerchandiseCode'))
+        idcnt = Merchandise.objects.filter(id = MerchandiseCode).count()
         if idcnt == 0:
             raise forms.ValidationError(u'商品コードが存在しません')
-        return McdPartNumber
+        return ProductOrderMerchandiseCode
 
     # オーダーナンバー重複チェック
     #def clean_ProductOrderOrderNumber(self):

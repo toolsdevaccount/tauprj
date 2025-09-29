@@ -38,3 +38,14 @@ class IndividualSearchForm(forms.Form):
         initial='',
         required=False,  # 必須ではない
     )
+class ChoiceForm(forms.Form):
+    choice = forms.fields.ChoiceField(
+        choices = (
+            ('', ''),
+            ('1', '発行済'),
+            ('0', '未発行'),
+        ),
+        initial='1',
+        required=False,
+        widget=forms.widgets.Select
+    )

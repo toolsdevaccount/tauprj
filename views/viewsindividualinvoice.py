@@ -1,7 +1,7 @@
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from myapp.models import RequestResult
-from myapp.form.formsindividualinvoice import IndividualMultiForm,IndividualSearchForm
+from myapp.form.formsindividualinvoice import IndividualMultiForm,IndividualSearchForm,ChoiceForm
 # 検索機能のために追加
 from django.db.models import Q
 # メッセージ
@@ -19,7 +19,7 @@ from django.core.paginator import Page
 class individualinvoiceListView(LoginRequiredMixin,ListView):
     model = RequestResult
     form_class = IndividualMultiForm
-    paginate_by = 20
+    paginate_by = 200
     template_name = "crud/individualinvoice/individualinvoice.html"
     queryset = RequestResult.objects.order_by('InvoiceNUmber')
 
@@ -29,13 +29,16 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
             self.request.POST.get('key', None),
             self.request.POST.get('word', None),
             self.request.POST.get('InvoiceIssueDateFrom', None),
+            self.request.POST.get('Issue', None),
         ]
 
         if 'clear' in request.POST:
             if 'invsearch' in request.session:
                 del request.session['invsearch']
+                del request.session['Issue']
         else:
             request.session['invsearch'] = search
+            request.session['Issue'] = search[4]
 
         # 検索時にページネーションに関連したエラーを防ぐ
         self.request.GET = self.request.GET.copy()
@@ -51,11 +54,13 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
             key = search[1]
             word = search[2]
             InvoiceIssueDateFrom = search[3]
+            Issue = search[4]
         else:
             query = self.request.POST.get('query', None)
             key = self.request.POST.get('key', None)
             word = self.request.POST.get('word', None)
             InvoiceIssueDateFrom = self.request.POST.get('InvoiceIssueDateFrom', None)
+            Issue = self.request.POST.get('Issue', None)
 
         #前月月初取得
         dt_now = datetime.datetime.now().date()
@@ -94,6 +99,9 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
         if InvoiceIssueDateFrom:
             queryset = queryset.filter(Q(InvoiceIssueDate__gte=(InvoiceIssueDateFrom)))
 
+        if Issue:
+            queryset = queryset.filter(Q(InvoiceIssueDiv=(Issue)))
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -103,6 +111,7 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
         key = ''
         word = ''
         InvoiceIssueDateFrom = ''
+        Issue = ''
 
         if 'invsearch' in self.request.session:
             search = self.request.session['invsearch']
@@ -110,15 +119,20 @@ class individualinvoiceListView(LoginRequiredMixin,ListView):
             key = search[1]
             word = search[2]
             InvoiceIssueDateFrom = search[3]
+            Issue = search[4]
 
         default_data = {'query': query,
                 'key': key,
                 'word': word,
                 'InvoiceIssueDateFrom': InvoiceIssueDateFrom,
+                'Issue': Issue,
                 }
         
         form = IndividualSearchForm(initial=default_data) # 検索フォーム
         context['invsearch'] = form
+        form = ChoiceForm()
+        context['ChoiceForm'] = form
+        context['ChoiceForm'].fields['choice'].initial = Issue
         # Pagination
         page: Page = context["page_obj"]
         # get_elided_page_rangeの結果を、paginator_range変数から使用可能

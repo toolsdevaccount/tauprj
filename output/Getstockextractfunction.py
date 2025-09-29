@@ -91,10 +91,12 @@ def GetCarryForwardProcess():
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='C') | 
             Q(OrderingId__SlipDiv='X'),
             is_Deleted=0, 
             OrderingId__is_Deleted=0, 
@@ -170,10 +172,12 @@ def GetCarryForwardProcessStock(search_date):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             is_Deleted=0, 
             OrderingId__is_Deleted=0, 
@@ -269,10 +273,12 @@ def GetStockProcess(search_date):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             is_Deleted=0, 
             OrderingId__is_Deleted=0, 
@@ -352,10 +358,12 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -430,10 +438,12 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 
@@ -575,10 +585,12 @@ def carryforward(table_param, Start_date, End_date, DuPrice, PrPrice, Item):
         ).filter(
             Q(OrderingId__SlipDiv='F') | 
             Q(OrderingId__SlipDiv='G') | 
-            Q(OrderingId__SlipDiv='O') | 
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='O') | 
             Q(OrderingId__SlipDiv='H') | 
             Q(OrderingId__SlipDiv='U') | 
-            Q(OrderingId__SlipDiv='C') |
+            #20250922 コメントアウト
+            #Q(OrderingId__SlipDiv='C') |
             Q(OrderingId__SlipDiv='X'),
             OrderingId__OrderNumber=table_param,
             is_Deleted=0, 

@@ -391,12 +391,15 @@ class ProductOrder(models.Model):
             (1, "様"),
             (2, "御中"),
         ]
-    ProductOrderMerchandiseCode = models.IntegerField(null=False,default=0,verbose_name="商品コード")
+    #20250929_変更
+    ProductOrderMerchandiseCode = models.ForeignKey(Merchandise, on_delete=models.PROTECT, blank=True, null=True, related_name='ProductOrderMerchandiseCode', verbose_name="商品id")
+    #ProductOrderMerchandiseCode = models.IntegerField(null=False,default=0,verbose_name="商品コード")
     ProductOrderOrderingDate = models.DateField(null=False,blank=False,default="2000-01-01",verbose_name="発注日")
     ProductOrderManagerCode = models.ForeignKey(User, to_field='id',on_delete=models.SET_NULL, null=True, db_column='ManagerCode',verbose_name="担当者コード")
     ProductOrderSlipDiv = models.CharField(max_length=1,null=False,blank=False,verbose_name="伝票区分")
     ProductOrderOrderNumber = models.CharField(max_length=7,null=False,blank=False,default=0,verbose_name="オーダーNO")
-    ProductOrderPartNumber = models.CharField(max_length=20,null=False,blank=False,default=0,verbose_name="本品番")
+    #20250902_削除
+    #ProductOrderPartNumber = models.CharField(max_length=20,null=False,blank=False,default=0,verbose_name="本品番")
     ProductOrderApparelCode = models.ForeignKey(CustomerSupplier,on_delete=models.PROTECT,related_name='ProductOrderApparelCode',verbose_name="アパレルコード")
     ProductOrderDestinationCode = models.ForeignKey(CustomerSupplier,on_delete=models.PROTECT,related_name='ProductOrderDestinationCode',null=False,blank=True,verbose_name="手配先コード",default=1)
     ProductOrderSupplierCode = models.ForeignKey(CustomerSupplier,on_delete=models.PROTECT,related_name='ProductOrderSupplierCode',verbose_name="仕入先コード")
