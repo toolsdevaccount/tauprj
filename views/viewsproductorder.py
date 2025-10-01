@@ -88,7 +88,7 @@ class ProductOrderListView(LoginRequiredMixin,ListView):
                  Q(ProductOrderSupplierCode__CustomerOmitName__icontains=query) | Q(ProductOrderApparelCode__CustomerOmitName__icontains=query) |
                  Q(ProductOrderApparelCode__CustomerOmitName__icontains=query) | Q(ProductOrderMarkName__contains=query) | 
                  Q(ProductOrderBrandName__contains=query) | Q(ProductOrderManagerCode__first_name__icontains=query) |
-                 Q(ProductOrderMerchandiseCode__contains=query) | Q(id__contains=query) | Q(ProductOrderPartNumber__contains=query)
+                 Q(id__contains=query) | Q(ProductOrderMerchandiseCode__id__contains=query)
             )
 
         if key:
@@ -98,7 +98,7 @@ class ProductOrderListView(LoginRequiredMixin,ListView):
                  Q(ProductOrderSupplierCode__CustomerOmitName__icontains=key) | Q(ProductOrderApparelCode__CustomerOmitName__icontains=key) |
                  Q(ProductOrderApparelCode__CustomerOmitName__icontains=key) | Q(ProductOrderMarkName__contains=key) | 
                  Q(ProductOrderBrandName__contains=key) | Q(ProductOrderManagerCode__first_name__icontains=key) |
-                Q(ProductOrderMerchandiseCode__contains=key) | Q(id__contains=key) | Q(ProductOrderPartNumber__contains=key)
+                 Q(id__contains=key) | Q(ProductOrderMerchandiseCode__id__contains=key)
             )
 
         if word:
@@ -108,7 +108,7 @@ class ProductOrderListView(LoginRequiredMixin,ListView):
                  Q(ProductOrderSupplierCode__CustomerOmitName__icontains=word) | Q(ProductOrderApparelCode__CustomerOmitName__icontains=word) |
                  Q(ProductOrderApparelCode__CustomerOmitName__icontains=word) | Q(ProductOrderMarkName__contains=word) | 
                  Q(ProductOrderBrandName__contains=word) | Q(ProductOrderManagerCode__first_name__icontains=word) |
-                 Q(ProductOrderMerchandiseCode__contains=word) | Q(id__contains=word) | Q(ProductOrderPartNumber__contains=word)
+                 Q(id__contains=word)| Q(ProductOrderMerchandiseCode__id__contains=word) 
             )
 
         if orderdateFrom and orderdateTo:

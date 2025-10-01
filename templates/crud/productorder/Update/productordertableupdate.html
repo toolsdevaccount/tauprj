@@ -9,10 +9,10 @@
 				<table class="table table-sticky" id="tblrowclsz">
 					<thead>
 						<tr class="bg-info">
-							<th scope="col" class="text-center days">色番</th>
-							<th scope="col" class="text-center days">カラー</th>
-							<th scope="col" class="text-center days">サイズ</th>
-							<th scope="col" class="text-center items">数量</th>
+							<th scope="col" class="text-center days font-smsm">色番</th>
+							<th scope="col" class="text-center days font-smsm">カラー</th>
+							<th scope="col" class="text-center days font-smsm">サイズ</th>
+							<th scope="col" class="text-center items font-smsm">数量</th>
 						</tr>
 					</thead>
 					<tbody id="list">
@@ -20,28 +20,28 @@
 						<tr>
 							<td>
 								<div>
-									<label>{{ col.McdColorNumber }}</label>										
+									<label class="font-smsm">{{ col.McdColorNumber }}</label>										
 								</div>
 								<input type="hidden"  data-id-format="id_PodDetailId-%d-PodColorId" data-name-format="PodDetailId-%d-PodColorId"
 								name="PodDetailId-{{ forloop.counter0 }}-PodColorId" id="id_PodDetailId-{{ forloop.counter0 }}-PodColorId" value="{{ col.podcolorid_id }}">
 							</td>
 							<td>
 								<div>
-									<label>{{ col.McdColor }}</label>										
+									<label class="font-smsm">{{ col.McdColor }}</label>										
 								</div>
 								<input type="hidden"  data-id-format="id_PodDetailId-%d-PodColorId" data-name-format="PodDetailId-%d-PodColorId"
 								name="PodDetailId-{{ forloop.counter0 }}-PodColorId" id="id_PodDetailId-{{ forloop.counter0 }}-PodColorId" value="{{ col.podcolorid_id }}">
 							</td>
 							<td>
 								<div>
-									<label>{{ col.McdSize }}</label>										
+									<label class="font-smsm">{{ col.McdSize }}</label>										
 								</div>
 								<input type="hidden"  data-id-format="id_PodDetailId-%d-PodSizeId" data-name-format="PodDetailId-%d-PodSizeId"
 								name="PodDetailId-{{ forloop.counter0 }}-PodSizeId" id="id_PodDetailId-{{ forloop.counter0 }}-PodSizeId" value="{{ col.podsizeid_id }}">
 							</td>
 							<td>
 								<div>
-									<input type="text" class="form-control" style="text-align: right;" autocomplete="new-password" data-id-format="id_PodDetailId-%d-PodVolume" data-name-format="PodDetailId-%d-PodVolume" 
+									<input type="text" class="form-control font-smsm" style="text-align: right;" autocomplete="new-password" data-id-format="id_PodDetailId-%d-PodVolume" data-name-format="PodDetailId-%d-PodVolume" 
 									name="PodDetailId-{{ forloop.counter0 }}-PodVolume" id="id_PodDetailId-{{ forloop.counter0 }}-PodVolume" value="{{ col.PodVolume }}">
 								</div>
 							</td>
