@@ -325,11 +325,11 @@
                                     <label for="id_ProductOrderSummary">摘要</label>
                                     {% if form.errors.ProductOrderSummary %}
                                     {% for error in form.errors.ProductOrderSummary %}
-                                    <input type="text" class="form-control is-invalid" name="ProductOrderSummary" id="id_ProductOrderSummary" value="{{ object.ProductOrderSummary }}" readonly>
+                                    <textarea class="form-control is-invalid" autocomplete="new-password" name="ProductOrderSummary" id="id_ProductOrderSummary" rows="1"  readonly>{{ form.ProductOrderSummary.value }}</textarea>
                                     <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
                                     {% else %}
-                                    <input type="text" class="form-control" name="ProductOrderSummary" id="id_ProductOrderSummary" value="{{ object.ProductOrderSummary }}" readonly>
+                                    <textarea class="form-control" autocomplete="new-password" name="ProductOrderSummary" id="id_ProductOrderSummary" rows="1" readonly>{{ form.ProductOrderSummary.value }}</textarea>
                                     {% endif %}
                                 </div>
                             </div>

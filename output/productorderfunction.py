@@ -438,13 +438,18 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
 
     # 備考
     pdf_canvas.setFont('游ゴシック 標準', font_size)
-    text = textwrap.wrap(dt[0][34], 20)
+
+    text = dt[0][34]
+    summary = text.split()
+
+    #text = textwrap.wrap(dt[0][34], 20)
     x = 190
-    for contents in text:
+    for contents in summary:
         contents.encode('utf-8')
         pdf_canvas.drawString(250, x, contents)
         x=x-10
-    # 
+     
+
     font_size = 14
     pdf_canvas.setFont('游ゴシック 標準', font_size)
     pdf_canvas.drawString(350, 75,'Signature')
