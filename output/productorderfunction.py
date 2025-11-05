@@ -440,7 +440,7 @@ def printstring(pdf_canvas,dt,dtsize,dtcolor,dtimage):
     pdf_canvas.setFont('游ゴシック 標準', font_size)
 
     text = dt[0][34]
-    summary = text.split()
+    summary = text.splitlines()
 
     #text = textwrap.wrap(dt[0][34], 20)
     x = 190
